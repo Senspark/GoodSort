@@ -21,3 +21,4 @@ UserSettings/
 *.opendb
 *.VC.db
 sysinfo.txt
+.idea/
