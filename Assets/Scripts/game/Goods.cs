@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace game
 {
-    public class Goods : MonoBehaviour, Ibegi
+    public class Goods : MonoBehaviour
     {
         [SerializeField] private Sprite item;
         [SerializeField] private GameObject prefab;

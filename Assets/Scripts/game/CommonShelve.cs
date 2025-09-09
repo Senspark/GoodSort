@@ -21,7 +21,7 @@ namespace game
         protected override void Awake()
         {
             base.Awake();
-            GameManager.Instance.shelves.Add(this);
+            GameManager.Instance.Shelves.Add(this);
         }
     
         protected override void Start() {}
