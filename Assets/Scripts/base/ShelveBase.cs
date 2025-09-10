@@ -25,7 +25,7 @@ public class ShelveBase : MonoBehaviour
 
     public virtual int GetSlot(Vector3 pos)
     {
-        return 0;
+        return -1;
     }
 
     protected virtual void OnPlaceGood()

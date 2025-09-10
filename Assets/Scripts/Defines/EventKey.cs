@@ -5,6 +5,7 @@ namespace Defines
         PlaceGood,
         MergeGoods,
         StartGame,
+        OnStageComplete,
         NextStage
     }
 }

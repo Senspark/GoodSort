@@ -1,7 +1,7 @@
+using System;
 using UnityEngine;
 using Defines;
 using System.Collections.Generic;
-using Cysharp.Threading.Tasks;
 
 namespace manager
 {
@@ -28,41 +28,44 @@ namespace manager
             _instance = this;
             // load MainUI from Resources
             LoadEventRegister();
-            LoadMainUI();
+            LoadUILayer();
         }
-        
-        private void LoadMainUI()
+
+        private void Start()
         {
-            var prefab = Resources.Load<GameObject>("UI/MainUI");
-            var instance = Instantiate(prefab, commonUI.transform);
-            _commonMap.Add("MainUI", instance); // lưu instance chứ không phải prefab
+            _commonMap["MainUI"].SetActive(true);
         }
-        
-        private void LoadNextStageUI()
+
+        private void LoadUILayer()
         {
-            var prefab = Resources.Load<GameObject>("UI/NextStageUI");
-            var instance = Instantiate(prefab, commonUI.transform);
-            _commonMap.Add("NextStageUI", instance);
+            var mainUI = Resources.Load<GameObject>("UI/MainUI");
+            var nextStageUI = Resources.Load<GameObject>("UI/NextStageUI");
+            _commonMap.Add("MainUI", Instantiate(mainUI, commonUI.transform));
+            _commonMap.Add("NextStageUI", Instantiate(nextStageUI, commonUI.transform));
+            
+            foreach (var ui in _commonMap)
+            {
+                ui.Value.SetActive(false);
+            }
         }
         
         private void LoadEventRegister()
         {
             EventManager.Instance.On(EventKey.StartGame, () =>
             {
-                Destroy(_commonMap.GetValueOrDefault("MainUI"));
-                _commonMap.Remove("MainUI");
+                _commonMap["MainUI"].SetActive(false);
+            });
+            
+            EventManager.Instance.On(EventKey.OnStageComplete, () =>
+            {
+                var ui = _commonMap.GetValueOrDefault("NextStageUI");
+                ui.transform.GetComponent<NextStageUI>().FadeIn();
             });
             
             EventManager.Instance.On(EventKey.NextStage, () =>
             {
-                LoadNextStageUI();
                 var ui = _commonMap.GetValueOrDefault("NextStageUI");
-                ui.transform.getComponent<NextStageUI>().Show();
-                UniTask.Delay(1000).ContinueWith(() =>
-                {
-                    Destroy(ui);
-                    _commonMap.Remove("NextStageUI");
-                });
+                ui.transform.GetComponent<NextStageUI>().FadeOut();
             });
         }
     }

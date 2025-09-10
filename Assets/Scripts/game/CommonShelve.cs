@@ -142,17 +142,23 @@ namespace game
         public override int GetSlot(Vector3 goodsPos)
         {
             var offsetX = 0.5f * GetComponent<RectTransform>().rect.width / 3f;
-    
-            return new Vector3[]
+
+            var availableSlots = new Vector3[]
                 {
                     new Vector3(-offsetX, 0, 0),
                     new Vector3(0, 0, 0),
                     new Vector3(offsetX, 0, 0)
                 }
                 .Select((pos, index) => (slotId: index, distance: Vector3.Distance(goodsPos, pos)))
-                .OrderBy(x => x.distance)
-                .FirstOrDefault(x => !IsSlotOccupied(x.slotId))
-                .slotId;
+                .Where(x => !IsSlotOccupied(x.slotId))
+                .OrderBy(x => x.distance);
+
+            if (availableSlots.Any())
+            {
+                return availableSlots.First().slotId;
+            }
+    
+            return -1; // Không có slot trống
         }
         
         public new bool IsSlotOccupied(int slotIndex)

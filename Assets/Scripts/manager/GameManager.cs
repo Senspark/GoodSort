@@ -181,11 +181,11 @@ namespace manager
                 var disX = Mathf.Abs(shelveWorldPos.x - holdGoodsWorldPos.x);
                 var disY = Mathf.Abs(shelveWorldPos.y - holdGoodsWorldPos.y);
 
-                if (!(disX < uiTrans.rect.width / 2) || !(disY < uiTrans.rect.height / 2)) continue;
+                if (!(disX < uiTrans.rect.width / 2.3) || !(disY < uiTrans.rect.height / 2.3)) continue;
                 var slotId = shelve.GetSlot(goodsLocalPos);
 
                 if (slotId < 0 || shelve.IsSlotOccupied(slotId))
-                    break;
+                    continue;
 
                 var goodsId = _pickedGoods.Id;
                 shelve.PlaceGoods(goodsId, slotId);
@@ -272,10 +272,28 @@ namespace manager
         private void LoadEventRegister()
         {
             EventManager.Instance.On(EventKey.StartGame, OnStartGame);
+            EventManager.Instance.On(EventKey.OnStageComplete, OnStageComplete);
+            EventManager.Instance.On(EventKey.NextStage, OnNextStage);
         }
         
         private void OnStartGame()
         {
+            CreateStage();
+        }
+        
+        private void OnStageComplete()
+        {
+            _currentLevel++;
+            SaveCurrentLevel();
+        }
+        
+        private void OnNextStage()
+        {
+            foreach (Transform child in levelRoot.transform)
+            {
+                Destroy(child.gameObject);
+            }
+            Reset();
             CreateStage();
         }
     }

@@ -117,7 +117,7 @@ namespace game
                 if (CheckWin())
                 {
                     yield return new WaitForSeconds(1f);
-                    EventManager.Instance.Emit(EventKey.NextStage);
+                    EventManager.Instance.Emit(EventKey.OnStageComplete);
                     yield break; // dừng coroutine
                 }
                 yield return new WaitForSeconds(0.5f);
