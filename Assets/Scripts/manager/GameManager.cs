@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using Newtonsoft.Json;
@@ -83,6 +84,7 @@ namespace manager
             // Deserialize level config and icon config
             LevelConfigs = JsonConvert.DeserializeObject<LevelConfigArray>(levelConfigText.text);
             IconConfigs = JsonConvert.DeserializeObject<IconConfig[]>(iconConfigText.text);
+            LoadEventRegister();
 
             // Load current level from local storage
             LoadCurrentLevel();
@@ -95,9 +97,7 @@ namespace manager
             {
                 Destroy(child.gameObject);
             }
-
             Reset();
-            CreateStage();
         }
         
         public void OnBeginDrag(PointerEventData eventData)
@@ -139,7 +139,6 @@ namespace manager
         public void Pick(Goods goods, Vector2 pos)
         {
             if (IsPicking()) return;
-            Debug.Log("KHOA TRAN - Pick");
             _pickedGoods = goods;
             _holdingGood = new GameObject();
 
@@ -268,6 +267,16 @@ namespace manager
             _shelves.Clear();
             GoodsArray.Clear();
             GoodsData.Clear();
+        }
+        
+        private void LoadEventRegister()
+        {
+            EventManager.Instance.On(EventKey.StartGame, OnStartGame);
+        }
+        
+        private void OnStartGame()
+        {
+            CreateStage();
         }
     }
 }

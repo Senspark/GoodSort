@@ -1,0 +1,3 @@
+[submodule "unity-extension"]
+	path = unity-extension
+	url = https://github.com/Senspark/unity-extension

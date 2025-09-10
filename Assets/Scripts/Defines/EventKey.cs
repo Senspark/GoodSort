@@ -3,6 +3,8 @@ namespace Defines
     public enum EventKey
     {
         PlaceGood,
-        MergeGoods
+        MergeGoods,
+        StartGame,
+        NextStage
     }
 }

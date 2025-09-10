@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections;
 using System.Linq;
 using Random = UnityEngine.Random;
+using Defines;
 
 namespace game
 {
@@ -115,7 +116,8 @@ namespace game
             {
                 if (CheckWin())
                 {
-                    Debug.Log(" KHOA TRAN - Win");
+                    yield return new WaitForSeconds(1f);
+                    EventManager.Instance.Emit(EventKey.NextStage);
                     yield break; // dừng coroutine
                 }
                 yield return new WaitForSeconds(0.5f);
