@@ -110,11 +110,12 @@ namespace game
 
         private IEnumerator OnCheckWin()
         {
+            yield return new WaitForSeconds(1f);
             while (true)
             {
                 if (CheckWin())
                 {
-                    Debug.Log("Win");
+                    Debug.Log(" KHOA TRAN - Win");
                     yield break; // dừng coroutine
                 }
                 yield return new WaitForSeconds(0.5f);

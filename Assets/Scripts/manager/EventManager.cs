@@ -14,9 +14,7 @@ namespace manager
             {
                 if (_instance == null)
                 {
-                    var go = new GameObject("EventManager");
-                    _instance = go.AddComponent<EventManager>();
-                    DontDestroyOnLoad(go);
+                    _instance = FindFirstObjectByType<EventManager>();
                 }
                 return _instance;
             }

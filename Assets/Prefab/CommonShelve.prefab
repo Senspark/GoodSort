@@ -257,3 +257,4 @@ MonoBehaviour:
   layers:
   - {fileID: 6102715459819498570}
   - {fileID: 1562013770979369396}
+  goodsPrefab: {fileID: 8830650904719733458, guid: 00cb21e69bc654147ae9292477354d55, type: 3}

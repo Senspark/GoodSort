@@ -10,8 +10,6 @@ namespace game
     public class Goods : MonoBehaviour, IPointerDownHandler
     {
         [SerializeField] private Image spriteImg;
-        [SerializeField] private Sprite item;
-        [SerializeField] private GameObject prefab;
         
         
         // getter and setter for opacity 
@@ -35,8 +33,9 @@ namespace game
             set
             {
                 _id = value;
-                item = Resources.Load<Sprite>("item_" + _id);
+                var item = Resources.Load<Sprite>("sprite/Items/Item" + _id);
                 spriteImg.sprite = item;
+                spriteImg.SetNativeSize();
             }
         }
 
