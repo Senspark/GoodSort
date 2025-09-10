@@ -1,34 +1,29 @@
 using UnityEngine;
+using DG.Tweening;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
+using manager;
+
 
 namespace game
 {
-    public class Goods : MonoBehaviour
+    public class Goods : MonoBehaviour, IPointerDownHandler
     {
+        [SerializeField] private Image spriteImg;
         [SerializeField] private Sprite item;
         [SerializeField] private GameObject prefab;
         
-        private SpriteRenderer _spriteRenderer;
-        private SpriteRenderer SpriteRenderer
-        {
-            get
-            {
-                if (_spriteRenderer == null)
-                {
-                    _spriteRenderer = GetComponent<SpriteRenderer>();
-                }
-                return _spriteRenderer;
-            }
-        }
         
         // getter and setter for opacity 
-        private float _opacity;
-        public float Opacity
+        private bool _visible;
+        public bool Visible
         {
-            get {return _opacity;}
+            get => _visible;
             set
             {
-                _opacity = value;
-                SpriteRenderer.color = new Color(SpriteRenderer.color.r, SpriteRenderer.color.g, SpriteRenderer.color.b, _opacity);
+                Color currentColor = spriteImg.color;
+                _visible = value;
+                spriteImg.color = new Color(currentColor.r, currentColor.g, currentColor.b, _visible ? 1 : 0.5f);
             }
         }
         
@@ -36,12 +31,12 @@ namespace game
         private int _id;
         public int Id
         {
-            get {return _id;}
+            get => _id;
             set
             {
                 _id = value;
                 item = Resources.Load<Sprite>("item_" + _id);
-                SpriteRenderer.sprite = item;
+                spriteImg.sprite = item;
             }
         }
 
@@ -53,19 +48,50 @@ namespace game
             {
                 _layer = value;
                 var isFront = _layer == 0;
-                // if isFront, set color image is white, else gray
-                SpriteRenderer.color = isFront ? Color.white : Color.gray;
+                spriteImg.color = isFront ? Color.white : Color.gray;
             }
         }
 
-        private int _slot;
-        public int Slot
+        public int Slot { get; set; }
+        
+        public void OnPointerDown(PointerEventData eventData)
         {
-            get => _slot;
-            set => _slot = value;
+            if (Layer == 0)
+            {
+                if(GameManager.Instance.IsPicking()) return;
+                GameManager.Instance.Pick(this, eventData.position);
+                Visible = false;
+            }
         }
         
-        private void Awake() {}
+        public void Bounce(float delay = 0f)
+        {
+            // Reset scale
+            transform.localScale = Vector3.one;
+
+            // Sequence tween
+            Sequence seq = DOTween.Sequence();
+            seq.AppendInterval(delay);
+            seq.Append(transform.DOScale(new Vector3(0.9f, 1.1f, 1f), 0.1f));
+            seq.Append(transform.DOScale(new Vector3(1.1f, 0.9f, 1f), 0.1f));
+            seq.Append(transform.DOScale(Vector3.one, 0.1f));
+        }
+        
+        public void Remove()
+        {
+            Sequence seq = DOTween.Sequence();
+            seq.Append(transform.DOScale(new Vector3(1.1f, 0.9f, 1f), 0.15f));
+            seq.Append(transform.DOScale(new Vector3(0.9f, 1.1f, 1f), 0.15f));
+            seq.AppendCallback(() =>
+            {
+                if (Layer == 0)
+                {
+                    Vector3 worldPos = transform.position;
+                    worldPos.y -= 20;
+                }
+                Destroy(gameObject);
+            });
+        }
         
     }
 }

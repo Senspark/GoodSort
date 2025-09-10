@@ -1,6 +1,7 @@
 using manager;
 using UnityEngine;
 using game;
+using Defines;
 
 public class ShelveBase : MonoBehaviour
 {
@@ -10,24 +11,26 @@ public class ShelveBase : MonoBehaviour
     protected virtual void Awake()
     {
         id = transform.GetSiblingIndex();
-        EventManager.on(EventKey.PLACE_GOOD, OnPlaceGood);
+        EventManager.Instance.On(EventKey.PlaceGood, OnPlaceGood);
     }
 
     protected virtual void Start() {}
 
     protected void OnDestroy()
     {
-        EventManager.on(EventKey.PLACE_GOOD, OnPlaceGood);
+        EventManager.Instance.Off(EventKey.PlaceGood, OnPlaceGood);
     }
 
-    public void Init(int bounceDelay = 0) {}
+    public virtual void Init(int bounceDelay = 0) {}
 
-    public int GetSlot(Vector3 pos)
+    public virtual int GetSlot(Vector3 pos)
     {
         return 0;
     }
 
-    protected void OnPlaceGood() {}
+    protected virtual void OnPlaceGood()
+    {
+    }
 
     public bool IsSlotOccupied(int slotIndex)
     {
@@ -39,17 +42,17 @@ public class ShelveBase : MonoBehaviour
         return false;
     }
     
-    public bool IsEmpty()
+    public virtual bool IsEmpty()
     {
         return false;
     }
 
-    public void CreateGoods(int goodsId, int slotId, int layer)
+    public virtual Goods CreateGoods(int goodsId, int slotId, int layer)
     {
-        
+        return null;
     }
     
-    public void PlaceGoods(int goodsId, int slotId)
+    public virtual void PlaceGoods(int goodsId, int slotId)
     {
         
     }
@@ -59,7 +62,7 @@ public class ShelveBase : MonoBehaviour
         
     }
     
-    public void clear()
+    public virtual void Clear()
     {
         
     }

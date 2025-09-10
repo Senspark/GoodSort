@@ -1,84 +1,82 @@
-{
-  "icons": [
-    {
-      "id": 1,
-      "icon": "icon_1"
-    },
-    {
-      "id": 2,
-      "icon": "icon_2"
-    },
-    {
-      "id": 3,
-      "icon": "icon_3"
-    },
-    {
-      "id": 4,
-      "icon": "icon_4"
-    },
-    {
-      "id": 5,
-      "icon": "icon_5"
-    },
-    {
-      "id": 6,
-      "icon": "icon_6"
-    },
-    {
-      "id": 7,
-      "icon": "icon_7"
-    },
-    {
-      "id": 8,
-      "icon": "icon_8"
-    },
-    {
-      "id": 9,
-      "icon": "icon_9"
-    },
-    {
-      "id": 10,
-      "icon": "icon_10"
-    },
-    {
-      "id": 11,
-      "icon": "icon_11"
-    },
-    {
-      "id": 12,
-      "icon": "icon_12"
-    },
-    {
-      "id": 13,
-      "icon": "icon_13"
-    },
-    {
-      "id": 14,
-      "icon": "icon_14"
-    },
-    {
-      "id": 15,
-      "icon": "icon_15"
-    },
-    {
-      "id": 16,
-      "icon": "icon_16"
-    },
-    {
-      "id": 17,
-      "icon": "icon_17"
-    },
-    {
-      "id": 18,
-      "icon": "icon_18"
-    },
-    {
-      "id": 19,
-      "icon": "icon_19"
-    },
-    {
-      "id": 20,
-      "icon": "icon_20"
-    }
-  ]
-}
+[
+  {
+    "id": 1,
+    "icon": "icon_1"
+  },
+  {
+    "id": 2,
+    "icon": "icon_2"
+  },
+  {
+    "id": 3,
+    "icon": "icon_3"
+  },
+  {
+    "id": 4,
+    "icon": "icon_4"
+  },
+  {
+    "id": 5,
+    "icon": "icon_5"
+  },
+  {
+    "id": 6,
+    "icon": "icon_6"
+  },
+  {
+    "id": 7,
+    "icon": "icon_7"
+  },
+  {
+    "id": 8,
+    "icon": "icon_8"
+  },
+  {
+    "id": 9,
+    "icon": "icon_9"
+  },
+  {
+    "id": 10,
+    "icon": "icon_10"
+  },
+  {
+    "id": 11,
+    "icon": "icon_11"
+  },
+  {
+    "id": 12,
+    "icon": "icon_12"
+  },
+  {
+    "id": 13,
+    "icon": "icon_13"
+  },
+  {
+    "id": 14,
+    "icon": "icon_14"
+  },
+  {
+    "id": 15,
+    "icon": "icon_15"
+  },
+  {
+    "id": 16,
+    "icon": "icon_16"
+  },
+  {
+    "id": 17,
+    "icon": "icon_17"
+  },
+  {
+    "id": 18,
+    "icon": "icon_18"
+  },
+  {
+    "id": 19,
+    "icon": "icon_19"
+  },
+  {
+    "id": 20,
+    "icon": "icon_20"
+  }
+]

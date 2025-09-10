@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using Newtonsoft.Json;
+using game;
 
 
 namespace manager
@@ -34,6 +35,13 @@ namespace manager
             get => _holdingGood;
             set => _holdingGood = value;
         }
+        
+        private Goods _pickedGoods;
+        public Goods PickedGoods
+        {
+            get => _pickedGoods;
+            set => _pickedGoods = value;
+        }
 
         private List<ShelveBase> _shelves;
         public List<ShelveBase> Shelves
@@ -54,11 +62,16 @@ namespace manager
         }
 
         public List<int> GoodsArray { get; set; }
+        public Dictionary<int, Dictionary<int, List<int>>> GoodsData { get; set; }
 
         private void Awake()
         {
             _instance = this;
+            
             _shelves = new List<ShelveBase>();
+            GoodsArray = new List<int>();
+            GoodsData = new Dictionary<int, Dictionary<int, List<int>>>();
+            // Deserialize level config and icon config
             LevelConfigs = JsonConvert.DeserializeObject<LevelConfigArray>(levelConfigText.text);
             IconConfigs = JsonConvert.DeserializeObject<IconConfig[]>(iconConfigText.text);
 
@@ -73,6 +86,7 @@ namespace manager
             {
                 Destroy(child.gameObject);
             }
+            Reset();
             CreateStage();
         }
         
@@ -98,11 +112,21 @@ namespace manager
         {
             
         }
+        
+        public void Pick(Goods goods, Vector2 pos)
+        {
+            _pickedGoods = goods;
+        }
 
         public void Release()
         {
             // var isSuccess = false;
             // var holdingGoodWorldPos = Instance._holdingGood.transform.position;
+        }
+
+        public bool IsPicking()
+        {
+            return _pickedGoods != null;
         }
         
         public void CreateStage()
@@ -148,5 +172,12 @@ namespace manager
             return null;
         }
 
+        private void Reset()
+        {
+            _holdingGood = null;
+            _shelves.Clear();
+            GoodsArray.Clear();
+            GoodsData.Clear();
+        }
     }
 }
