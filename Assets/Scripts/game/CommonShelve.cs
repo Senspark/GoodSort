@@ -175,10 +175,13 @@ namespace game
         {
             var layer0 = layers[0];
             var layer0GoodsArr = layer0.GetComponentsInChildren<Goods>();
+            Debug.Log("KHOA TRAN ----------- OnPlaceGood" + Id);
             foreach (var goods in layer0GoodsArr)
             {
+                Debug.Log("KHOA TRAN ----------- OnPlaceGood 1");
                 if (goods.Visible) continue;
-                Destroy(goods.gameObject);
+                Debug.Log("KHOA TRAN ----------- OnPlaceGood 2");
+                goods.Remove();
                 layer0GoodMap.Remove(goods.Slot);
             }
         }

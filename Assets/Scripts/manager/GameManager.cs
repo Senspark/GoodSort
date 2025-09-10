@@ -3,13 +3,16 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using Newtonsoft.Json;
 using game;
+using UnityEngine.UI;
+using Defines;
 
 
 namespace manager
 {
-    public class GameManager : MonoBehaviour, IDragHandler, IEndDragHandler, ICancelHandler
+    public class GameManager : MonoBehaviour, IDragHandler,IBeginDragHandler, IEndDragHandler
     {
         private static GameManager _instance;
+
         public static GameManager Instance
         {
             get
@@ -18,25 +21,29 @@ namespace manager
                 {
                     Debug.LogError("GameManager is null");
                 }
+
                 return _instance;
             }
         }
 
-        [SerializeField] private GameObject levelRoot;
+        [SerializeField] private RectTransform levelRoot;
         [SerializeField] private GameObject stagePrefab;
         [SerializeField] private TextAsset levelConfigText;
         [SerializeField] private TextAsset iconConfigText;
-        
+
         public LevelConfigArray LevelConfigs { get; private set; }
         public IconConfig[] IconConfigs { get; private set; }
         private GameObject _holdingGood;
+        private Vector2 _dragOffset;
+
         public GameObject HoldingGood
         {
             get => _holdingGood;
             set => _holdingGood = value;
         }
-        
+
         private Goods _pickedGoods;
+
         public Goods PickedGoods
         {
             get => _pickedGoods;
@@ -44,6 +51,7 @@ namespace manager
         }
 
         private List<ShelveBase> _shelves;
+
         public List<ShelveBase> Shelves
         {
             get => _shelves;
@@ -51,6 +59,7 @@ namespace manager
         }
 
         private int _currentLevel;
+
         public int CurrentLevel
         {
             get => _currentLevel;
@@ -67,7 +76,7 @@ namespace manager
         private void Awake()
         {
             _instance = this;
-            
+
             _shelves = new List<ShelveBase>();
             GoodsArray = new List<int>();
             GoodsData = new Dictionary<int, Dictionary<int, List<int>>>();
@@ -78,7 +87,7 @@ namespace manager
             // Load current level from local storage
             LoadCurrentLevel();
         }
-        
+
         private void Start()
         {
             // remove all child of level Root
@@ -86,49 +95,129 @@ namespace manager
             {
                 Destroy(child.gameObject);
             }
+
             Reset();
             CreateStage();
         }
         
+        public void OnBeginDrag(PointerEventData eventData)
+        {
+            Debug.Log("KHOA TRAN - OnBeginDrag");
+            if (_holdingGood == null) return;
+            
+            // Tính offset giữa vị trí click và vị trí holdingGood
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                levelRoot, 
+                eventData.position, 
+                eventData.pressEventCamera, 
+                out Vector2 localPoint
+            );
+            _dragOffset = (Vector2)_holdingGood.transform.localPosition - localPoint;
+        }
+
         public void OnDrag(PointerEventData eventData)
         {
-            var holdingGood = Instance._holdingGood;
-            if (holdingGood == null) return;
-            var uiPos = eventData.position;
-            uiPos.y += 10;
-            Vector2 localPos;
-            //rect transform is gameManager
-            RectTransformUtility.ScreenPointToLocalPointInRectangle(transform as RectTransform, uiPos, eventData.pressEventCamera, out localPos);
-            holdingGood.transform.localPosition = localPos;
+            if (_holdingGood == null) return;
+            
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                levelRoot, 
+                eventData.position, 
+                eventData.pressEventCamera, 
+                out Vector2 localPos
+            );
+            
+            // Áp dụng offset để giữ vị trí tương đối với chuột
+            _holdingGood.transform.localPosition = localPos + _dragOffset;
         }
-        
+
         public void OnEndDrag(PointerEventData eventData)
         {
             if (Instance._holdingGood == null) return;
             Instance.Release();
         }
-        
-        public void OnCancel(BaseEventData eventData)
-        {
-            
-        }
-        
+
         public void Pick(Goods goods, Vector2 pos)
         {
+            if (IsPicking()) return;
+            Debug.Log("KHOA TRAN - Pick");
             _pickedGoods = goods;
+            _holdingGood = new GameObject();
+
+            Image img = _holdingGood.AddComponent<Image>();
+            img.sprite = goods.spriteImg.sprite;
+            img.SetNativeSize();
+            img.raycastTarget = false;
+
+            // add to level root
+            _holdingGood.transform.SetParent(levelRoot.transform, true);
+
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                levelRoot, // rectTransform cha
+                pos, // screen pos (nếu pos đang ở tọa độ UI/screen)
+                null, // Camera (null nếu Canvas = Screen Space Overlay)
+                out var localPoint
+            );
+            RectTransform holdRect = _holdingGood.GetComponent<RectTransform>();
+            holdRect.anchoredPosition = localPoint;
+            holdRect.localScale = Vector3.one;
         }
 
         public void Release()
         {
             // var isSuccess = false;
             // var holdingGoodWorldPos = Instance._holdingGood.transform.position;
+            var isSuccess = false;
+
+            if (_holdingGood == null) return;
+
+            var holdGoodsWorldPos = _holdingGood.transform.position;
+
+            foreach (var shelve in _shelves)
+            {
+                var uiTrans = shelve.GetComponent<RectTransform>();
+                var shelveWorldPos = shelve.transform.position;
+
+                Vector2 goodsLocalPos = uiTrans.InverseTransformPoint(holdGoodsWorldPos);
+
+                var disX = Mathf.Abs(shelveWorldPos.x - holdGoodsWorldPos.x);
+                var disY = Mathf.Abs(shelveWorldPos.y - holdGoodsWorldPos.y);
+
+                if (!(disX < uiTrans.rect.width / 2) || !(disY < uiTrans.rect.height / 2)) continue;
+                var slotId = shelve.GetSlot(goodsLocalPos);
+
+                if (slotId < 0 || shelve.IsSlotOccupied(slotId))
+                    break;
+
+                var goodsId = _pickedGoods.Id;
+                shelve.PlaceGoods(goodsId, slotId);
+                isSuccess = true;
+                break;
+            }
+
+            if (isSuccess)
+            {
+                EventManager.Instance.Emit(EventKey.PlaceGood);
+            }
+            else
+            {
+                _pickedGoods.Visible = true;
+            }
+
+            _pickedGoods = null;
+
+            if (_holdingGood != null)
+            {
+                Destroy(_holdingGood.gameObject);
+            }
+
+            _holdingGood = null;
         }
 
         public bool IsPicking()
         {
             return _pickedGoods != null;
         }
-        
+
         public void CreateStage()
         {
             // instantiate stage prefab
@@ -169,6 +258,7 @@ namespace manager
                     return levelConfig;
                 }
             }
+
             return null;
         }
 

@@ -9,11 +9,11 @@ namespace game
 {
     public class Goods : MonoBehaviour, IPointerDownHandler
     {
-        [SerializeField] private Image spriteImg;
+        public Image spriteImg;
         
         
         // getter and setter for opacity 
-        private bool _visible;
+        private bool _visible = true;
         public bool Visible
         {
             get => _visible;
@@ -21,7 +21,7 @@ namespace game
             {
                 Color currentColor = spriteImg.color;
                 _visible = value;
-                spriteImg.color = new Color(currentColor.r, currentColor.g, currentColor.b, _visible ? 1 : 0.5f);
+                spriteImg.color = new Color(currentColor.r, currentColor.g, currentColor.b, _visible ? 1 : 0);
             }
         }
         
