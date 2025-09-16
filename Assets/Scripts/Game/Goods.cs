@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using manager;
 
 
-namespace game
+namespace Game
 {
     public class Goods : MonoBehaviour, IPointerDownHandler
     {

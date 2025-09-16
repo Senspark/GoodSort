@@ -6,7 +6,7 @@ using System.Linq;
 using Defines;
 
 
-namespace game
+namespace Game
 {
     public class CommonShelve : ShelveBase
     {

@@ -7,7 +7,7 @@ using System.Linq;
 using Random = UnityEngine.Random;
 using Defines;
 
-namespace game
+namespace Game
 {
     public class Stage : MonoBehaviour
     {

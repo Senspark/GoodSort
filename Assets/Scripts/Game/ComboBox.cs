@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace game
+namespace Game
 {
     public class ComboBox : MonoBehaviour
     {
