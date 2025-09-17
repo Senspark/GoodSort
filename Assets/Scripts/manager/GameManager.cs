@@ -1,11 +1,12 @@
 using System.Collections.Generic;
-using System.Threading.Tasks;
+using Constant;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using Newtonsoft.Json;
-using game;
+using Game;
+using manager.Interface;
+using Senspark;
 using UnityEngine.UI;
-using Defines;
 
 
 namespace manager
@@ -195,7 +196,7 @@ namespace manager
 
             if (isSuccess)
             {
-                EventManager.Instance.Emit(EventKey.PlaceGood);
+                ServiceLocator.Instance.Resolve<IEventManager>().Invoke(EventKey.PlaceGood);
             }
             else
             {
@@ -271,9 +272,10 @@ namespace manager
         
         private void LoadEventRegister()
         {
-            EventManager.Instance.On(EventKey.StartGame, OnStartGame);
-            EventManager.Instance.On(EventKey.OnStageComplete, OnStageComplete);
-            EventManager.Instance.On(EventKey.NextStage, OnNextStage);
+            var eventManager = ServiceLocator.Instance.Resolve<IEventManager>();
+            eventManager.AddListener(EventKey.StartGame, OnStartGame);
+            eventManager.AddListener(EventKey.OnStageComplete, OnStageComplete);
+            eventManager.AddListener(EventKey.NextStage, OnNextStage);
         }
         
         private void OnStartGame()

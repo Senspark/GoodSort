@@ -1,7 +1,9 @@
 using System;
 using UnityEngine;
-using Defines;
 using System.Collections.Generic;
+using Constant;
+using manager.Interface;
+using Senspark;
 
 namespace manager
 {
@@ -51,18 +53,17 @@ namespace manager
         
         private void LoadEventRegister()
         {
-            EventManager.Instance.On(EventKey.StartGame, () =>
+            var eventManager = ServiceLocator.Instance.Resolve<IEventManager>();
+            eventManager.AddListener(EventKey.StartGame, () =>
             {
                 _commonMap["MainUI"].SetActive(false);
             });
-            
-            EventManager.Instance.On(EventKey.OnStageComplete, () =>
+            eventManager.AddListener(EventKey.OnStageComplete, () =>
             {
                 var ui = _commonMap.GetValueOrDefault("NextStageUI");
                 ui.transform.GetComponent<NextStageUI>().FadeIn();
             });
-            
-            EventManager.Instance.On(EventKey.NextStage, () =>
+            eventManager.AddListener(EventKey.NextStage, () =>
             {
                 var ui = _commonMap.GetValueOrDefault("NextStageUI");
                 ui.transform.GetComponent<NextStageUI>().FadeOut();

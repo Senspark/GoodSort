@@ -58,7 +58,8 @@ namespace Game
             if (Layer == 0)
             {
                 if(GameManager.Instance.IsPicking()) return;
-                GameManager.Instance.Pick(this, eventData.position);
+                // GameManager.Instance.Pick(this, eventData.position);
+                // TODO
                 Visible = false;
             }
         }

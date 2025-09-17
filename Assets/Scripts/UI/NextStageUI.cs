@@ -1,8 +1,10 @@
+using Constant;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
-using Defines;
 using manager;
+using manager.Interface;
+using Senspark;
 
 public class NextStageUI : MonoBehaviour
 {
@@ -20,7 +22,8 @@ public class NextStageUI : MonoBehaviour
         _gc1Height = (int)gc2Trans.rect.height;
         nextButton.onClick.AddListener(() =>
         {
-            EventManager.Instance.Emit(EventKey.NextStage);
+            ServiceLocator.Instance.Resolve<IEventManager>().Invoke(EventKey.NextStage);
+            // EventManager.Instance.Emit(EventKey.NextStage);
         });
     }
 

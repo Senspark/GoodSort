@@ -4,8 +4,10 @@ using Utilities;
 using System.Collections.Generic;
 using System.Collections;
 using System.Linq;
+using Constant;
+using manager.Interface;
+using Senspark;
 using Random = UnityEngine.Random;
-using Defines;
 
 namespace Game
 {
@@ -52,18 +54,18 @@ namespace Game
         private void CreateGoodsArray(int group, int goodsTypeCnt)
         {
             var goodsArray = GameManager.Instance.IconConfigs;
-            var indexArray = ArrayUtility.GenerateRandomArrayIndexNoDuplicate(goodsArray, goodsTypeCnt);
+            var indexArray = ArrayUtils.GenerateRandomArrayIndexNoDuplicate(goodsArray, goodsTypeCnt);
             // clear good array in GameManager
             GameManager.Instance.GoodsArray = new List<int>();
             for (var i = 0; i < group; i++)
             {
-                var goodsId = ArrayUtility.GetRandomElement(indexArray);
+                var goodsId = ArrayUtils.GetRandomElement(indexArray);
                 GameManager.Instance.GoodsArray.Add(goodsId + 1);
                 GameManager.Instance.GoodsArray.Add(goodsId + 1);
                 GameManager.Instance.GoodsArray.Add(goodsId + 1);
             }
 
-            ArrayUtility.Shuffle(GameManager.Instance.GoodsArray);
+            ArrayUtils.Shuffle(GameManager.Instance.GoodsArray);
         }
 
         private void CreateGoodsData()
@@ -76,7 +78,7 @@ namespace Game
                 {
                     placeList.Add(i);
                 }
-                ArrayUtility.Shuffle(placeList);
+                ArrayUtils.Shuffle(placeList);
 
                 placeList.RemoveRange(0, placeCount <= 6 ? Random.Range(2, 3) : Random.Range(4, 6));
                 for (int i = 0; i < placeCount; i++)
@@ -117,7 +119,7 @@ namespace Game
                 if (CheckWin())
                 {
                     yield return new WaitForSeconds(1f);
-                    EventManager.Instance.Emit(EventKey.OnStageComplete);
+                    ServiceLocator.Instance.Resolve<IEventManager>().Invoke(EventKey.OnStageComplete);
                     yield break; // dừng coroutine
                 }
                 yield return new WaitForSeconds(0.5f);

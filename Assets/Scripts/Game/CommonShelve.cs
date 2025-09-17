@@ -3,7 +3,9 @@ using manager;
 using UnityEngine;
 using System.Collections;
 using System.Linq;
-using Defines;
+using Constant;
+using manager.Interface;
+using Senspark;
 
 
 namespace Game
@@ -121,8 +123,7 @@ namespace Game
                 goods.Remove();
             }
             layer0GoodMap.Clear();
-            EventManager.Instance.Emit(EventKey.MergeGoods, transform.position);
-            Debug.Log($"Merge goods at {transform.position}");
+            ServiceLocator.Instance.Resolve<IEventManager>().Invoke(EventKey.MergeGoods, transform.position);
         }
 
         public override Goods CreateGoods(int goodsId, int slotId, int layer)

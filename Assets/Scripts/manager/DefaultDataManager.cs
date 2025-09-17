@@ -1,3 +1,6 @@
+using System.Threading.Tasks;
+using manager.Interface;
+
 namespace manager
 {
     public class DefaultDataManager : IDataManager
@@ -7,6 +10,11 @@ namespace manager
         public DefaultDataManager(IDataStorage storage)
         {
             _storage = storage;
+        }
+        
+        public Task<bool> Initialize()
+        {
+            return Task.FromResult(true);
         }
         
         public int GetInt(string key, int defaultValue)

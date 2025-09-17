@@ -1,35 +1,54 @@
 using UnityEngine;
 using System.Collections.Generic;
-using Defines;
 using System;
+using System.Threading.Tasks;
+using Constant;
+using manager.Interface;
 
 namespace manager
 {
-    public class EventManager : MonoBehaviour
+    public class EventManager : IEventManager
     {
-        private static EventManager _instance;
-        public static EventManager Instance
+        private Dictionary<EventKey,Action> eventTable = new();
+        private Dictionary<EventKey, Action<object>> eventTableWithParam = new();
+        
+        public Task<bool> Initialize()
         {
-            get
-            {
-                if (_instance == null)
-                {
-                    _instance = FindFirstObjectByType<EventManager>();
-                }
-                return _instance;
-            }
+            return Task.FromResult(true);
         }
-
-        private Dictionary<EventKey,Action> eventTable = new Dictionary<EventKey, Action>();
-
-        private Dictionary<EventKey, Action<object>> eventTableWithParam = new Dictionary<EventKey, Action<object>>();
-
-        private void Awake()
+        
+        
+        public void AddListener(EventKey key, Action callback)
         {
-            _instance = this;
+            On(key, callback);
         }
-
-        public void On(EventKey key, Action callback)
+        
+        public void AddListener(EventKey key, Action<object> callback)
+        {
+            On(key, callback);
+        }
+        
+        public void RemoveListener(EventKey key, Action callback)
+        {
+            Off(key, callback);
+        }
+        
+        public void RemoveListener(EventKey key, Action<object> callback)
+        {
+            Off(key, callback);
+        }
+        
+        public void Invoke(EventKey key)
+        {
+            Emit(key);
+        }
+        
+        public void Invoke(EventKey key, object param)
+        {
+            Emit(key, param);
+        }
+        
+        private void On(EventKey key, Action callback)
         {
             if (!eventTable.ContainsKey(key))
                 eventTable[key] = () => { };
@@ -37,7 +56,7 @@ namespace manager
             eventTable[key] += callback;
         }
 
-        public void On(EventKey key, Action<object> callback)
+        private void On(EventKey key, Action<object> callback)
         {
             if (!eventTableWithParam.ContainsKey(key))
                 eventTableWithParam[key] = obj => { };
@@ -45,25 +64,25 @@ namespace manager
             eventTableWithParam[key] += callback;
         }
 
-        public void Off(EventKey key, Action callback)
+        private void Off(EventKey key, Action callback)
         {
             if (eventTable.ContainsKey(key))
                 eventTable[key] -= callback;
         }
 
-        public void Off(EventKey key, Action<object> callback)
+        private void Off(EventKey key, Action<object> callback)
         {
             if (eventTableWithParam.ContainsKey(key))
                 eventTableWithParam[key] -= callback;
         }
 
-        public void Emit(EventKey key)
+        private void Emit(EventKey key)
         {
             if (eventTable.ContainsKey(key))
                 eventTable[key]?.Invoke();
         }
 
-        public void Emit(EventKey key, object param)
+        private void Emit(EventKey key, object param)
         {
             if (eventTableWithParam.ContainsKey(key))
                 eventTableWithParam[key]?.Invoke(param);

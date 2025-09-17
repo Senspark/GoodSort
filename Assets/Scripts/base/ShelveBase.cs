@@ -1,7 +1,9 @@
+using Constant;
 using manager;
 using UnityEngine;
-using game;
-using Defines;
+using Game;
+using manager.Interface;
+using Senspark;
 
 public class ShelveBase : MonoBehaviour
 {
@@ -11,14 +13,15 @@ public class ShelveBase : MonoBehaviour
     protected virtual void Awake()
     {
         id = transform.GetSiblingIndex();
-        EventManager.Instance.On(EventKey.PlaceGood, OnPlaceGood);
+        // EventManager.Instance.On(EventKey.PlaceGood, OnPlaceGood);
+        ServiceLocator.Instance.Resolve<IEventManager>().AddListener(EventKey.PlaceGood, OnPlaceGood);
     }
 
     protected virtual void Start() {}
 
     protected void OnDestroy()
     {
-        EventManager.Instance.Off(EventKey.PlaceGood, OnPlaceGood);
+        ServiceLocator.Instance.Resolve<IEventManager>().RemoveListener(EventKey.PlaceGood, OnPlaceGood);
     }
 
     public virtual void Init(int bounceDelay = 0) {}
