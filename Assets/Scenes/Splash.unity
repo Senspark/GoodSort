@@ -148,10 +148,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d35879a57ac1488798eeafdddfb86039, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  canvasDialog: {fileID: 1543356183}
   loadingbar: {fileID: 1075073787}
   progress: {fileID: 611495666}
-  remoteConfigText: {fileID: 4900000, guid: c37f41a821914612b8a22990c69d246a, type: 3}
 --- !u!4 &184481886
 Transform:
   m_ObjectHideFlags: 0
@@ -977,7 +975,7 @@ GameObject:
   - component: {fileID: 2067274078}
   - component: {fileID: 2067274077}
   m_Layer: 0
-  m_Name: Canvas_background
+  m_Name: Canvas_BG
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -999,7 +997,7 @@ MonoBehaviour:
   m_BlockingObjects: 0
   m_BlockingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 55
 --- !u!114 &2067274078
 MonoBehaviour:
   m_ObjectHideFlags: 0
