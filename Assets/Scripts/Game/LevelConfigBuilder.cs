@@ -1,4 +1,4 @@
-using System.Threading.Tasks;
+using System.Collections.Generic;
 using Defines;
 using manager.Interface;
 using Strategy.Level;
@@ -10,6 +10,7 @@ namespace Game
     {
         private readonly ILevelLoaderManager _levelLoader;
         private LevelStrategy _levelStrategy;
+        private List<GoodsConfig> _goodsArray;
         private GameObject _levelObject;
         
         public LevelConfigBuilder(ILevelLoaderManager levelLoader)
@@ -18,6 +19,8 @@ namespace Game
         }
         
         public GameObject LevelObject => _levelObject;
+        public LevelStrategy LevelStrategy => _levelStrategy;
+        public List<GoodsConfig> GoodsArray => _goodsArray;
         
         public LevelConfigBuilder SetLevelStrategy(LevelStrategy levelStrategy)
         {
@@ -25,6 +28,11 @@ namespace Game
             return this;
         }
         
+        public LevelConfigBuilder SetGoodsArray(List<GoodsConfig> goodsArray)
+        {
+            _goodsArray = goodsArray;
+            return this;
+        }
         
         public LevelConfigBuilder Build()
         {

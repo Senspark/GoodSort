@@ -14,9 +14,9 @@ namespace manager
         
         public GameObject Create(int level)
         {
-            // TODO: Dynamite load level bằng cách hoành tráng hơn
             var levelPrefab = Resources.Load<GameObject>("Level/LEVEL_" + level);
-            return levelPrefab;
+            return levelPrefab != null ? Object.Instantiate(levelPrefab) : // Return instantiated object
+                null;
         }
     }
 }

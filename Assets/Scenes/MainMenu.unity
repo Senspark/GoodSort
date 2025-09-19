@@ -1309,8 +1309,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d0e03210a7342f08439db9c4ff7db9f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  canvasDialog: {fileID: 0}
-  playButton: {fileID: 0}
+  canvasDialog: {fileID: 1000845860}
+  playButton: {fileID: 129227936}
 --- !u!1 &1724027353
 GameObject:
   m_ObjectHideFlags: 0

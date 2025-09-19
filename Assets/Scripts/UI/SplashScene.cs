@@ -43,8 +43,10 @@ namespace Game.UI
         private void InitializeConfigManager()
         {
             var configManager = new DefaultConfigManager();
-            configManager.SetDefaultValue(ConfigKey.LevelConfig, levelConfigDefault.text);
-            configManager.SetDefaultValue(ConfigKey.IconConfig, iconConfigDefault.text);
+            var levelConfig = JsonConvert.DeserializeObject<LevelConfig>(levelConfigDefault.text);
+            var goodsConfig = JsonConvert.DeserializeObject<GoodsConfig[]>(iconConfigDefault.text);
+            configManager.SetDefaultValue(ConfigKey.LevelConfig, levelConfig);
+            configManager.SetDefaultValue(ConfigKey.GoodsConfig, goodsConfig);
             ServiceLocator.Instance.Provide(configManager);
         }
         

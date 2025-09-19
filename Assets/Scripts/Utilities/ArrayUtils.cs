@@ -41,24 +41,31 @@ namespace Utilities
         }
         
         // Generate random array pick from old, but no duplicate
-        public static T[] GenerateRandomArrayNoDuplicate<T>(T[] oldArray, int count)
+        public static List<T> GenerateRandomList<T>(List<T> oldList, int count, bool allowRepeat = false)
         {
-            if (count > oldArray.Length)
-                throw new ArgumentException("Count cannot be greater than array length.");
-            
-            T[] clone = (T[])oldArray.Clone();
+            var result = new List<T>();
 
-            // Fisher-Yates shuffle
-            for (int i = clone.Length - 1; i > 0; i--)
+            if (allowRepeat)
             {
-                int randIndex = UnityEngine.Random.Range(0, i + 1);
-                (clone[i], clone[randIndex]) = (clone[randIndex], clone[i]);
+                for (var i = 0; i < count; i++)
+                {
+                    var randIndex = UnityEngine.Random.Range(0, oldList.Count);
+                    result.Add(oldList[randIndex]);
+                }
+            }
+            else
+            {
+                var clone = new List<T>(oldList);
+
+                for (var i = clone.Count - 1; i > 0; i--)
+                {
+                    var randIndex = UnityEngine.Random.Range(0, i + 1);
+                    (clone[i], clone[randIndex]) = (clone[randIndex], clone[i]);
+                }
+                result = clone.GetRange(0, count);
             }
 
-            T[] newArray = new T[count];
-            Array.Copy(clone, newArray, count);
-
-            return newArray;
+            return result;
         }
         
         // Generate random unique indexes from oldArray

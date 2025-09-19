@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using Defines;
 using Senspark;
 
 namespace manager.Interface
@@ -5,7 +7,7 @@ namespace manager.Interface
     public static class ConfigKey
     {
         public const string LevelConfig = "levels_config";
-        public const string IconConfig = "icon_config";
+        public const string GoodsConfig = "goods_config";
     }
     
     [Service(nameof(IConfigManager))]

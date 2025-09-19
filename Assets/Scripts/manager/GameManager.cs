@@ -35,7 +35,7 @@ namespace manager
         [SerializeField] private TextAsset iconConfigText;
 
         public LevelConfig LevelConfigs { get; private set; }
-        public IconConfig[] IconConfigs { get; private set; }
+        public GoodsConfig[] IconConfigs { get; private set; }
         private GameObject _holdingGood;
         private Vector2 _dragOffset;
 
@@ -85,7 +85,7 @@ namespace manager
             GoodsData = new Dictionary<int, Dictionary<int, List<int>>>();
             // Deserialize level config and icon config
             LevelConfigs = JsonConvert.DeserializeObject<LevelConfig>(levelConfigText.text);
-            IconConfigs = JsonConvert.DeserializeObject<IconConfig[]>(iconConfigText.text);
+            IconConfigs = JsonConvert.DeserializeObject<GoodsConfig[]>(iconConfigText.text);
             LoadEventRegister();
 
             // Load current level from local storage
@@ -248,20 +248,20 @@ namespace manager
             Debug.Log($"Saved current level to local storage: {_currentLevel}");
         }
 
-        public LevelStrategy GetCurrentLevelConfig()
-        {
-            if (LevelConfigs == null) return null;
-
-            foreach (var levelConfig in LevelConfigs.levelStrategies)
-            {
-                if (levelConfig.Id == _currentLevel)
-                {
-                    return levelConfig;
-                }
-            }
-
-            return null;
-        }
+        // public LevelStrategy GetCurrentLevelConfig()
+        // {
+        //     if (LevelConfigs == null) return null;
+        //
+        //     foreach (var levelConfig in LevelConfigs.levelStrategies)
+        //     {
+        //         if (levelConfig.Id == _currentLevel)
+        //         {
+        //             return levelConfig;
+        //         }
+        //     }
+        //
+        //     return null;
+        // }
 
         private void Reset()
         {

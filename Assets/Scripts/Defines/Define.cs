@@ -24,16 +24,22 @@ namespace Defines
     }
 
     [Serializable]
-    public class IconConfig
+    public class GoodsConfig
     {
         public int Id { get; }
     
         public string Icon { get; }
         [JsonConstructor]
-        public IconConfig(int id, string icon)
+        public GoodsConfig(int id, string icon)
         {
             Id = id;
             Icon = icon;
+        }
+        
+        // toString
+        public override string ToString()
+        {
+            return $"GoodsConfig Id: {Id}, Icon: {Icon}";
         }
     }
 }

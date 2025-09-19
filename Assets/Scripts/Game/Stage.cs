@@ -8,6 +8,7 @@ using Constant;
 using Defines;
 using manager.Interface;
 using Senspark;
+using Strategy.Level;
 using Random = UnityEngine.Random;
 
 namespace Game
@@ -24,13 +25,13 @@ namespace Game
 
         private void Start()
         {
-            levelStrategy = GameManager.Instance.GetCurrentLevelConfig();
-            CreateShelves(levelStrategy.ShelveMap);
-            // CreateShelveLockers(_levelConfig.lockCnt);
-            CreateGoodsArray(levelStrategy.Group, levelStrategy.GoodsTypeCnt);
-            CreateGoodsData();
-
-            StartCoroutine(OnCheckWin());
+            // levelStrategy = GameManager.Instance.GetCurrentLevelConfig();
+            // CreateShelves(levelStrategy.ShelveMap);
+            // // CreateShelveLockers(_levelConfig.lockCnt);
+            // CreateGoodsArray(levelStrategy.Group, levelStrategy.GoodsTypeCnt);
+            // CreateGoodsData();
+            //
+            // StartCoroutine(OnCheckWin());
         }
 
         private void CreateShelves(int[][] shelveMap)

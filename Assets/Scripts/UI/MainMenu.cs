@@ -1,7 +1,8 @@
+using System;
 using UnityEngine;
-using Constant;
 using manager.Interface;
 using Senspark;
+using Utilities;
 
 
 namespace UI
@@ -10,12 +11,12 @@ namespace UI
     {
         [SerializeField] private Canvas canvasDialog;
         [SerializeField] private Transform playButton;
-        
+
         public void OnPlayButtonPressed()
         {
-            // change to game scene
-            ServiceLocator.Instance.Resolve<ISceneLoader>().LoadScene<GameScene>(nameof(GameScene));
+            _ = ServiceLocator.Instance
+                .Resolve<ISceneLoader>()
+                .LoadScene<GameScene>(nameof(GameScene));
         }
-        
     }
 }
