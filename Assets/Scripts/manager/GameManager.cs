@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Constant;
+using Defines;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using Newtonsoft.Json;
@@ -33,7 +34,7 @@ namespace manager
         [SerializeField] private TextAsset levelConfigText;
         [SerializeField] private TextAsset iconConfigText;
 
-        public LevelConfigArray LevelConfigs { get; private set; }
+        public LevelConfig LevelConfigs { get; private set; }
         public IconConfig[] IconConfigs { get; private set; }
         private GameObject _holdingGood;
         private Vector2 _dragOffset;
@@ -83,7 +84,7 @@ namespace manager
             GoodsArray = new List<int>();
             GoodsData = new Dictionary<int, Dictionary<int, List<int>>>();
             // Deserialize level config and icon config
-            LevelConfigs = JsonConvert.DeserializeObject<LevelConfigArray>(levelConfigText.text);
+            LevelConfigs = JsonConvert.DeserializeObject<LevelConfig>(levelConfigText.text);
             IconConfigs = JsonConvert.DeserializeObject<IconConfig[]>(iconConfigText.text);
             LoadEventRegister();
 
@@ -247,11 +248,11 @@ namespace manager
             Debug.Log($"Saved current level to local storage: {_currentLevel}");
         }
 
-        public LevelConfig GetCurrentLevelConfig()
+        public LevelStrategy GetCurrentLevelConfig()
         {
             if (LevelConfigs == null) return null;
 
-            foreach (var levelConfig in LevelConfigs.Levels)
+            foreach (var levelConfig in LevelConfigs.levelStrategies)
             {
                 if (levelConfig.Id == _currentLevel)
                 {

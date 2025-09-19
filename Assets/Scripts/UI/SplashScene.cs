@@ -1,19 +1,14 @@
 using System.Collections;
-using System.Collections.Generic;
+using Defines;
 using UnityEngine;
 using UnityEngine.UI;
-using Newtonsoft.Json;
-using System.Threading.Tasks;
-using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using Senspark;
-using Senspark.Internal;
 using manager;
 using manager.Interface;
+using Newtonsoft.Json;
 using UI;
 using Utilities;
-using IAudioManager = manager.Interface.IAudioManager;
-using IDataManager = manager.Interface.IDataManager;
 
 namespace Game.UI
 {
@@ -21,6 +16,8 @@ namespace Game.UI
     {
         [SerializeField] private Transform loadingbar;
         [SerializeField] private Image progress;
+        [SerializeField] private TextAsset levelConfigDefault;
+        [SerializeField] private TextAsset iconConfigDefault;
 
         private bool isLoaded;
 
@@ -28,7 +25,7 @@ namespace Game.UI
         {
             Screen.sleepTimeout = SleepTimeout.NeverSleep;
             Application.targetFrameRate = 60;
-            
+
             var initializer = new ServiceInitializer();
             initializer.OnProgress += (current, total) =>
             {
@@ -39,7 +36,16 @@ namespace Game.UI
                 isLoaded = true;
                 StartCoroutine(OnAppLoaded());
             };
+            InitializeConfigManager();
             _ = initializer.InitializeAllAsync();
+        }
+
+        private void InitializeConfigManager()
+        {
+            var configManager = new DefaultConfigManager();
+            configManager.SetDefaultValue(ConfigKey.LevelConfig, levelConfigDefault.text);
+            configManager.SetDefaultValue(ConfigKey.IconConfig, iconConfigDefault.text);
+            ServiceLocator.Instance.Provide(configManager);
         }
         
         private IEnumerator OnAppLoaded()
@@ -68,7 +74,7 @@ namespace Game.UI
                 .LoadScene<MainMenu>(nameof(MainMenu))
                 .Then(mainMenu =>
                 {
-                    mainMenu.OnStartButtonPressed();
+                    Debug.Log("Do Something");
                 });
         }
     }

@@ -16,12 +16,13 @@ namespace manager
         public ISceneLoader SceneLoader { get; set; }
         public IScoreManager ScoreManager { get; set; }
         public IEventManager EventManager { get; set; }
+        public ILevelLoaderManager LevelLoaderManager { get; set; }
     }
 
     public class ServiceInitializer : IServiceDeclaration
     {
-        public int TotalSteps { get; private set; }
-        public int CurrentStep { get; private set; }
+        private int TotalSteps { get; set; }
+        private int CurrentStep { get; set; }
 
 
         public event Action<int, int> OnProgress;
@@ -34,6 +35,8 @@ namespace manager
         public ISceneLoader SceneLoader { get; set; }
         public IScoreManager ScoreManager { get; set; }
         public IEventManager EventManager { get; set; }
+        public ILevelLoaderManager LevelLoaderManager { get; set; }
+
         #endregion
 
 
@@ -45,6 +48,7 @@ namespace manager
             SceneLoader = new DefaultSceneLoader();
             ScoreManager = new DefaultScoreManager(DataManager);
             EventManager = new EventManager();
+            LevelLoaderManager = new DefaultLevelLoaderManager();
             var services = new IService[]
             {
                 DataManager,
@@ -52,7 +56,8 @@ namespace manager
                 LevelStoreManager,
                 SceneLoader,
                 ScoreManager,
-                EventManager
+                EventManager,
+                LevelLoaderManager
             };
             TotalSteps = services.Length;
             CurrentStep = 0;

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections;
 using System.Linq;
 using Constant;
+using Defines;
 using manager.Interface;
 using Senspark;
 using Random = UnityEngine.Random;
@@ -16,17 +17,17 @@ namespace Game
         [SerializeField] private GameObject shelveContainer;
         [SerializeField] private GameObject[] shelvePrefabArray;
 
-        private LevelConfig _levelConfig;
+        private LevelStrategy levelStrategy;
         private const int FixedWidth = 348;
         private const int FixedHeight = 300;
         private ShelveBase[] _listShelve;
 
         private void Start()
         {
-            _levelConfig = GameManager.Instance.GetCurrentLevelConfig();
-            CreateShelves(_levelConfig.ShelveMap);
+            levelStrategy = GameManager.Instance.GetCurrentLevelConfig();
+            CreateShelves(levelStrategy.ShelveMap);
             // CreateShelveLockers(_levelConfig.lockCnt);
-            CreateGoodsArray(_levelConfig.Group, _levelConfig.GoodsTypeCnt);
+            CreateGoodsArray(levelStrategy.Group, levelStrategy.GoodsTypeCnt);
             CreateGoodsData();
 
             StartCoroutine(OnCheckWin());

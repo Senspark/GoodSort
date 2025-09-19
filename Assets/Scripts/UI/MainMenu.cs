@@ -11,15 +11,10 @@ namespace UI
         [SerializeField] private Canvas canvasDialog;
         [SerializeField] private Transform playButton;
         
-        public void OnStartButtonPressed()
-        {
-            // EventManager.Instance.Emit(EventKey.StartGame);
-            ServiceLocator.Instance.Resolve<IEventManager>().Invoke(EventKey.StartGame);
-        }
-
         public void OnPlayButtonPressed()
         {
-            
+            // change to game scene
+            ServiceLocator.Instance.Resolve<ISceneLoader>().LoadScene<GameScene>(nameof(GameScene));
         }
         
     }

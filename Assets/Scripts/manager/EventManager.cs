@@ -9,8 +9,8 @@ namespace manager
 {
     public class EventManager : IEventManager
     {
-        private Dictionary<EventKey,Action> eventTable = new();
-        private Dictionary<EventKey, Action<object>> eventTableWithParam = new();
+        private readonly Dictionary<EventKey,Action> eventTable = new();
+        private readonly Dictionary<EventKey, Action<object>> eventTableWithParam = new();
         
         public Task<bool> Initialize()
         {
@@ -78,14 +78,14 @@ namespace manager
 
         private void Emit(EventKey key)
         {
-            if (eventTable.ContainsKey(key))
-                eventTable[key]?.Invoke();
+            if (eventTable.TryGetValue(key, out var value))
+                value?.Invoke();
         }
 
         private void Emit(EventKey key, object param)
         {
-            if (eventTableWithParam.ContainsKey(key))
-                eventTableWithParam[key]?.Invoke(param);
+            if (eventTableWithParam.TryGetValue(key, out var value))
+                value?.Invoke(param);
         }
     }
 }
