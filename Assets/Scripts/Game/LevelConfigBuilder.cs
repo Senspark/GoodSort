@@ -3,6 +3,7 @@ using Defines;
 using manager.Interface;
 using Strategy.Level;
 using UnityEngine;
+using Utilities;
 
 namespace Game
 {
@@ -30,7 +31,8 @@ namespace Game
         
         public LevelConfigBuilder SetGoodsArray(List<GoodsConfig> goodsArray)
         {
-            _goodsArray = goodsArray;
+            var sourceCnt = _levelStrategy.TripleCount;
+            _goodsArray = ArrayUtils.GenerateRandomList(goodsArray, sourceCnt);
             return this;
         }
         

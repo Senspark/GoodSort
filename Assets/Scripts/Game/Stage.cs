@@ -34,24 +34,25 @@ namespace Game
             // StartCoroutine(OnCheckWin());
         }
 
-        private void CreateShelves(int[][] shelveMap)
-        {
-            var row = shelveMap.Length;
-            var col = shelveMap[0].Length;
-            var uiTransform = shelveContainer.GetComponent<RectTransform>();
-            // set width and height of shelveContainer to row * 100 and col * 100
-            uiTransform.sizeDelta = new Vector2(col * FixedWidth, row * FixedHeight);
-            for (var i = row - 1; i >= 0; i--)
-            {
-                for (var j = 0; j < col; j++)
-                {
-                    var type = (ShelveType)shelveMap[i][j];
-                    var shelvePrefab = shelvePrefabArray[(int)type];
-                    Instantiate(shelvePrefab, shelveContainer.transform);
-                }
-            }
-            _listShelve = shelveContainer.GetComponentsInChildren<ShelveBase>();
-        }
+        // private void CreateShelves(int[][] shelveMap)
+        // {
+        //     var row = shelveMap.Length;
+        //     var col = shelveMap[0].Length;
+        //     var uiTransform = shelveContainer.GetComponent<RectTransform>();
+        //     // set width and height of shelveContainer to row * 100 and col * 100
+        //     uiTransform.sizeDelta = new Vector2(col * FixedWidth, row * FixedHeight);
+        //     for (var i = row - 1; i >= 0; i--)
+        //     {
+        //         for (var j = 0; j < col; j++)
+        //         {
+        //             var type = (ShelveType)shelveMap[i][j];
+        //             var shelvePrefab = shelvePrefabArray[(int)type];
+        //             Instantiate(shelvePrefab, shelveContainer.transform);
+        //         }
+        //     }
+        //     _listShelve = shelveContainer.GetComponentsInChildren<ShelveBase>();
+        // }
+        // UN USE
 
         private void CreateGoodsArray(int group, int goodsTypeCnt)
         {

@@ -1,3 +1,4 @@
+using System;
 using Constant;
 using manager;
 using UnityEngine;
@@ -7,24 +8,33 @@ using Senspark;
 
 public class ShelveBase : MonoBehaviour
 {
+    private bool _isTargetTouched = false;
     protected int id;
     public int Id { get => id; set => id = value; }
+    
+    protected LevelViewController _controller;
+    public LevelViewController Controller
+    {
+        get => _controller;
+        set => _controller = value;
+    }
+
+    public bool IsTargetTouched() => _isTargetTouched;
 
     protected virtual void Awake()
     {
         id = transform.GetSiblingIndex();
-        // EventManager.Instance.On(EventKey.PlaceGood, OnPlaceGood);
         ServiceLocator.Instance.Resolve<IEventManager>().AddListener(EventKey.PlaceGood, OnPlaceGood);
     }
 
     protected virtual void Start() {}
 
-    protected void OnDestroy()
+    protected virtual void OnDestroy()
     {
         ServiceLocator.Instance.Resolve<IEventManager>().RemoveListener(EventKey.PlaceGood, OnPlaceGood);
     }
 
-    public virtual void Init(int bounceDelay = 0) {}
+    public virtual void Init() {}
 
     public virtual int GetSlot(Vector3 pos)
     {
@@ -68,5 +78,21 @@ public class ShelveBase : MonoBehaviour
     public virtual void Clear()
     {
         
+    }
+
+    protected void OnTriggerStay2D(Collider2D other)
+    {
+        if(other.gameObject.name == "HoldingGoods")
+        {
+            _isTargetTouched = true;
+        }
+    }
+    
+    protected void OnTriggerExit2D(Collider2D other)
+    {
+        if(other.gameObject.name == "HoldingGoods")
+        {
+            _isTargetTouched = false;
+        }
     }
 }

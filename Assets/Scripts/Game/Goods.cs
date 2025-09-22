@@ -1,27 +1,38 @@
+using System;
 using UnityEngine;
 using DG.Tweening;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using manager;
+using UnityEngine.Serialization;
 
 
 namespace Game
 {
-    public class Goods : MonoBehaviour, IPointerDownHandler
+    public class Goods : MonoBehaviour
     {
-        public Image spriteImg;
+        [FormerlySerializedAs("spriteImg")] public SpriteRenderer spriteIcon;
+        private bool _dragging;
+        private Vector2 _startPos;
+        private Vector2 _dragOffset;
+        private Camera _mainCamera;
+        private ShelveBase _shelve;
+        public ShelveBase Shelve
+        {
+            get => _shelve;
+            set => _shelve = value;
+        }
         
-        
-        // getter and setter for opacity 
+        // getter and setter for opacity
         private bool _visible = true;
         public bool Visible
         {
             get => _visible;
             set
             {
-                Color currentColor = spriteImg.color;
+                Color currentColor = spriteIcon.color;
                 _visible = value;
-                spriteImg.color = new Color(currentColor.r, currentColor.g, currentColor.b, _visible ? 1 : 0);
+                spriteIcon.color = new Color(currentColor.r, currentColor.g, currentColor.b, _visible ? 1 : 0);
             }
         }
         
@@ -34,8 +45,7 @@ namespace Game
             {
                 _id = value;
                 var item = Resources.Load<Sprite>("sprite/Items/Item" + _id);
-                spriteImg.sprite = item;
-                spriteImg.SetNativeSize();
+                spriteIcon.sprite = item;
             }
         }
 
@@ -47,23 +57,48 @@ namespace Game
             {
                 _layer = value;
                 var isFront = _layer == 0;
-                spriteImg.color = isFront ? Color.white : Color.gray;
+                spriteIcon.color = isFront ? Color.white : Color.gray;
             }
         }
 
         public int Slot { get; set; }
-        
-        public void OnPointerDown(PointerEventData eventData)
+
+        private void Start()
         {
-            if (Layer == 0)
+            _startPos = transform.position;
+            _mainCamera = Camera.main;
+        }
+
+        private void Update()
+        {
+            if (_dragging)
             {
-                if(GameManager.Instance.IsPicking()) return;
-                // GameManager.Instance.Pick(this, eventData.position);
-                // TODO
-                Visible = false;
+                Vector2 mousePos = GetMousePosition();
+                transform.position = mousePos;
+                // _shelve.Controller.OnMoveGoods(mousePos);
+                
             }
         }
         
+        public void OnMouseDown()
+        {
+            _dragging = true;
+            _startPos = transform.position;
+            // _shelve.Controller.OnPickGoods(this, GetMousePosition());
+        }
+
+        void OnMouseUp()
+        {
+            _dragging = false;
+            transform.position = _startPos;
+            // _shelve.Controller.OnDropGoods();
+        }
+
+        private Vector2 GetMousePosition()
+        {
+            return _mainCamera.ScreenToWorldPoint(Input.mousePosition);
+        }
+
         public void Bounce(float delay = 0f)
         {
             // Reset scale

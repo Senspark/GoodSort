@@ -11,86 +11,158 @@ namespace Game
 {
     public interface ILevelView
     {
-        public void Load(LevelConfigBuilder level, IEventManager eventManager);
+        public void Load(LevelConfigBuilder level, LevelViewController controller);
+    }
+
+    public struct LevelViewController
+    {
+        public Action<Goods, Vector2> OnPickGoods;
+        public Action<Vector2> OnMoveGoods;
+        public Action OnDropGoods;
     }
     public class LevelView : MonoBehaviour, ILevelView
     {
         private List<ShelveBase> _shelves;
-        private List<GoodsConfig> _goodsArray;
+        private LevelViewController _controller;
+
+        public List<ShelveBase> Shelves
+        {
+            get => _shelves;
+            set => _shelves = value;
+        }
+        public LevelViewController Controller
+        {
+            get => _controller;
+            set => _controller = value;
+        }
         
-        public void Load(LevelConfigBuilder level, IEventManager eventManager)
+        public void Load(LevelConfigBuilder level, LevelViewController controller)
         {
             var levelObject = level.LevelObject;
-            var tripleCnt = level.LevelStrategy.TripleCount;
+            
             var pairCnt = level.LevelStrategy.PairCount;
+            var totalLayer = level.LevelStrategy.MaxLayers * level.LevelStrategy.NormalShelveCount;
+            var goodsIDArray = level.GoodsArray.Select(x => x.Id).ToList();
+            
             _shelves = levelObject.GetComponentsInChildren<ShelveBase>().ToList();
-            _goodsArray = CreateGoodsArray(level.GoodsArray, tripleCnt, pairCnt);
+            foreach (var s in _shelves)
+            {
+                s.Controller = controller;
+            }
+            var subset = DistributeGoods(goodsIDArray,totalLayer, pairCnt);
+            PopulateSubsetToShelve(subset);
         }
-        
-        private List<GoodsConfig> CreateGoodsArray(List<GoodsConfig> goodsArray, int tripleCount, int pairCount)
+
+        private void PopulateSubsetToShelve(List<List<int>> subset)
         {
-            var store = ArrayUtils.GenerateRandomList(goodsArray, tripleCount);
-            Dictionary<int, int> goodsCount = new();
-            foreach (var goods in store)
+            var shelvesCount = _shelves.Count;
+            
+            var shelveQueue = new Dictionary<int, Queue<List<int>>>();
+            for (int i = 0; i < shelvesCount; i++)
             {
-                goodsCount[goods.Id] = 3;
+                shelveQueue[i] = new Queue<List<int>>();
             }
             
-            List<List<GoodsConfig>> boxes = new();
-            for (int i = 0; i < pairCount; i++)
+            for (int i = 0; i < subset.Count; i++)
             {
-                var pair = store[i];
-                var one = store[(i + 1) % tripleCount];
-                boxes.Add(new List<GoodsConfig> { pair, pair, one});
-                goodsCount[pair.Id] -= 2;
-                goodsCount[one.Id] -= 1;
+                var shelveId = i % shelvesCount;
+                shelveQueue[shelveId].Enqueue(subset[i]);
             }
             
-            List<GoodsConfig> remain = new();
-            foreach (var kvp in goodsCount)
+            for (var j = 0; j < shelvesCount; j++)
             {
-                var id = kvp.Key;
-                var count = kvp.Value;
-                var template = store.First(g => g.Id == id);
-                for (var i = 0; i < count; i++)
+                var shelve = _shelves[j] as CommonShelve;
+                if (shelve)
                 {
-                    remain.Add(template);
+                    SetShelveQueue(shelve, shelveQueue[j]);
                 }
+            }
+        }
+
+        private void SetShelveQueue(CommonShelve shelve, Queue<List<int>> layerQueue)
+        {
+            shelve.Clear();
+            shelve.SetLayerQueue(layerQueue);
+            
+            shelve.LoadNextLayers();
+        }
+
+        private List<List<int>> DistributeGoods(List<int> source, int n, int k)
+        {
+            var m = source.Count;
+
+            if (k > m || n < m || n > 3 * m) {
+                throw new ArgumentException("Invalid input");
             }
 
-            var remainGroups = goodsCount
-                .SelectMany(kvp => Enumerable.Repeat(kvp.Key, kvp.Value))
-                .GroupBy(id => id)
-                .ToDictionary(g => g.Key, g => g.Count());
-    
-            // Tạo boxes còn lại với 3 ID khác nhau
-            for (var i = 0; i < tripleCount - pairCount; i++)
-            {
-                var box = new List<int>();
-        
-                var availableIds = remainGroups.Where(kv => kv.Value > 0)
-                    .OrderByDescending(kv => kv.Value)
-                    .Select(kv => kv.Key)
-                    .ToList();
-        
-                for (int j = 0; j < Math.Min(3, availableIds.Count); j++)
-                {
-                    box.Add(availableIds[j]);
-                    remainGroups[availableIds[j]]--;
-                }
-        
-                // Thêm box vào kết quả
-                boxes.Add(box.Select(id => store.First(g => g.Id == id)).ToList());
+            var subsets = new List<List<int>>();
+            var remaining = new List<int>();
+            var pool = new Dictionary<int,int>();
+            foreach (var x in source) pool[x] = 3;
+
+            var pairs2 = k / 2;          // số tập [x,x]
+            var pairs3 = k - pairs2;     // số tập [x,x,y]
+
+            var idx = 0;
+            // Tạo các tập con [x,x]
+            for (var i = 0; i < pairs2; i++, idx++) {
+                var x = source[idx];
+                subsets.Add(new List<int>{ x, x });
+                pool[x] -= 2;
             }
             
-            // Fisher-Yates shuffle
-            for (int i = boxes.Count - 1; i > 0; i--)
-            {
-                int j = Random.Range(0, i + 1);
-                (boxes[i], boxes[j]) = (boxes[j], boxes[i]);
+            // Tạo các tập con [x,x,y]
+            for (var i = 0; i < pairs3; i++, idx++) {
+                var x = source[idx];
+                pool[x] -= 2;
+
+                var y = -1;
+                foreach (var kv in pool)
+                {
+                    if (kv.Value <= 0 || kv.Key == x) continue;
+                    y = kv.Key;
+                    break;
+                }
+                if (y == -1) {
+                    throw new Exception("Không tìm được y để tạo [x,x,y]");
+                }
+
+                subsets.Add(new List<int>{ x, x, y });
+                pool[y] -= 1;
             }
-            // return flat
-            return boxes.SelectMany(x => x).ToList();
+            
+            foreach (var kv in pool) {
+                for (var c = 0; c < kv.Value; c++) remaining.Add(kv.Key);
+            }
+
+            // Bước 2: Tạo các tập con còn lại (n - k)
+            for (var i = 0; i < n - k; i++) {
+                subsets.Add(new List<int>());
+            }
+
+            for (var i = 0; i < n - k; i++) {
+                subsets[k + i].Add(remaining[0]);
+                remaining.RemoveAt(0);
+            }
+            while (remaining.Count > 0) {
+                var x = remaining[0];
+                remaining.RemoveAt(0);
+
+                var placed = false;
+                for (var j = k; j < subsets.Count; j++)
+                {
+                    if (subsets[j].Count >= 3 || subsets[j].Contains(x)) continue;
+                    subsets[j].Add(x);
+                    placed = true;
+                    break;
+                }
+                if (!placed) {
+                    throw new Exception("Không thể đặt " + x + " vào tập con nào");
+                }
+            }
+            return subsets;
         }
+        
+        
     }
 }

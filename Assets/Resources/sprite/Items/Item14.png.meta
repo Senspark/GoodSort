@@ -3,17 +3,8 @@ guid: d7ace437fc67849eca0d06bb25a4988c
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -1222971655099587749
-    second: Item14_0
-  - first:
-      213: 813520743338810367
-    second: Item14_1
-  - first:
-      213: 7244493605301489236
-    second: Item14_2
-  - first:
-      213: -8237343640821449996
-    second: Item14_3
+      213: 2719916602837695721
+    second: item14_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -122,79 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Item14_0
+      name: item14_0
       rect:
         serializedVersion: 2
         x: 0
-        y: 169
-        width: 41
-        height: 22
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: b53ea6f52c1270fe0800000000000000
-      internalID: -1222971655099587749
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Item14_1
-      rect:
-        serializedVersion: 2
-        x: 70
-        y: 178
-        width: 9
-        height: 13
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: ffb1f1c4ec43a4b00800000000000000
-      internalID: 813520743338810367
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Item14_2
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 108
-        width: 26
-        height: 43
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 45e85911d8c998460800000000000000
-      internalID: 7244493605301489236
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Item14_3
-      rect:
-        serializedVersion: 2
-        x: 23
         y: 0
-        width: 101
-        height: 153
+        width: 96
+        height: 121
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -203,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 4fab30c1a931fad80800000000000000
-      internalID: -8237343640821449996
+      spriteID: 9ecf3d25db51fb520800000000000000
+      internalID: 2719916602837695721
       vertices: []
       indices: 
       edges: []
@@ -223,10 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Item14_0: -1222971655099587749
-      Item14_1: 813520743338810367
-      Item14_2: 7244493605301489236
-      Item14_3: -8237343640821449996
+      item14_0: 2719916602837695721
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

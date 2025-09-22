@@ -145,7 +145,7 @@ namespace manager
             _holdingGood = new GameObject();
 
             Image img = _holdingGood.AddComponent<Image>();
-            img.sprite = goods.spriteImg.sprite;
+            img.sprite = goods.spriteIcon.sprite;
             img.SetNativeSize();
             img.raycastTarget = false;
 

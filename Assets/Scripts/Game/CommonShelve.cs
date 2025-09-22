@@ -14,7 +14,8 @@ namespace Game
     {
         [SerializeField] private GameObject[] layers;
         [SerializeField] private GameObject goodsPrefab;
-        private Dictionary<int, int> layer0GoodMap = new Dictionary<int, int>();
+        private Dictionary<int, int> _layer0GoodMap = new Dictionary<int, int>();
+        private Queue<List<int>> _layerQueue = new Queue<List<int>>();
 
         public override bool IsEmpty()
         {
@@ -39,8 +40,9 @@ namespace Game
             StartCoroutine(OnCheckMerge());
         }
 
-        public override void Init(int bounceDelay = 0)
+        public override void Init()
         {
+            var bounceDelay = 1;
             CreateLayerGood(0, bounceDelay);
             CreateLayerGood(1, bounceDelay);
         }
@@ -76,30 +78,6 @@ namespace Game
             }
         }
         
-        private void TrySupplyGoods()
-        {
-            var layer0 = layers[0];
-            var layer1 = layers[1];
-            if (layer0.transform.childCount <= 0)
-            {
-                var goodsInLayer1 = layer1.GetComponentsInChildren<Goods>();
-                foreach (var goods in goodsInLayer1)
-                {
-                    goods.Layer = 0;
-                    goods.transform.SetParent(layer0.transform);
-                    goods.transform.position -= new Vector3(0, 10, 0);
-                    layer0GoodMap[goods.Slot] = goods.Id;
-                    goods.Bounce();
-                }
-                CreateLayerGood(1);
-            }
-            if (layer1.transform.childCount <= 0)
-            {
-                CreateLayerGood(1);
-            }
-            
-        }
-        
         private IEnumerator OnCheckMerge()
         {
             while (true)
@@ -111,7 +89,7 @@ namespace Game
         
         private void CheckMerge()
         {
-            var goodsCount = layer0GoodMap.Count;
+            var goodsCount = _layer0GoodMap.Count;
             if (goodsCount < 3) return;
             var layer0 = layers[0];
             var layer0GoodsArr = layer0.GetComponentsInChildren<Goods>();
@@ -122,7 +100,7 @@ namespace Game
                 var goods = layer0GoodsArr[i];
                 goods.Remove();
             }
-            layer0GoodMap.Clear();
+            _layer0GoodMap.Clear();
             ServiceLocator.Instance.Resolve<IEventManager>().Invoke(EventKey.MergeGoods, transform.position);
         }
 
@@ -130,46 +108,53 @@ namespace Game
         {
             var goodsNode = Instantiate(goodsPrefab, layers[layer].transform);
             var goods = goodsNode.GetComponent<Goods>();
-            var layerNode = layers[layer];
-            var pos = new Vector3((slotId - 1) * (layerNode.GetComponent<RectTransform>().rect.width - 10) / 3, layer * 10, 0);
+            var pos = new Vector3(slotId - 1, 0, layer);
             goodsNode.transform.localPosition = pos;
             goods.Id = goodsId;
             goods.Layer = layer;
             goods.Slot = slotId;
-            if (layer == 0) layer0GoodMap[slotId] = goodsId;
+            goods.Shelve = this;
+            if (layer == 0) _layer0GoodMap[slotId] = goodsId;
+            
             return goods;
         }
         
         public override int GetSlot(Vector3 goodsPos)
         {
-            var offsetX = 0.5f * GetComponent<RectTransform>().rect.width / 3f;
-
-            var availableSlots = new Vector3[]
-                {
-                    new Vector3(-offsetX, 0, 0),
-                    new Vector3(0, 0, 0),
-                    new Vector3(offsetX, 0, 0)
-                }
-                .Select((pos, index) => (slotId: index, distance: Vector3.Distance(goodsPos, pos)))
-                .Where(x => !IsSlotOccupied(x.slotId))
-                .OrderBy(x => x.distance);
-
-            if (availableSlots.Any())
-            {
-                return availableSlots.First().slotId;
-            }
+            // var availableSlots = new Vector3[]
+            //     {
+            //         new Vector3(-1, 0, 0),
+            //         new Vector3(0, 0, 0),
+            //         new Vector3(1, 0, 0)
+            //     }
+            //     .Select((pos, index) => (slotId: index, distance: Vector3.Distance(goodsPos, pos)))
+            //     .Where(x => !IsSlotOccupied(x.slotId))
+            //     .OrderBy(x => x.distance);
+            //
+            // if (availableSlots.Any())
+            // {
+            //     return availableSlots.First().slotId;
+            // }
+            // local pos of goods in shelve
+            var localPos = transform.InverseTransformPoint(goodsPos);
+            // x from -1.5 to -0.5 is slot 0
+            // x from -0.5 to 0.5 is slot 1
+            // x from 0.5 to 1.5 is slot 2
+            if (localPos.x < -0.5f) return 0;
+            if (localPos.x < 0.5f) return 1;
+            if (localPos.x < 1.5f) return 2;
     
             return -1; // Không có slot trống
         }
         
         public new bool IsSlotOccupied(int slotIndex)
         {
-            return layer0GoodMap.ContainsKey(slotIndex);
+            return _layer0GoodMap.ContainsKey(slotIndex);
         }
         
         public new bool IsAllSlotOccupied()
         {
-            return layer0GoodMap.Count == 3;
+            return _layer0GoodMap.Count == 3;
         }
         
         public override void PlaceGoods(int goodsId, int slotId)
@@ -189,7 +174,7 @@ namespace Game
                 if (goods.Visible) continue;
                 Debug.Log("KHOA TRAN ----------- OnPlaceGood 2");
                 goods.Remove();
-                layer0GoodMap.Remove(goods.Slot);
+                _layer0GoodMap.Remove(goods.Slot);
             }
         }
 
@@ -237,7 +222,7 @@ namespace Game
         
         public override void Clear()
         {
-            layer0GoodMap.Clear();
+            _layer0GoodMap.Clear();
             for (int i = 0; i < layers.Length; i++)
             {
                 GameObject layer = layers[i];
@@ -256,14 +241,62 @@ namespace Game
         {
             if (goods == null) return;
     
-            int layer = goods.Layer;
-            int slot = goods.Slot;
-    
-            if (layer == 0)
+            if (goods.Layer == 0)
             {
-                layer0GoodMap.Remove(slot);
+                _layer0GoodMap.Remove(goods.Slot);
             }
             goods.Remove();
+        }
+
+        public void SetLayerQueue(Queue<List<int>> layerQueue)
+        {
+            _layerQueue = layerQueue;
+        }
+
+        public void LoadNextLayers()
+        {
+            if (_layerQueue.Count > 0)
+            {
+                var layer0Data = _layerQueue.Dequeue();
+                LoadLayerData(0, layer0Data);
+            }
+            if (_layerQueue.Count > 0)
+            {
+                var layer1Data = _layerQueue.Dequeue();
+                LoadLayerData(1, layer1Data);
+            }
+        }
+
+        private void LoadLayerData(int layerIndex, List<int> goodsData)
+        {
+            for (var i = 0; i < goodsData.Count; i++)
+            {
+                CreateGoods(goodsData[i], i, layerIndex);
+            }
+        }
+        
+        private void TrySupplyGoods()
+        {
+            var layer0 = layers[0];
+            var layer1 = layers[1];
+            if (layer0.transform.childCount <= 0)
+            {
+                var goodsInLayer1 = layer1.GetComponentsInChildren<Goods>();
+                foreach (var goods in goodsInLayer1)
+                {
+                    goods.Layer = 0;
+                    goods.transform.SetParent(layer0.transform);
+                    goods.transform.position -= new Vector3(0, 0.2f, 0);
+                    _layer0GoodMap[goods.Slot] = goods.Id;
+                    goods.Bounce();
+                }
+
+                if (_layerQueue.Count > 0)
+                {
+                    var nextLayerData = _layerQueue.Dequeue();
+                    LoadLayerData(1, nextLayerData);
+                }
+            }
         }
         
     }

@@ -76,7 +76,6 @@ namespace Game.UI
                 .LoadScene<MainMenu>(nameof(MainMenu))
                 .Then(mainMenu =>
                 {
-                    Debug.Log("Do Something");
                 });
         }
     }
