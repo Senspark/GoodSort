@@ -19,10 +19,10 @@ namespace UI
         [SerializeField] private Button backLevelButton;
         [SerializeField] private Text currentLevelText;
         
-        private readonly IEventManager _eventManager = ServiceLocator.Instance.Resolve<IEventManager>();
-        private readonly ILevelLoaderManager _levelLoaderManager = ServiceLocator.Instance.Resolve<ILevelLoaderManager>();
-        private readonly ILevelStoreManager _levelStoreManager = ServiceLocator.Instance.Resolve<ILevelStoreManager>();
-        private readonly IConfigManager _configManager = ServiceLocator.Instance.Resolve<IConfigManager>();
+        private IEventManager _eventManager;
+        private ILevelLoaderManager _levelLoaderManager;
+        private ILevelStoreManager _levelStoreManager;
+        private IConfigManager _configManager;
 
         public GameObject holdingGoods;
         private Goods _pickedGoods;
@@ -35,6 +35,11 @@ namespace UI
         private void Awake()
         {
             _sharedInstance = this;
+            var services = ServiceLocator.Instance;
+            _eventManager = services.Resolve<IEventManager>();
+            _levelLoaderManager = services.Resolve<ILevelLoaderManager>();
+            _levelStoreManager = services.Resolve<ILevelStoreManager>();
+            _configManager = services.Resolve<IConfigManager>();
         }
         
         public static GameScene Instance
