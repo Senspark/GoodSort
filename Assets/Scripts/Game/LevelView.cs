@@ -11,32 +11,20 @@ namespace Game
 {
     public interface ILevelView
     {
-        public void Load(LevelConfigBuilder level, LevelViewController controller);
+        public void Load(LevelConfigBuilder level);
     }
 
-    public struct LevelViewController
-    {
-        public Action<Goods, Vector2> OnPickGoods;
-        public Action<Vector2> OnMoveGoods;
-        public Action OnDropGoods;
-    }
     public class LevelView : MonoBehaviour, ILevelView
     {
         private List<ShelveBase> _shelves;
-        private LevelViewController _controller;
 
         public List<ShelveBase> Shelves
         {
             get => _shelves;
             set => _shelves = value;
         }
-        public LevelViewController Controller
-        {
-            get => _controller;
-            set => _controller = value;
-        }
         
-        public void Load(LevelConfigBuilder level, LevelViewController controller)
+        public void Load(LevelConfigBuilder level)
         {
             var levelObject = level.LevelObject;
             
@@ -45,10 +33,6 @@ namespace Game
             var goodsIDArray = level.GoodsArray.Select(x => x.Id).ToList();
             
             _shelves = levelObject.GetComponentsInChildren<ShelveBase>().ToList();
-            foreach (var s in _shelves)
-            {
-                s.Controller = controller;
-            }
             var subset = DistributeGoods(goodsIDArray,totalLayer, pairCnt);
             PopulateSubsetToShelve(subset);
         }

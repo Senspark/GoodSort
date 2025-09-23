@@ -1,9 +1,6 @@
-using System;
 using UnityEngine;
 using DG.Tweening;
-using UnityEngine.EventSystems;
-using UnityEngine.UI;
-using manager;
+using UI;
 using UnityEngine.Serialization;
 
 
@@ -13,8 +10,7 @@ namespace Game
     {
         [FormerlySerializedAs("spriteImg")] public SpriteRenderer spriteIcon;
         private bool _dragging;
-        private Vector2 _startPos;
-        private Vector2 _dragOffset;
+        private Vector3 _startPos;
         private Camera _mainCamera;
         private ShelveBase _shelve;
         public ShelveBase Shelve
@@ -57,46 +53,64 @@ namespace Game
             {
                 _layer = value;
                 var isFront = _layer == 0;
-                spriteIcon.color = isFront ? Color.white : Color.gray;
+                spriteIcon.sortingOrder = isFront ? 10 : 2;
+                spriteIcon.color = isFront ? Color.white : new Color(0.3f, 0.3f, 0.3f, 0.9f);
             }
         }
 
-        public int Slot { get; set; }
+        private int _slot;
+        public int Slot
+        {
+            get => _slot;
+            set
+            {
+                _startPos = new Vector3(value - 1, 0, 0);
+                transform.localPosition = _startPos;
+                _slot = value;
+            }
+        }
 
         private void Start()
         {
-            _startPos = transform.position;
             _mainCamera = Camera.main;
+            _startPos = transform.localPosition;
         }
 
-        private void Update()
+        private void OnMouseDrag()
         {
-            if (_dragging)
-            {
-                Vector2 mousePos = GetMousePosition();
-                transform.position = mousePos;
-                // _shelve.Controller.OnMoveGoods(mousePos);
-                
-            }
+            if (!_dragging) return;
+
+            Vector3 mousePos = Input.mousePosition;
+    
+            // khoảng cách từ camera tới object hiện tại
+            mousePos.z = Mathf.Abs(_mainCamera.transform.position.z - transform.position.z); 
+
+            Vector3 worldPos = _mainCamera.ScreenToWorldPoint(mousePos);
+            worldPos.z = 0; // giữ luôn object ở z=0 trong thế giới 2D
+    
+            transform.position = worldPos;
+            GameScene.Instance.OnMoveGoods(new Vector2(worldPos.x, worldPos.y));
         }
-        
+
+
         public void OnMouseDown()
         {
+            if(_layer != 0) return;
             _dragging = true;
-            _startPos = transform.position;
+            Vector3 mousePos = Input.mousePosition;
+            Vector3 worldPos = _mainCamera.ScreenToWorldPoint(mousePos);
+            GameScene.Instance.OnPickGoods(this, new Vector2(worldPos.x, worldPos.y));
+            
             // _shelve.Controller.OnPickGoods(this, GetMousePosition());
         }
 
-        void OnMouseUp()
+        private void OnMouseUp()
         {
+            Debug.Log("KHOA TRAN - OnMouseUp");
             _dragging = false;
-            transform.position = _startPos;
+            transform.localPosition = _startPos;
             // _shelve.Controller.OnDropGoods();
-        }
-
-        private Vector2 GetMousePosition()
-        {
-            return _mainCamera.ScreenToWorldPoint(Input.mousePosition);
+            GameScene.Instance.OnDropGoods();
         }
 
         public void Bounce(float delay = 0f)
