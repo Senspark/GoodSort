@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using DG.Tweening;
 using UI;
@@ -74,6 +75,13 @@ namespace Game
         {
             _mainCamera = Camera.main;
             _startPos = transform.localPosition;
+            StartCoroutine(PullToLowestZ());
+        }
+        
+        private IEnumerator PullToLowestZ()
+        {
+            yield return new WaitForSeconds(0.2f);
+            transform.localPosition = new Vector3(_startPos.x, _startPos.y, -90);
         }
 
         private void OnMouseDrag()
@@ -95,7 +103,9 @@ namespace Game
 
         public void OnMouseDown()
         {
+            Debug.Log("KHOA TRAN - OnMouseDown");
             if(_layer != 0) return;
+            Debug.Log("KHOA TRAN - OnMouseDown " + _layer);
             _dragging = true;
             Vector3 mousePos = Input.mousePosition;
             Vector3 worldPos = _mainCamera.ScreenToWorldPoint(mousePos);

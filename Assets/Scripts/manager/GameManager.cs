@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using Constant;
 using Defines;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using Newtonsoft.Json;
 using Game;
 using manager.Interface;
@@ -12,7 +11,7 @@ using UnityEngine.UI;
 
 namespace manager
 {
-    public class GameManager : MonoBehaviour, IDragHandler,IBeginDragHandler, IEndDragHandler
+    public class GameManager : MonoBehaviour
     {
         private static GameManager _instance;
 
@@ -102,41 +101,41 @@ namespace manager
             Reset();
         }
         
-        public void OnBeginDrag(PointerEventData eventData)
-        {
-            Debug.Log("KHOA TRAN - OnBeginDrag");
-            if (_holdingGood == null) return;
-            
-            // Tính offset giữa vị trí click và vị trí holdingGood
-            RectTransformUtility.ScreenPointToLocalPointInRectangle(
-                levelRoot, 
-                eventData.position, 
-                eventData.pressEventCamera, 
-                out Vector2 localPoint
-            );
-            _dragOffset = (Vector2)_holdingGood.transform.localPosition - localPoint;
-        }
+        // public void OnBeginDrag(PointerEventData eventData)
+        // {
+        //     Debug.Log("KHOA TRAN - OnBeginDrag");
+        //     if (_holdingGood == null) return;
+        //     
+        //     // Tính offset giữa vị trí click và vị trí holdingGood
+        //     RectTransformUtility.ScreenPointToLocalPointInRectangle(
+        //         levelRoot, 
+        //         eventData.position, 
+        //         eventData.pressEventCamera, 
+        //         out Vector2 localPoint
+        //     );
+        //     _dragOffset = (Vector2)_holdingGood.transform.localPosition - localPoint;
+        // }
 
-        public void OnDrag(PointerEventData eventData)
-        {
-            if (_holdingGood == null) return;
-            
-            RectTransformUtility.ScreenPointToLocalPointInRectangle(
-                levelRoot, 
-                eventData.position, 
-                eventData.pressEventCamera, 
-                out Vector2 localPos
-            );
-            
-            // Áp dụng offset để giữ vị trí tương đối với chuột
-            _holdingGood.transform.localPosition = localPos + _dragOffset;
-        }
+        // public void OnDrag(PointerEventData eventData)
+        // {
+        //     if (_holdingGood == null) return;
+        //     
+        //     RectTransformUtility.ScreenPointToLocalPointInRectangle(
+        //         levelRoot, 
+        //         eventData.position, 
+        //         eventData.pressEventCamera, 
+        //         out Vector2 localPos
+        //     );
+        //     
+        //     // Áp dụng offset để giữ vị trí tương đối với chuột
+        //     _holdingGood.transform.localPosition = localPos + _dragOffset;
+        // }
 
-        public void OnEndDrag(PointerEventData eventData)
-        {
-            if (Instance._holdingGood == null) return;
-            Instance.Release();
-        }
+        // public void OnEndDrag(PointerEventData eventData)
+        // {
+        //     if (Instance._holdingGood == null) return;
+        //     Instance.Release();
+        // }
 
         public void Pick(Goods goods, Vector2 pos)
         {
