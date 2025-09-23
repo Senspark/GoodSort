@@ -22,3 +22,4 @@ UserSettings/
 *.VC.db
 sysinfo.txt
 .idea/
+.utmp

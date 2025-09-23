@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System;
 using DG.Tweening;
 using System.Threading.Tasks;
-using NUnit.Framework;
+using UnityEngine.Assertions;
 using UnityEngine.EventSystems;
 
 namespace Dialog
