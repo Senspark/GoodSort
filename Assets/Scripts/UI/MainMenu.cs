@@ -23,7 +23,6 @@ namespace UI
                 .Resolve<ISceneLoader>()
                 .LoadScene<GameScene>(nameof(GameScene)).Then(gameScene =>
                 {
-                    gameScene.GetComponent<GameScene>().LoadLevel(level);
                 });
         }
     }

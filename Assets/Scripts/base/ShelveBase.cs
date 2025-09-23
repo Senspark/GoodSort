@@ -11,13 +11,6 @@ public class ShelveBase : MonoBehaviour
     private bool _isTargetTouched = false;
     protected int id;
     public int Id { get => id; set => id = value; }
-    
-    protected LevelViewController _controller;
-    public LevelViewController Controller
-    {
-        get => _controller;
-        set => _controller = value;
-    }
 
     public bool IsTargetTouched() => _isTargetTouched;
 
@@ -45,7 +38,7 @@ public class ShelveBase : MonoBehaviour
     {
     }
 
-    public bool IsSlotOccupied(int slotIndex)
+    public virtual bool IsSlotOccupied(int slotIndex)
     {
         return false;
     }

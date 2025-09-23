@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Linq;
 using System.Threading.Tasks;
+using Constant;
 using Defines;
 using Game;
 using manager.Interface;
@@ -12,6 +13,7 @@ namespace UI
 {
     public class GameScene : MonoBehaviour
     {
+        private static GameScene _sharedInstance = null;
         [Header("Level Navigation")]
         [SerializeField] private Button nextLevelButton;
         [SerializeField] private Button backLevelButton;
@@ -23,20 +25,34 @@ namespace UI
         private readonly IConfigManager _configManager = ServiceLocator.Instance.Resolve<IConfigManager>();
 
         public GameObject holdingGoods;
-        private Goods pickedGoods;
+        private Goods _pickedGoods;
         private LevelView _levelView;
         
         private int _currentLevel = 1;
         private const int MIN_LEVEL = 1;
         private const int MAX_LEVEL = 10;
         
+        private void Awake()
+        {
+            _sharedInstance = this;
+        }
+        
+        public static GameScene Instance
+        {
+            get
+            {
+                if (_sharedInstance == null)
+                {
+                   throw new System.Exception("GameScene is null");
+                }
+                return _sharedInstance;
+            }
+        }
+        
         private void Start()
         {
-            // SetupLevelNavigation();
-            // // get current level from local storage
-            // _currentLevel = PlayerPrefs.GetInt("current_level", 1);
-            // Debug.Log($"Current level: {_currentLevel}");
-            // StartCoroutine(LoadLevelAsync(1));
+            SetupLevelNavigation();
+            StartCoroutine(LoadLevelAsync(4));
         }
         
         public void LoadLevel(int level)
@@ -84,23 +100,17 @@ namespace UI
                 .Build();
 
             var leveView = builder.LevelObject.GetComponent<LevelView>();
-            var levelCallback = new LevelViewController
-            {
-                OnPickGoods = OnPickGoods,
-                OnMoveGoods = OnMoveGoods,
-                OnDropGoods = OnDropGoods
-            };
-            leveView.Load(builder, levelCallback);
+            leveView.Load(builder);
             leveView.transform.SetParent(transform, false);
             _levelView = leveView;
         }
         
-        private void OnPickGoods(Goods goods, Vector2 position)
+        public void OnPickGoods(Goods goods, Vector2 position)
         {
-            pickedGoods = goods;
-            pickedGoods.Visible = false;
+            _pickedGoods = goods;
+            _pickedGoods.Visible = false;
 
-            holdingGoods = new GameObject("HoldingGoods" + goods.Id);
+            holdingGoods = new GameObject("HoldingGoods");
             holdingGoods.transform.SetParent(transform, true);
             holdingGoods.transform.position = new Vector3(position.x, position.y, 0);
             var img = holdingGoods.AddComponent<SpriteRenderer>();
@@ -114,17 +124,12 @@ namespace UI
             col.isTrigger = true;
         }
         
-        private void OnMoveGoods(Vector2 position)
+        public void OnMoveGoods(Vector2 position)
         {
-            if (holdingGoods)
-            {
-                Debug.LogWarning("KHOA TRAN - OnMoveGoods: holdingGoods is null");
-                return;
-            }
             holdingGoods.transform.position = position;
         }
         
-        private void OnDropGoods()
+        public void OnDropGoods()
         {
             var isSuccess = false;
             if (!holdingGoods) return;
@@ -137,7 +142,7 @@ namespace UI
                 if (slotId < 0 || shelve.IsSlotOccupied(slotId))
                     continue;
 
-                var goodsId = pickedGoods.Id;
+                var goodsId = _pickedGoods.Id;
                 shelve.PlaceGoods(goodsId, slotId);
                 isSuccess = true;
                 break;
@@ -145,16 +150,16 @@ namespace UI
             
             if(isSuccess)
             {
-                Debug.Log("KHOA TRAN - OnDropGoods: isSuccess");
-                if(pickedGoods != null)
+                ServiceLocator.Instance.Resolve<IEventManager>().Invoke(EventKey.PlaceGood);
+                if(_pickedGoods != null)
                 {
-                    Destroy(pickedGoods.gameObject);
-                    pickedGoods = null;
+                    Destroy(_pickedGoods.gameObject);
+                    _pickedGoods = null;
                 }
             }
             else
             {
-                pickedGoods.Visible = true;
+                _pickedGoods.Visible = true;
             }
 
             Destroy(holdingGoods.gameObject);

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using manager;
 using UnityEngine;
@@ -6,6 +7,8 @@ using System.Linq;
 using Constant;
 using manager.Interface;
 using Senspark;
+using Unity.Mathematics;
+using Utilities;
 
 
 namespace Game
@@ -14,23 +17,19 @@ namespace Game
     {
         [SerializeField] private GameObject[] layers;
         [SerializeField] private GameObject goodsPrefab;
-        private Dictionary<int, int> _layer0GoodMap = new Dictionary<int, int>();
-        private Queue<List<int>> _layerQueue = new Queue<List<int>>();
+        private readonly Dictionary<int, int> _layer0GoodMap = new();
+        private Queue<List<int>> _layerQueue = new();
 
         public override bool IsEmpty()
         {
-            for (int i = 0; i < layers.Length; i++)
-            {
-                if (layers[i].transform.childCount > 0) return false;
-            }
-            return true;
+            return layers.All(t => t.transform.childCount <= 0);
         }
-    
-        protected override void Awake()
-        {
-            base.Awake();
-            GameManager.Instance.Shelves.Add(this);
-        }
+        //
+        // protected override void Awake()
+        // {
+        //     base.Awake();
+        //     GameManager.Instance.Shelves.Add(this);
+        // }
 
         protected override void Start()
         {
@@ -42,7 +41,7 @@ namespace Game
 
         public override void Init()
         {
-            var bounceDelay = 1;
+            const int bounceDelay = 1;
             CreateLayerGood(0, bounceDelay);
             CreateLayerGood(1, bounceDelay);
         }
@@ -108,8 +107,6 @@ namespace Game
         {
             var goodsNode = Instantiate(goodsPrefab, layers[layer].transform);
             var goods = goodsNode.GetComponent<Goods>();
-            var pos = new Vector3(slotId - 1, 0, layer);
-            goodsNode.transform.localPosition = pos;
             goods.Id = goodsId;
             goods.Layer = layer;
             goods.Slot = slotId;
@@ -137,6 +134,7 @@ namespace Game
             // }
             // local pos of goods in shelve
             var localPos = transform.InverseTransformPoint(goodsPos);
+            Debug.Log($"GetSlot localPos: {localPos}");
             // x from -1.5 to -0.5 is slot 0
             // x from -0.5 to 0.5 is slot 1
             // x from 0.5 to 1.5 is slot 2
@@ -147,8 +145,16 @@ namespace Game
             return -1; // Không có slot trống
         }
         
-        public new bool IsSlotOccupied(int slotIndex)
+        public override bool IsSlotOccupied(int slotIndex)
         {
+            Debug.Log($"///////");
+            foreach (var goods in _layer0GoodMap)
+            {
+                Debug.Log($"IsSlotOccupied: {goods.Key}");
+                Debug.Log($"IsSlotOccupied: {goods.Value}");
+                Debug.Log($"-----");
+            }
+            
             return _layer0GoodMap.ContainsKey(slotIndex);
         }
         
@@ -167,12 +173,9 @@ namespace Game
         {
             var layer0 = layers[0];
             var layer0GoodsArr = layer0.GetComponentsInChildren<Goods>();
-            Debug.Log("KHOA TRAN ----------- OnPlaceGood" + Id);
             foreach (var goods in layer0GoodsArr)
             {
-                Debug.Log("KHOA TRAN ----------- OnPlaceGood 1");
                 if (goods.Visible) continue;
-                Debug.Log("KHOA TRAN ----------- OnPlaceGood 2");
                 goods.Remove();
                 _layer0GoodMap.Remove(goods.Slot);
             }
@@ -226,7 +229,7 @@ namespace Game
             for (int i = 0; i < layers.Length; i++)
             {
                 GameObject layer = layers[i];
-                if (layer != null)
+                if (layer)
                 {
                     // Xóa tất cả children của layer
                     foreach (Transform child in layer.transform)
@@ -239,13 +242,13 @@ namespace Game
         
         public void RemoveGoods(Goods goods)
         {
-            if (goods == null) return;
-    
-            if (goods.Layer == 0)
-            {
-                _layer0GoodMap.Remove(goods.Slot);
-            }
-            goods.Remove();
+            // if (goods == null) return;
+            //
+            // if (goods.Layer == 0)
+            // {
+            //     _layer0GoodMap.Remove(goods.Slot);
+            // }
+            // goods.Remove();
         }
 
         public void SetLayerQueue(Queue<List<int>> layerQueue)
@@ -269,9 +272,12 @@ namespace Game
 
         private void LoadLayerData(int layerIndex, List<int> goodsData)
         {
+            // random range int
+            var randomSlotId = new int[] { 0, 1, 2 };
+            ArrayUtils.Shuffle(randomSlotId);
             for (var i = 0; i < goodsData.Count; i++)
             {
-                CreateGoods(goodsData[i], i, layerIndex);
+                CreateGoods(goodsData[i], randomSlotId[i], layerIndex);
             }
         }
         
@@ -286,7 +292,7 @@ namespace Game
                 {
                     goods.Layer = 0;
                     goods.transform.SetParent(layer0.transform);
-                    goods.transform.position -= new Vector3(0, 0.2f, 0);
+                    goods.transform.position -= new Vector3(0, 0.1f, 0);
                     _layer0GoodMap[goods.Slot] = goods.Id;
                     goods.Bounce();
                 }
