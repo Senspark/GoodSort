@@ -57,7 +57,7 @@ namespace UI
         private void Start()
         {
             SetupLevelNavigation();
-            _currentLevel = PlayerPrefs.GetInt("current_level", 1);
+            _currentLevel = 2;
             Debug.Log("Current level: " + _currentLevel);
             StartCoroutine(LoadLevelAsync(_currentLevel));
         }

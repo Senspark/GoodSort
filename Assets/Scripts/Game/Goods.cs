@@ -9,16 +9,9 @@ namespace Game
 {
     public class Goods : MonoBehaviour
     {
-        [FormerlySerializedAs("spriteImg")] public SpriteRenderer spriteIcon;
+        [SerializeField] public SpriteRenderer spriteIcon;
         private bool _dragging;
         private Vector3 _startPos;
-        private Camera _mainCamera;
-        private ShelveBase _shelve;
-        public ShelveBase Shelve
-        {
-            get => _shelve;
-            set => _shelve = value;
-        }
         
         // getter and setter for opacity
         private bool _visible = true;
@@ -53,9 +46,17 @@ namespace Game
             set
             {
                 _layer = value;
-                var isFront = _layer == 0;
-                spriteIcon.sortingOrder = isFront ? 10 : 2;
-                spriteIcon.color = isFront ? Color.white : new Color(0.3f, 0.3f, 0.3f, 0.9f);
+
+                if (_layer == 0)
+                {
+                    spriteIcon.sortingLayerName = "Layer0";
+                    spriteIcon.color = new Color(1, 1, 1, 1);
+                }
+                else if (_layer == 1)
+                {
+                    spriteIcon.sortingLayerName = "Layer1";
+                    spriteIcon.color = new Color(0.2f, 0.2f, 0.2f, 0.8f);
+                }
             }
         }
 
@@ -73,55 +74,53 @@ namespace Game
 
         private void Start()
         {
-            _mainCamera = Camera.main;
-            _startPos = transform.localPosition;
-            StartCoroutine(PullToLowestZ());
+            // StartCoroutine(PullToLowestZ());
         }
         
-        private IEnumerator PullToLowestZ()
-        {
-            yield return new WaitForSeconds(0.2f);
-            transform.localPosition = new Vector3(_startPos.x, _startPos.y, -90);
-        }
+        // private IEnumerator PullToLowestZ()
+        // {
+        //     yield return new WaitForSeconds(0.2f);
+        //     transform.localPosition = new Vector3(_startPos.x, _startPos.y, -90);
+        // }
 
-        private void OnMouseDrag()
-        {
-            if (!_dragging) return;
+        // private void OnMouseDrag()
+        // {
+        //     if (!_dragging) return;
+        //
+        //     Vector3 mousePos = Input.mousePosition;
+        //
+        //     // khoảng cách từ camera tới object hiện tại
+        //     mousePos.z = Mathf.Abs(_mainCamera.transform.position.z - transform.position.z); 
+        //
+        //     Vector3 worldPos = _mainCamera.ScreenToWorldPoint(mousePos);
+        //     worldPos.z = 0; // giữ luôn object ở z=0 trong thế giới 2D
+        //
+        //     transform.position = worldPos;
+        //     GameScene.Instance.OnMoveGoods(new Vector2(worldPos.x, worldPos.y));
+        // }
 
-            Vector3 mousePos = Input.mousePosition;
-    
-            // khoảng cách từ camera tới object hiện tại
-            mousePos.z = Mathf.Abs(_mainCamera.transform.position.z - transform.position.z); 
 
-            Vector3 worldPos = _mainCamera.ScreenToWorldPoint(mousePos);
-            worldPos.z = 0; // giữ luôn object ở z=0 trong thế giới 2D
-    
-            transform.position = worldPos;
-            GameScene.Instance.OnMoveGoods(new Vector2(worldPos.x, worldPos.y));
-        }
+        // public void OnMouseDown()
+        // {
+        //     Debug.Log("KHOA TRAN - OnMouseDown");
+        //     if(_layer != 0) return;
+        //     Debug.Log("KHOA TRAN - OnMouseDown " + _layer);
+        //     _dragging = true;
+        //     Vector3 mousePos = Input.mousePosition;
+        //     Vector3 worldPos = _mainCamera.ScreenToWorldPoint(mousePos);
+        //     GameScene.Instance.OnPickGoods(this, new Vector2(worldPos.x, worldPos.y));
+        //     
+        //     // _shelve.Controller.OnPickGoods(this, GetMousePosition());
+        // }
 
-
-        public void OnMouseDown()
-        {
-            Debug.Log("KHOA TRAN - OnMouseDown");
-            if(_layer != 0) return;
-            Debug.Log("KHOA TRAN - OnMouseDown " + _layer);
-            _dragging = true;
-            Vector3 mousePos = Input.mousePosition;
-            Vector3 worldPos = _mainCamera.ScreenToWorldPoint(mousePos);
-            GameScene.Instance.OnPickGoods(this, new Vector2(worldPos.x, worldPos.y));
-            
-            // _shelve.Controller.OnPickGoods(this, GetMousePosition());
-        }
-
-        private void OnMouseUp()
-        {
-            Debug.Log("KHOA TRAN - OnMouseUp");
-            _dragging = false;
-            transform.localPosition = _startPos;
-            // _shelve.Controller.OnDropGoods();
-            GameScene.Instance.OnDropGoods();
-        }
+        // private void OnMouseUp()
+        // {
+        //     Debug.Log("KHOA TRAN - OnMouseUp");
+        //     _dragging = false;
+        //     transform.localPosition = _startPos;
+        //     // _shelve.Controller.OnDropGoods();
+        //     GameScene.Instance.OnDropGoods();
+        // }
 
         public void Bounce(float delay = 0f)
         {
@@ -138,7 +137,12 @@ namespace Game
         
         public void Remove()
         {
-            Sequence seq = DOTween.Sequence();
+            var dropZone = transform.GetComponent<DropZone>();
+            if (dropZone)
+            {
+                dropZone.Free();
+            }
+            var seq = DOTween.Sequence();
             seq.Append(transform.DOScale(new Vector3(1.1f, 0.9f, 1f), 0.15f));
             seq.Append(transform.DOScale(new Vector3(0.9f, 1.1f, 1f), 0.15f));
             seq.AppendCallback(() =>

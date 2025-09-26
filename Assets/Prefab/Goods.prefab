@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3393598149485877585}
   - component: {fileID: 275133113370904955}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Icon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -26,7 +26,7 @@ Transform:
   m_GameObject: {fileID: 7593940414748960802}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.3, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -75,7 +75,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 9
+  m_SortingOrder: 0
   m_Sprite: {fileID: -1678187950271180273, guid: 5a33a4e78ed9143a58731d08ff07ea13, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -98,7 +98,8 @@ GameObject:
   - component: {fileID: 8024387809503085902}
   - component: {fileID: 3713050466513019549}
   - component: {fileID: 5651973831137646324}
-  m_Layer: 0
+  - component: {fileID: 8739553217579386929}
+  m_Layer: 8
   m_Name: Goods
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -178,5 +179,25 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 1.2, y: 1.2}
   m_EdgeRadius: 0
+--- !u!114 &8739553217579386929
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8830650904719733458}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96f9b869c7e0460e9b3f65ba7da87857, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dropZoneLayer:
+    serializedVersion: 2
+    m_Bits: 512
+  goodsLayer:
+    serializedVersion: 2
+    m_Bits: 256
+  snapDistance: 0.5
+  returnToOriginIfInvalidDrop: 1

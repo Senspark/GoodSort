@@ -13,8 +13,8 @@ TagManager:
   - UI
   - 
   - 
-  - Shelve
-  - 
+  - GoodsLayer
+  - SlotLayer
   - 
   - 
   - 
@@ -40,6 +40,12 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Layer1
+    uniqueID: 650786819
+    locked: 0
+  - name: Layer0
+    uniqueID: 1401317773
     locked: 0
   m_RenderingLayers:
   - Default
