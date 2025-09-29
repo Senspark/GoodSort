@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.PlayerLoop;
 
 namespace Game
 {
@@ -12,7 +14,7 @@ namespace Game
         public float snapDistance = 0.5f;
         public bool returnToOriginIfInvalidDrop = true;
 
-        private bool isDragging = false;
+        private bool isDragging;
         private Vector3 originalPosition;
         private Transform originalParent;
         private DropZone currentDropZone;
@@ -71,7 +73,6 @@ namespace Game
             originalPosition = transform.position;
 
             // Visual feedback
-            spriteRenderer.color = new Color(originalColor.r, originalColor.g, originalColor.b, 0.8f);
 
             // Bring to front
             spriteRenderer.sortingOrder = 100;
@@ -80,9 +81,10 @@ namespace Game
         private void StopDragging()
         {
             isDragging = false;
+            var goods = GetComponent<Goods>();
 
             // Reset visual feedback
-            spriteRenderer.color = originalColor;
+            // spriteRenderer.color = originalColor;
             spriteRenderer.sortingOrder = 0;
 
             if (currentDropZone && currentDropZone.CanAcceptItem(this))
@@ -102,11 +104,11 @@ namespace Game
             var dropZones = Physics2D.OverlapPointAll(transform.position, dropZoneLayer);
 
             // Reset previous drop zone highlight
-            if (currentDropZone != null)
-            {
-                currentDropZone.SetHighlight(false);
-                currentDropZone = null;
-            }
+            // if (currentDropZone != null)
+            // {
+            //     currentDropZone.SetHighlight(false);
+            //     currentDropZone = null;
+            // }
 
             // Find valid drop zone
             foreach (var dropZoneCollider in dropZones)
@@ -183,7 +185,7 @@ namespace Game
             }
 
             // Debug xem Unity chọn gì
-            Debug.Log($"Topmost under mouse: {topCollider?.name}");
+            // Debug.Log($"Topmost under mouse: {topCollider?.name}");
 
             // Chỉ cho phép drag nếu objectCollider chính là topmost
             return topCollider == objectCollider;

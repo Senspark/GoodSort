@@ -58,7 +58,7 @@ namespace UI
         {
             SetupLevelNavigation();
             _currentLevel = 2;
-            Debug.Log("Current level: " + _currentLevel);
+            // Debug.Log("Current level: " + _currentLevel);
             StartCoroutine(LoadLevelAsync(_currentLevel));
         }
         
@@ -70,8 +70,8 @@ namespace UI
         
         private void SetupLevelNavigation()
         {
-            nextLevelButton.onClick.AddListener(NextLevel);
-            backLevelButton.onClick.AddListener(BackLevel);
+            // nextLevelButton.onClick.AddListener(NextLevel);
+            // backLevelButton.onClick.AddListener(BackLevel);
         }
         
         private void NextLevel()
@@ -117,7 +117,7 @@ namespace UI
         public void OnPickGoods(Goods goods, Vector2 position)
         {
             _pickedGoods = goods;
-            _pickedGoods.Visible = false;
+            // _pickedGoods.Visible = false;
 
             holdingGoods = new GameObject("HoldingGoods");
             holdingGoods.transform.SetParent(transform, true);
@@ -168,7 +168,7 @@ namespace UI
             }
             else
             {
-                _pickedGoods.Visible = true;
+                // _pickedGoods.Visible = true;
             }
 
             Destroy(holdingGoods.gameObject);
