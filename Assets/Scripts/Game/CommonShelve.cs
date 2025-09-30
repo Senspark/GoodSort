@@ -115,7 +115,7 @@ namespace Game
                 goods.Remove();
             }
             // _layer0GoodMap.Clear();
-            // ServiceLocator.Instance.Resolve<IEventManager>().Invoke(EventKey.MergeGoods, transform.position);
+            ServiceLocator.Instance.Resolve<IEventManager>().Invoke(EventKey.MergeGoods);
         }
 
         public override Goods CreateGoods(int goodsId, int slotId, int layer)

@@ -24,6 +24,10 @@ namespace Game
             set => _shelves = value;
         }
         
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="level"></param>
         public void Load(LevelConfigBuilder level)
         {
             var levelObject = level.LevelObject;

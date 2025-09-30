@@ -8,4 +8,10 @@ namespace Constant
         OnStageComplete,
         NextStage
     }
+
+    public enum SlotType
+    {
+        EveryThing,
+        None,
+    }
 }

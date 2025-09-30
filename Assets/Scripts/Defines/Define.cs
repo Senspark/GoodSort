@@ -17,13 +17,6 @@ namespace Defines
     }
 
     [Serializable]
-    public enum ShelveType
-    {
-        Empty,
-        Common
-    }
-
-    [Serializable]
     public class GoodsConfig
     {
         public int Id { get; }
