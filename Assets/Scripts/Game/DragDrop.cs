@@ -10,6 +10,7 @@ namespace Game
         [Header("Inventory Settings")] public LayerMask dropZoneLayer;
 
         public LayerMask goodsLayer;
+        public LayerMask lockGlassLayer;
 
         public float snapDistance = 0.5f;
         public bool returnToOriginIfInvalidDrop = true;
@@ -161,6 +162,8 @@ namespace Game
 
         private bool IsMouseOverObject(Vector3 mouseWorldPos)
         {
+            var lockGlassHits = Physics2D.OverlapPointAll(mouseWorldPos, lockGlassLayer);
+            if(lockGlassHits.Length > 0) return false;
             // Lấy tất cả collider thuộc layer goods tại vị trí chuột
             var hits = Physics2D.OverlapPointAll(mouseWorldPos, goodsLayer);
             if (hits.Length == 0) return false;

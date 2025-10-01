@@ -34,6 +34,7 @@ namespace Game
             UnlockCount--;
         }
         
+        
         private void OnDestroy()
         {
             ServiceLocator.Instance.Resolve<IEventManager>().RemoveListener(EventKey.MergeGoods, OnMergeGoods);

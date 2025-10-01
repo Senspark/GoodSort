@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Defines;
 using manager.Interface;
+using Strategy.Level;
 using UnityEngine;
 using Utilities;
 using Random = UnityEngine.Random;
@@ -31,13 +32,10 @@ namespace Game
         public void Load(LevelConfigBuilder level)
         {
             var levelObject = level.LevelObject;
-            
-            var pairCnt = level.LevelStrategy.PairCount;
-            var totalLayer = level.LevelStrategy.MaxLayers * level.LevelStrategy.NormalShelveCount;
             var goodsIDArray = level.GoodsArray.Select(x => x.Id).ToList();
             
             _shelves = levelObject.GetComponentsInChildren<ShelveBase>().ToList();
-            var subset = DistributeGoods(goodsIDArray,totalLayer, pairCnt);
+            var subset = DistributeGoods(goodsIDArray, level.LevelStrategy);
             PopulateSubsetToShelve(subset);
         }
 
@@ -75,11 +73,13 @@ namespace Game
             shelve.LoadNextLayers();
         }
 
-        private List<List<int>> DistributeGoods(List<int> source, int n, int k)
+        private List<List<int>> DistributeGoods(List<int> source, LevelStrategy levelStrategy)
         {
             var m = source.Count;
+            var totalLayer = levelStrategy.MaxLayers * levelStrategy.NormalShelveCount;
+            var k = levelStrategy.PairCount;
 
-            if (k > m || n < m || n > 3 * m) {
+            if (k > m || totalLayer < m || totalLayer > 3 * m) {
                 throw new ArgumentException("Invalid input");
             }
 
@@ -87,6 +87,8 @@ namespace Game
             var remaining = new List<int>();
             var pool = new Dictionary<int,int>();
             foreach (var x in source) pool[x] = 3;
+            
+            
 
             var pairs2 = k / 2;          // số tập [x,x]
             var pairs3 = k - pairs2;     // số tập [x,x,y]
@@ -124,11 +126,11 @@ namespace Game
             }
 
             // Bước 2: Tạo các tập con còn lại (n - k)
-            for (var i = 0; i < n - k; i++) {
+            for (var i = 0; i < totalLayer - k; i++) {
                 subsets.Add(new List<int>());
             }
 
-            for (var i = 0; i < n - k; i++) {
+            for (var i = 0; i < totalLayer - k; i++) {
                 subsets[k + i].Add(remaining[0]);
                 remaining.RemoveAt(0);
             }
