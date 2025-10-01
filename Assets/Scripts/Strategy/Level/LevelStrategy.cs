@@ -11,10 +11,10 @@ namespace Strategy.Level
         public int NormalBox;
         public int NormalLockedBox;
         public int NormalBoxLayer;
-        public int RowBox;
+        public int RowRange;
         public int RowLockedBox;
         public int RowBoxLayer;
-        public int ColumnBox;
+        public int ColumnRange;
         public int ColumnLockedBox;
         public int ColumnBoxLayer;
         public int SpecialBox;
@@ -23,8 +23,8 @@ namespace Strategy.Level
         public float Density;
 
         [JsonConstructor]
-        public LevelStrategy(int id, int timeLimit, int normalBox, int normalLockedBox, int normalBoxLayer, int rowBox,
-            int rowLockedBox, int rowBoxLayer, int columnBox, int columnLockedBox, int columnBoxLayer, int specialBox,
+        public LevelStrategy(int id, int timeLimit, int normalBox, int normalLockedBox, int normalBoxLayer, int rowRange,
+            int rowLockedBox, int rowBoxLayer, int columnRange, int columnLockedBox, int columnBoxLayer, int specialBox,
             int specialBoxLayer, int group, float density)
         {
             Id = id;
@@ -32,10 +32,10 @@ namespace Strategy.Level
             NormalBox = normalBox;
             NormalLockedBox = normalLockedBox;
             NormalBoxLayer = normalBoxLayer;
-            RowBox = rowBox;
+            RowRange = rowRange;
             RowLockedBox = rowLockedBox;
             RowBoxLayer = rowBoxLayer;
-            ColumnBox = columnBox;
+            ColumnRange = columnRange;
             ColumnLockedBox = columnLockedBox;
             ColumnBoxLayer = columnBoxLayer;
             SpecialBox = specialBox;
