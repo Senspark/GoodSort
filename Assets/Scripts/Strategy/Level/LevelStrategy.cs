@@ -6,37 +6,42 @@ namespace Strategy.Level
     [Serializable]
     public class LevelStrategy
     {
-        public int Id { get; set; }
-        public int TimeLimit { get; set; }
-        public int NormalShelveCount { get; set; }
-        public int LockedShelveCount { get; set; }
-        public int MaxLayers { get; set; }
-        public int SpecialShelveCount { get; set; }
-        public int GoodsPerSpecialShelve { get; set; }
-        public int TripleCount { get; set; }
-        public int PairCount { get; set; }
+        public int Id;
+        public int TimeLimit;
+        public int NormalBox;
+        public int NormalLockedBox;
+        public int NormalBoxLayer;
+        public int RowBox;
+        public int RowLockedBox;
+        public int RowBoxLayer;
+        public int ColumnBox;
+        public int ColumnLockedBox;
+        public int ColumnBoxLayer;
+        public int SpecialBox;
+        public int SpecialBoxLayer;
+        public int Group;
+        public float Density;
 
         [JsonConstructor]
-        public LevelStrategy(int id, 
-            int time_limit, 
-            int normal_count, 
-            int locked_count, 
-            int max_layers,
-            int min_layers, 
-            int special_count, 
-            int goods_per_special_shelve, 
-            int triple_count, 
-            int pair_count)
+        public LevelStrategy(int id, int timeLimit, int normalBox, int normalLockedBox, int normalBoxLayer, int rowBox,
+            int rowLockedBox, int rowBoxLayer, int columnBox, int columnLockedBox, int columnBoxLayer, int specialBox,
+            int specialBoxLayer, int group, float density)
         {
             Id = id;
-            TimeLimit = time_limit;
-            NormalShelveCount = normal_count;
-            LockedShelveCount = locked_count;
-            MaxLayers = max_layers;
-            SpecialShelveCount = special_count;
-            GoodsPerSpecialShelve = goods_per_special_shelve;
-            TripleCount = triple_count;
-            PairCount = pair_count;
+            TimeLimit = timeLimit;
+            NormalBox = normalBox;
+            NormalLockedBox = normalLockedBox;
+            NormalBoxLayer = normalBoxLayer;
+            RowBox = rowBox;
+            RowLockedBox = rowLockedBox;
+            RowBoxLayer = rowBoxLayer;
+            ColumnBox = columnBox;
+            ColumnLockedBox = columnLockedBox;
+            ColumnBoxLayer = columnBoxLayer;
+            SpecialBox = specialBox;
+            SpecialBoxLayer = specialBoxLayer;
+            Group = group;
+            Density = density;
         }
     }
 }
