@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Constant;
 using manager;
 using UnityEngine;
@@ -8,6 +9,7 @@ using Senspark;
 
 public class ShelveBase : MonoBehaviour
 {
+    protected Queue<List<int>> _layerQueue = new();
     private bool _isTargetTouched = false;
     protected int id;
     public int Id { get => id; set => id = value; }
@@ -26,6 +28,13 @@ public class ShelveBase : MonoBehaviour
     {
         ServiceLocator.Instance.Resolve<IEventManager>().RemoveListener(EventKey.PlaceGood, OnPlaceGood);
     }
+    
+    public void SetLayerQueue(Queue<List<int>> layerQueue)
+    {
+        _layerQueue = layerQueue;
+    }
+    
+    public virtual void LoadNextLayers(){}
 
     public virtual void Init() {}
 

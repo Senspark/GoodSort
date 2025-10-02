@@ -1,6 +1,23 @@
 {
   "LevelStrategies": [
     {
+      "Id": 1,
+      "TimeLimit": 0,
+      "NormalBox": 0,
+      "NormalLockedBox": 0,
+      "NormalBoxLayer": 0,
+      "RowRange": 0,
+      "RowLockedBox": 0,
+      "RowBoxLayer": 0,
+      "ColumnRange": 0,
+      "ColumnLockedBox": 0,
+      "ColumnBoxLayer": 0,
+      "SpecialBox": 0,
+      "SpecialBoxLayer": 0,
+      "Group": 0,
+      "Density": 0
+    },
+    {
       "Id": 2,
       "TimeLimit": 5,
       "NormalBox": 9,
@@ -165,8 +182,8 @@
       "ColumnRange": 0,
       "ColumnLockedBox": 0,
       "ColumnBoxLayer": 0,
-      "SpecialBox": 0,
-      "SpecialBoxLayer": 0,
+      "SpecialBox": 1,
+      "SpecialBoxLayer": 2,
       "Group": 40,
       "Density": 0.73
     },

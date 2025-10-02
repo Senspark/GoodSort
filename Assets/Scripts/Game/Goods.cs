@@ -53,9 +53,17 @@ namespace Game
             get => _slot;
             set
             {
-                _startPos = new Vector3(value - 1, 0, 0);
-                transform.localPosition = _startPos;
                 _slot = value;
+            }
+        }
+
+        public Vector3 StartPos
+        {
+            get => _startPos;
+            set
+            {
+                _startPos = value;
+                transform.localPosition = _startPos;
             }
         }
 

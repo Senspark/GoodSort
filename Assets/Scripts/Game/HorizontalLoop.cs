@@ -5,80 +5,72 @@ namespace Game
 {
     public class HorizontalLoop : MonoBehaviour
     {
-        [Header("Movement Settings")] public float speed = 2f;
-        public bool moveRight = true;
-        public float offsetX = 0.2f;
+        [Header("Movement")] 
+        [SerializeField] private float speed = 2f;
+        [SerializeField] private bool rightToLeft = true;
+        [Header("Custom Boundary")] 
+        public Vector2 boundary = new Vector2(10f, 3f);
+        [Header("Spacing")] 
+        [SerializeField] private float spacing = 2f;
 
-        [Header("Custom Boundary")] public Vector2 boundary = new Vector2(10f, 3f); // giống cc.Size
-
-        private Transform[] children;
+        private Transform[] boxes;
 
         void Start()
         {
-            int count = transform.childCount;
-            children = new Transform[count];
-            for (int i = 0; i < count; i++)
-                children[i] = transform.GetChild(i);
+            // Lưu danh sách box con
+            boxes = new Transform[transform.childCount];
+            for (var i = 0; i < transform.childCount; i++)
+            {
+                boxes[i] = transform.GetChild(i);
+            }
+
+            ArrangeInitialPositions();
         }
 
         void Update()
         {
-            float dir = moveRight ? 1f : -1f;
-            Vector3 move = new Vector3(dir * speed * Time.deltaTime, 0, 0);
+            var direction = rightToLeft ? -1f : 1f;
+            var moveDelta = speed * Time.deltaTime * direction;
 
-            foreach (var child in children)
+            foreach (var box in boxes)
             {
-                child.position += move;
+                box.localPosition += new Vector3(moveDelta, 0, 0);
 
-                var sr = child.GetComponent<SpriteRenderer>();
-                if (sr == null) continue;
+                var halfWidth = boundary.x;
 
-                float halfWidth = sr.bounds.size.x / 2f;
-
-                // kiểm tra biên dựa trên boundary custom
-                float left = transform.position.x - boundary.x / 2f;
-                float right = transform.position.x + boundary.x / 2f;
-
-                if (moveRight)
+                if (rightToLeft && box.localPosition.x < -halfWidth)
                 {
-                    if (child.position.x - halfWidth > right)
-                    {
-                        float minX = GetMinChildX();
-                        child.position = new Vector3(minX - sr.bounds.size.x - offsetX, child.position.y,
-                            child.position.z);
-                    }
+                    var maxX = GetMaxX();
+                    box.localPosition = new Vector3(maxX + spacing, box.localPosition.y, box.localPosition.z);
                 }
-                else
+                else if (!rightToLeft && box.localPosition.x > halfWidth)
                 {
-                    if (child.position.x + halfWidth < left)
-                    {
-                        float maxX = GetMaxChildX();
-                        child.position = new Vector3(maxX + sr.bounds.size.x + offsetX, child.position.y,
-                            child.position.z);
-                    }
+                    var minX = GetMinX();
+                    box.localPosition = new Vector3(minX - spacing, box.localPosition.y, box.localPosition.z);
                 }
             }
         }
 
-        float GetMinChildX()
+        private void ArrangeInitialPositions()
         {
-            float min = float.MaxValue;
-            foreach (var child in children)
-                if (child.position.x < min)
-                    min = child.position.x;
-            return min;
+            var direction = rightToLeft ? 1f : -1f;
+            for (var i = 0; i < boxes.Length; i++)
+            {
+                var posX = i * spacing * direction;
+                boxes[i].localPosition = new Vector3(posX, 0, 0);
+            }
         }
 
-        float GetMaxChildX()
+        private float GetMaxX()
         {
-            float max = float.MinValue;
-            foreach (var child in children)
-                if (child.position.x > max)
-                    max = child.position.x;
-            return max;
+            return boxes.Select(box => box.localPosition.x).Prepend(float.MinValue).Max();
         }
 
-        // Vẽ khung boundary trên Scene view
+        private float GetMinX()
+        {
+            return boxes.Select(box => box.localPosition.x).Prepend(float.MaxValue).Min();
+        }
+
         void OnDrawGizmos()
         {
             Gizmos.color = Color.green;

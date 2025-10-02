@@ -150,7 +150,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   loadingbar: {fileID: 1075073787}
   progress: {fileID: 611495666}
-  levelConfigDefault: {fileID: 4900000, guid: c37f41a821914612b8a22990c69d246a, type: 3}
+  levelConfigDefault: {fileID: 4900000, guid: 8e35967d63124d45b241b37843ebecc0, type: 3}
   iconConfigDefault: {fileID: 4900000, guid: 79a7784cc3cb405ca525f278a5095739, type: 3}
 --- !u!4 &184481886
 Transform:

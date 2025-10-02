@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 
 namespace Strategy.Level
 {
@@ -6,7 +7,7 @@ namespace Strategy.Level
     public class LevelStrategy
     {
         public int Id;
-        public int TimeLimit;
+        public float TimeLimit;
         public int NormalBox;
         public int NormalLockedBox;
         public int NormalBoxLayer;

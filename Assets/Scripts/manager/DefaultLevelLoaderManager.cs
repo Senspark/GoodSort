@@ -14,6 +14,7 @@ namespace manager
         
         public GameObject Create(int level)
         {
+            Debug.Log($"KHOA TRAN create game level {level}");
             var levelPrefab = Resources.Load<GameObject>("Level/LEVEL_" + level);
             return levelPrefab != null ? Object.Instantiate(levelPrefab) : // Return instantiated object
                 null;

@@ -57,16 +57,16 @@ namespace UI
         private void Start()
         {
             SetupLevelNavigation();
-            _currentLevel = 2;
+            _currentLevel = 11;
             // Debug.Log("Current level: " + _currentLevel);
             StartCoroutine(LoadLevelAsync(_currentLevel));
         }
         
-        public void LoadLevel(int level)
-        {
-            _currentLevel = level;
-            StartCoroutine(LoadLevelAsync(level));
-        }
+        // public void LoadLevel(int level)
+        // {
+        //     _currentLevel = level;
+        //     StartCoroutine(LoadLevelAsync(level));
+        // }
         
         private void SetupLevelNavigation()
         {
@@ -74,27 +74,27 @@ namespace UI
             // backLevelButton.onClick.AddListener(BackLevel);
         }
         
-        private void NextLevel()
-        {
-            if (_currentLevel < MAX_LEVEL)
-            {
-                _currentLevel++;
-                // set current level to local storage
-                PlayerPrefs.SetInt("current_level", _currentLevel);
-                PlayerPrefs.Save();
-            }
-        }
-    
-        private void BackLevel()
-        {
-            if (_currentLevel > MIN_LEVEL)
-            {
-                _currentLevel--;
-                // set current level to local storage
-                PlayerPrefs.SetInt("current_level", _currentLevel);
-                PlayerPrefs.Save();
-            }
-        }
+        // private void NextLevel()
+        // {
+        //     if (_currentLevel < MAX_LEVEL)
+        //     {
+        //         _currentLevel++;
+        //         // set current level to local storage
+        //         PlayerPrefs.SetInt("current_level", _currentLevel);
+        //         PlayerPrefs.Save();
+        //     }
+        // }
+        //
+        // private void BackLevel()
+        // {
+        //     if (_currentLevel > MIN_LEVEL)
+        //     {
+        //         _currentLevel--;
+        //         // set current level to local storage
+        //         PlayerPrefs.SetInt("current_level", _currentLevel);
+        //         PlayerPrefs.Save();
+        //     }
+        // }
 
         private IEnumerator LoadLevelAsync(int level)
         {
@@ -114,66 +114,66 @@ namespace UI
             _levelView = leveView;
         }
         
-        public void OnPickGoods(Goods goods, Vector2 position)
-        {
-            _pickedGoods = goods;
-            // _pickedGoods.Visible = false;
-
-            holdingGoods = new GameObject("HoldingGoods");
-            holdingGoods.transform.SetParent(transform, true);
-            holdingGoods.transform.position = new Vector3(position.x, position.y, 0);
-            var img = holdingGoods.AddComponent<SpriteRenderer>();
-            img.sprite = goods.spriteIcon.sprite;
-            img.sortingOrder = 100;
-            
-            var rd = holdingGoods.AddComponent<Rigidbody2D>();
-            rd.isKinematic = true;
-            
-            var col = holdingGoods.AddComponent<BoxCollider2D>();
-            col.isTrigger = true;
-        }
+        // public void OnPickGoods(Goods goods, Vector2 position)
+        // {
+        //     _pickedGoods = goods;
+        //     // _pickedGoods.Visible = false;
+        //
+        //     holdingGoods = new GameObject("HoldingGoods");
+        //     holdingGoods.transform.SetParent(transform, true);
+        //     holdingGoods.transform.position = new Vector3(position.x, position.y, 0);
+        //     var img = holdingGoods.AddComponent<SpriteRenderer>();
+        //     img.sprite = goods.spriteIcon.sprite;
+        //     img.sortingOrder = 100;
+        //     
+        //     var rd = holdingGoods.AddComponent<Rigidbody2D>();
+        //     rd.isKinematic = true;
+        //     
+        //     var col = holdingGoods.AddComponent<BoxCollider2D>();
+        //     col.isTrigger = true;
+        // }
+        //
+        // public void OnMoveGoods(Vector2 position)
+        // {
+        //     holdingGoods.transform.position = position;
+        // }
         
-        public void OnMoveGoods(Vector2 position)
-        {
-            holdingGoods.transform.position = position;
-        }
-        
-        public void OnDropGoods()
-        {
-            var isSuccess = false;
-            if (!holdingGoods) return;
-            
-            foreach (var shelve in _levelView.Shelves)
-            {
-                if (!shelve.IsTargetTouched()) continue;
-                var slotId = shelve.GetSlot(holdingGoods.transform.position);
-
-                if (slotId < 0 || shelve.IsSlotOccupied(slotId))
-                    continue;
-
-                var goodsId = _pickedGoods.Id;
-                shelve.PlaceGoods(goodsId, slotId);
-                isSuccess = true;
-                break;
-            }
-            
-            if(isSuccess)
-            {
-                ServiceLocator.Instance.Resolve<IEventManager>().Invoke(EventKey.PlaceGood);
-                if(_pickedGoods != null)
-                {
-                    Destroy(_pickedGoods.gameObject);
-                    _pickedGoods = null;
-                }
-            }
-            else
-            {
-                // _pickedGoods.Visible = true;
-            }
-
-            Destroy(holdingGoods.gameObject);
-            holdingGoods = null;
-        }
+        // public void OnDropGoods()
+        // {
+        //     var isSuccess = false;
+        //     if (!holdingGoods) return;
+        //     
+        //     foreach (var shelve in _levelView.Shelves)
+        //     {
+        //         if (!shelve.IsTargetTouched()) continue;
+        //         var slotId = shelve.GetSlot(holdingGoods.transform.position);
+        //
+        //         if (slotId < 0 || shelve.IsSlotOccupied(slotId))
+        //             continue;
+        //
+        //         var goodsId = _pickedGoods.Id;
+        //         shelve.PlaceGoods(goodsId, slotId);
+        //         isSuccess = true;
+        //         break;
+        //     }
+        //     
+        //     if(isSuccess)
+        //     {
+        //         ServiceLocator.Instance.Resolve<IEventManager>().Invoke(EventKey.PlaceGood);
+        //         if(_pickedGoods != null)
+        //         {
+        //             Destroy(_pickedGoods.gameObject);
+        //             _pickedGoods = null;
+        //         }
+        //     }
+        //     else
+        //     {
+        //         // _pickedGoods.Visible = true;
+        //     }
+        //
+        //     Destroy(holdingGoods.gameObject);
+        //     holdingGoods = null;
+        // }
         
     }
 }

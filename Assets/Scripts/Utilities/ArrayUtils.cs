@@ -43,6 +43,8 @@ namespace Utilities
         // Generate random array pick from old, but no duplicate
         public static List<T> GenerateRandomList<T>(List<T> oldList, int count, bool allowRepeat = false)
         {
+            if (count > oldList.Count && !allowRepeat)
+                throw new ArgumentException($"{count} cannot be greater than list length {oldList.Count} ");
             var result = new List<T>();
 
             if (allowRepeat)
