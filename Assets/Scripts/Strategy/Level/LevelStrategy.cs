@@ -1,5 +1,4 @@
 using System;
-using Newtonsoft.Json;
 
 namespace Strategy.Level
 {
@@ -22,26 +21,10 @@ namespace Strategy.Level
         public int Group;
         public float Density;
 
-        [JsonConstructor]
-        public LevelStrategy(int id, int timeLimit, int normalBox, int normalLockedBox, int normalBoxLayer, int rowRange,
-            int rowLockedBox, int rowBoxLayer, int columnRange, int columnLockedBox, int columnBoxLayer, int specialBox,
-            int specialBoxLayer, int group, float density)
+        public int GetTotalLayer()
         {
-            Id = id;
-            TimeLimit = timeLimit;
-            NormalBox = normalBox;
-            NormalLockedBox = normalLockedBox;
-            NormalBoxLayer = normalBoxLayer;
-            RowRange = rowRange;
-            RowLockedBox = rowLockedBox;
-            RowBoxLayer = rowBoxLayer;
-            ColumnRange = columnRange;
-            ColumnLockedBox = columnLockedBox;
-            ColumnBoxLayer = columnBoxLayer;
-            SpecialBox = specialBox;
-            SpecialBoxLayer = specialBoxLayer;
-            Group = group;
-            Density = density;
+            return NormalBox * NormalBoxLayer + 5 * (RowRange * RowBoxLayer + ColumnRange * ColumnBoxLayer);
         }
     }
+
 }

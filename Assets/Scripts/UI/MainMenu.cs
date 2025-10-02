@@ -1,11 +1,8 @@
-using System;
 using UnityEngine;
 using manager.Interface;
 using Senspark;
 using UnityEngine.UI;
 using Utilities;
-using manager.Interface;
-
 
 namespace UI
 {

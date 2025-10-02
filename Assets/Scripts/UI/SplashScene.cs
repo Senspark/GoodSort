@@ -19,7 +19,6 @@ namespace Game.UI
         [SerializeField] private TextAsset levelConfigDefault;
         [SerializeField] private TextAsset iconConfigDefault;
 
-        private bool isLoaded;
 
         private void Start()
         {
@@ -33,7 +32,6 @@ namespace Game.UI
             };
             initializer.OnCompleted += () =>
             {
-                isLoaded = true;
                 StartCoroutine(OnAppLoaded());
             };
             InitializeConfigManager();
@@ -54,7 +52,6 @@ namespace Game.UI
         {
             yield return new WaitForSeconds(1f);
             progress.fillAmount = 1f;
-            isLoaded = true;
             DisappearLoadingBar();
         }
         

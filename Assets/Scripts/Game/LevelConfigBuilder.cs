@@ -31,7 +31,7 @@ namespace Game
         
         public LevelConfigBuilder SetGoodsArray(List<GoodsConfig> goodsArray)
         {
-            var sourceCnt = _levelStrategy.TripleCount;
+            var sourceCnt = _levelStrategy.Group;
             _goodsArray = ArrayUtils.GenerateRandomList(goodsArray, sourceCnt);
             return this;
         }

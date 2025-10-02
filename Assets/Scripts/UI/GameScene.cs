@@ -101,7 +101,7 @@ namespace UI
             yield return new WaitForEndOfFrame();
             var levelLoaderManager = ServiceLocator.Instance.Resolve<ILevelLoaderManager>();
             var configManager = ServiceLocator.Instance.Resolve<IConfigManager>();
-            var strategy = configManager.GetValue<LevelConfig>(ConfigKey.LevelConfig).levelStrategies[level - 1];
+            var strategy = configManager.GetValue<LevelConfig>(ConfigKey.LevelConfig).LevelStrategies[level - 1];
             var goodsConfig = configManager.GetValue<GoodsConfig[]>(ConfigKey.GoodsConfig);
             var builder = new LevelConfigBuilder(levelLoaderManager)
                 .SetLevelStrategy(strategy)

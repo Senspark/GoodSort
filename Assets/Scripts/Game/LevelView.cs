@@ -76,8 +76,8 @@ namespace Game
         private List<List<int>> DistributeGoods(List<int> source, LevelStrategy levelStrategy)
         {
             var m = source.Count;
-            var totalLayer = levelStrategy.MaxLayers * levelStrategy.NormalShelveCount;
-            var k = levelStrategy.PairCount;
+            var totalLayer = levelStrategy.GetTotalLayer();
+            var k = Mathf.CeilToInt(levelStrategy.Density * levelStrategy.Group);
 
             if (k > m || totalLayer < m || totalLayer > 3 * m) {
                 throw new ArgumentException("Invalid input");
