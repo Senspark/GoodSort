@@ -31,6 +31,7 @@ namespace Game
         
         private void OnMergeGoods()
         {
+            Debug.Log("Merge goods on lock glass");
             UnlockCount--;
         }
         

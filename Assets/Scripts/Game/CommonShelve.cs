@@ -20,6 +20,7 @@ namespace Game
         [SerializeField] private DropZone[] slot;
         // private readonly Dictionary<int, int> _layer0GoodMap = new();
         // private Queue<List<int>> _layerQueue = new();
+        private bool _mergeInProgress = false;
 
         public override bool IsEmpty()
         {
@@ -31,7 +32,7 @@ namespace Game
             base.Start();
             Init();
             StartCoroutine(OnTrySupplyGoods());
-            StartCoroutine(OnCheckMerge());
+            // StartCoroutine(OnCheckMerge());
         }
 
         public override void Init()
@@ -69,28 +70,47 @@ namespace Game
             }
         }
         
-        private IEnumerator OnCheckMerge()
-        {
-            while (true)
-            {
-                CheckMerge();
-                yield return new WaitForSeconds(0.15f);
-            }
-        }
+        // private IEnumerator OnCheckMerge()
+        // {
+        //     while (true)
+        //     {
+        //         CheckMerge();
+        //         yield return new WaitForSeconds(0.15f);
+        //     }
+        // }
         
         private void CheckMerge()
         {
+            if (_mergeInProgress) 
+            {
+                return;
+            }
+            
             var layer0 = layers[0];
             var layer0GoodsArr = layer0.GetComponentsInChildren<Goods>();
             if (layer0GoodsArr.Length < 3) return;
+            
             var isAllSame = layer0GoodsArr.All(goods => goods.Id == layer0GoodsArr[0].Id);
             if (!isAllSame) return;
+            
+            _mergeInProgress = true;
+            
             for (int i = 0; i < layer0GoodsArr.Length; i++)
             {
                 var goods = layer0GoodsArr[i];
                 goods.Remove();
             }
+
             ServiceLocator.Instance.Resolve<IEventManager>().Invoke(EventKey.MergeGoods);
+            
+            // Reset flag after a short delay
+            StartCoroutine(ResetMergeFlag());
+        }
+
+        private IEnumerator ResetMergeFlag()
+        {
+            yield return new WaitForSeconds(0.1f);
+            _mergeInProgress = false;
         }
 
         public override Goods CreateGoods(int goodsId, int slotId, int layer)
@@ -136,6 +156,7 @@ namespace Game
         protected override void OnPlaceGood()
         {
             Debug.Log("OnPlaceGood - CommonShelve");
+            CheckMerge();
             // DO NOTHING
         }
 
@@ -178,9 +199,6 @@ namespace Game
 
         private void LoadLayerData(int layerIndex, List<int> goodsData)
         {
-            Debug.Log($"Layer index {layerIndex}");
-            Debug.Log($"Goods data {string.Join(",", goodsData)}");
-            // random range int
             var randomSlotId = new[] { 0, 1, 2 };
             ArrayUtils.Shuffle(randomSlotId);
             for (var i = 0; i < goodsData.Count; i++)
@@ -204,6 +222,7 @@ namespace Game
                 {
                     goods.Layer = 0;
                     goods.transform.SetParent(layer0.transform);
+                    goods.transform.position -= new Vector3(0, 0.2f, 0);
                     var newSlot = goods.Slot;
                     var goodsDrag = goods.GetComponent<DragDrop>();
                     if (newSlot >= 0 && newSlot < slot.Length)

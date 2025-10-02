@@ -41,31 +41,15 @@ namespace Game
 
         private void PopulateSubsetToShelve(List<List<int>> subset)
         {
-            // var shelvesCount = _shelves.Count;
-            //
-            // var shelveQueue = new Dictionary<int, Queue<List<int>>>();
-            // for (int i = 0; i < shelvesCount; i++)
-            // {
-            //     shelveQueue[i] = new Queue<List<int>>();
-            // }
-            //
-            // for (int i = 0; i < subset.Count; i++)
-            // {
-            //     var shelveId = i % shelvesCount;
-            //     shelveQueue[shelveId].Enqueue(subset[i]);
-            // }
-            //
-            // for (var j = 0; j < shelvesCount; j++)
-            // {
-            //     var shelve = _shelves[j] as CommonShelve;
-            //     if (shelve)
-            //     {
-            //         SetShelveQueue(shelve, shelveQueue[j]);
-            //     }
-            // }
+           
+            for(int i = 0; i < _shelves.Count; i++)
+            {
+                //Log subset 
+                Debug.Log($"Subset {i}: [{string.Join(",", subset[i])}]");
+            }
+            
             
             var shelvesCount = _shelves.Count;
-            Debug.Log(_shelves);
 
             var shelveQueue = new Dictionary<int, Queue<List<int>>>();
             for (int i = 0; i < shelvesCount; i++)
@@ -99,7 +83,6 @@ namespace Game
                             flatQueue.Enqueue(new List<int> { x });
                     }
 
-                    Debug.Log(flatQueue);
                     SetShelveQueue(single, flatQueue);
                 }
             }
@@ -181,7 +164,7 @@ namespace Game
             }
 
             // 4. Tạo các subset rỗng để lấp đủ totalLayer
-            while (subsets.Count < totalLayer - 5)
+            while (subsets.Count < totalLayer)
                 subsets.Add(new List<int>());
             // subsets.Add(new List<int>());
             // subsets.Add(new List<int>());

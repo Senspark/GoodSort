@@ -1,6 +1,7 @@
 using UnityEngine;
 using manager.Interface;
 using Senspark;
+using TMPro;
 using UnityEngine.UI;
 using Utilities;
 
@@ -11,7 +12,7 @@ namespace UI
     {
     [SerializeField] private Canvas canvasDialog;
     [SerializeField] private Transform playButton;
-    [SerializeField] private InputField inputField;
+    [SerializeField] private TMP_InputField tmpInputField;
 
     public void OnPlayButtonPressed()
     {
@@ -20,6 +21,7 @@ namespace UI
             .Resolve<ISceneLoader>()
             .LoadScene<GameScene>(nameof(GameScene)).Then(gameScene =>
             {
+                gameScene.CurrentLevel = int.Parse(tmpInputField.text);
             });
     }
     }

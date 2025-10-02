@@ -28,10 +28,16 @@ namespace UI
         private Goods _pickedGoods;
         private LevelView _levelView;
         
-        private int _currentLevel = 1;
+        private int _currentLevel = 2;
         private const int MIN_LEVEL = 1;
         private const int MAX_LEVEL = 10;
-        
+
+        public int CurrentLevel
+        {
+            get => _currentLevel;
+            set => _currentLevel = value;
+        }
+
         private void Awake()
         {
             _sharedInstance = this;
@@ -57,7 +63,6 @@ namespace UI
         private void Start()
         {
             SetupLevelNavigation();
-            _currentLevel = 11;
             // Debug.Log("Current level: " + _currentLevel);
             StartCoroutine(LoadLevelAsync(_currentLevel));
         }
