@@ -3,9 +3,9 @@
     {
       "Id": 1,
       "TimeLimit": 0,
-      "NormalBox": 0,
+      "NormalBox": 4,
       "NormalLockedBox": 0,
-      "NormalBoxLayer": 0,
+      "NormalBoxLayer": 1,
       "RowRange": 0,
       "RowLockedBox": 0,
       "RowBoxLayer": 0,
@@ -14,14 +14,14 @@
       "ColumnBoxLayer": 0,
       "SpecialBox": 0,
       "SpecialBoxLayer": 0,
-      "Group": 0,
+      "Group": 2,
       "Density": 0
     },
     {
       "Id": 2,
       "TimeLimit": 5,
       "NormalBox": 9,
-      "NormalLockedBox": 2,
+      "NormalLockedBox": 0,
       "NormalBoxLayer": 3,
       "RowRange": 0,
       "RowLockedBox": 0,
@@ -32,7 +32,7 @@
       "SpecialBox": 0,
       "SpecialBoxLayer": 0,
       "Group": 4,
-      "Density": 0.15
+      "Density": 0.9
     },
     {
       "Id": 3,
@@ -49,7 +49,7 @@
       "SpecialBox": 0,
       "SpecialBoxLayer": 0,
       "Group": 33,
-      "Density": 0.92
+      "Density": 0.9
     },
     {
       "Id": 4,
@@ -66,7 +66,7 @@
       "SpecialBox": 0,
       "SpecialBoxLayer": 0,
       "Group": 36,
-      "Density": 0.72
+      "Density": 0
     },
     {
       "Id": 5,
@@ -83,7 +83,7 @@
       "SpecialBox": 0,
       "SpecialBoxLayer": 0,
       "Group": 44,
-      "Density": 0.73
+      "Density": 0
     },
     {
       "Id": 6,
@@ -100,14 +100,14 @@
       "SpecialBox": 0,
       "SpecialBoxLayer": 0,
       "Group": 35,
-      "Density": 0.97
+      "Density": 0
     },
     {
       "Id": 7,
       "TimeLimit": 5,
       "NormalBox": 7,
       "NormalLockedBox": 0,
-      "NormalBoxLayer": 6,
+      "NormalBoxLayer": 7,
       "RowRange": 0,
       "RowLockedBox": 0,
       "RowBoxLayer": 0,
@@ -117,14 +117,14 @@
       "SpecialBox": 0,
       "SpecialBoxLayer": 0,
       "Group": 37,
-      "Density": 0.76
+      "Density": 0
     },
     {
       "Id": 8,
-      "TimeLimit": 5,
+      "TimeLimit": 6,
       "NormalBox": 7,
       "NormalLockedBox": 0,
-      "NormalBoxLayer": 6,
+      "NormalBoxLayer": 5,
       "RowRange": 0,
       "RowLockedBox": 0,
       "RowBoxLayer": 0,
@@ -134,7 +134,7 @@
       "SpecialBox": 2,
       "SpecialBoxLayer": 4,
       "Group": 31,
-      "Density": 0.89
+      "Density": 0
     },
     {
       "Id": 9,
@@ -151,11 +151,11 @@
       "SpecialBox": 3,
       "SpecialBoxLayer": 3,
       "Group": 40,
-      "Density": 0.74
+      "Density": 0
     },
     {
       "Id": 10,
-      "TimeLimit": 6,
+      "TimeLimit": 5,
       "NormalBox": 15,
       "NormalLockedBox": 0,
       "NormalBoxLayer": 5,
@@ -168,13 +168,13 @@
       "SpecialBox": 0,
       "SpecialBoxLayer": 0,
       "Group": 52,
-      "Density": 0.225
+      "Density": 0
     },
     {
       "Id": 11,
       "TimeLimit": 5,
       "NormalBox": 7,
-      "NormalLockedBox": 1,
+      "NormalLockedBox": 0,
       "NormalBoxLayer": 5,
       "RowRange": 1,
       "RowLockedBox": 0,
@@ -182,10 +182,10 @@
       "ColumnRange": 0,
       "ColumnLockedBox": 0,
       "ColumnBoxLayer": 0,
-      "SpecialBox": 1,
-      "SpecialBoxLayer": 2,
+      "SpecialBox": 0,
+      "SpecialBoxLayer": 0,
       "Group": 40,
-      "Density": 0.73
+      "Density": 0
     },
     {
       "Id": 12,
@@ -196,13 +196,13 @@
       "RowRange": 2,
       "RowLockedBox": 2,
       "RowBoxLayer": 3,
-      "ColumnRange": 5,
-      "ColumnLockedBox": 2,
-      "ColumnBoxLayer": 3,
+      "ColumnRange": 0,
+      "ColumnLockedBox": 0,
+      "ColumnBoxLayer": 0,
       "SpecialBox": 0,
       "SpecialBoxLayer": 0,
       "Group": 46,
-      "Density": 0.9
+      "Density": 0
     },
     {
       "Id": 13,
@@ -216,10 +216,10 @@
       "ColumnRange": 0,
       "ColumnLockedBox": 0,
       "ColumnBoxLayer": 0,
-      "SpecialBox": 0,
-      "SpecialBoxLayer": 0,
+      "SpecialBox": 2,
+      "SpecialBoxLayer": 4,
       "Group": 41,
-      "Density": 0.76
+      "Density": 0
     },
     {
       "Id": 14,
@@ -233,10 +233,10 @@
       "ColumnRange": 0,
       "ColumnLockedBox": 0,
       "ColumnBoxLayer": 0,
-      "SpecialBox": 2,
-      "SpecialBoxLayer": 4,
+      "SpecialBox": 0,
+      "SpecialBoxLayer": 0,
       "Group": 43,
-      "Density": 0.67
+      "Density": 0
     },
     {
       "Id": 15,
@@ -253,24 +253,24 @@
       "SpecialBox": 0,
       "SpecialBoxLayer": 0,
       "Group": 41,
-      "Density": 0.67
+      "Density": 0
     },
     {
       "Id": 16,
       "TimeLimit": 5,
-      "NormalBox": 7,
+      "NormalBox": 10,
       "NormalLockedBox": 0,
-      "NormalBoxLayer": 7,
+      "NormalBoxLayer": 6,
       "RowRange": 0,
       "RowLockedBox": 0,
       "RowBoxLayer": 0,
       "ColumnRange": 0,
       "ColumnLockedBox": 0,
       "ColumnBoxLayer": 0,
-      "SpecialBox": 0,
-      "SpecialBoxLayer": 0,
+      "SpecialBox": 2,
+      "SpecialBoxLayer": 4,
       "Group": 40,
-      "Density": 0.68
+      "Density": 0
     },
     {
       "Id": 17,
@@ -287,31 +287,14 @@
       "SpecialBox": 0,
       "SpecialBoxLayer": 0,
       "Group": 43,
-      "Density": 0.68
+      "Density": 0
     },
     {
       "Id": 18,
-      "TimeLimit": 5,
-      "NormalBox": 6,
-      "NormalLockedBox": 0,
-      "NormalBoxLayer": 7,
-      "RowRange": 0,
-      "RowLockedBox": 0,
-      "RowBoxLayer": 0,
-      "ColumnRange": 0,
-      "ColumnLockedBox": 0,
-      "ColumnBoxLayer": 0,
-      "SpecialBox": 2,
-      "SpecialBoxLayer": 3,
-      "Group": 53,
-      "Density": 0.73
-    },
-    {
-      "Id": 19,
-      "TimeLimit": 4.5,
-      "NormalBox": 51,
-      "NormalLockedBox": 1,
-      "NormalBoxLayer": 1,
+      "TimeLimit": 6,
+      "NormalBox": 13,
+      "NormalLockedBox": 3,
+      "NormalBoxLayer": 5,
       "RowRange": 0,
       "RowLockedBox": 0,
       "RowBoxLayer": 0,
@@ -320,8 +303,43 @@
       "ColumnBoxLayer": 0,
       "SpecialBox": 0,
       "SpecialBoxLayer": 0,
-      "Group": 43,
-      "Density": 0.84
+      "Group": 53,
+      "Density": 0
+    },
+    {
+      "Id": 19,
+      "TimeLimit": 5,
+      "NormalBox": 9,
+      "NormalLockedBox": 0,
+      "NormalBoxLayer": 3,
+      "RowRange": 0,
+      "RowLockedBox": 0,
+      "RowBoxLayer": 0,
+      "ColumnRange": 0,
+      "ColumnLockedBox": 0,
+      "ColumnBoxLayer": 0,
+      "SpecialBox": 0,
+      "SpecialBoxLayer": 0,
+      "Group": 23,
+      "Density": 0
+    },
+    {
+      "Id": 20,
+      "TimeLimit": 5,
+      "NormalBox": 12,
+      "NormalLockedBox": 0,
+      "NormalBoxLayer": 3,
+      "RowRange": 0,
+      "RowLockedBox": 0,
+      "RowBoxLayer": 0,
+      "ColumnRange": 0,
+      "ColumnLockedBox": 0,
+      "ColumnBoxLayer": 0,
+      "SpecialBox": 0,
+      "SpecialBoxLayer": 0,
+      "Group": 24,
+      "Density": 0
     }
+    
   ]
 }
