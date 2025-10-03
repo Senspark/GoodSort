@@ -1,4 +1,5 @@
 using System.Collections;
+using Cysharp.Threading.Tasks;
 using Defines;
 using UnityEngine;
 using UnityEngine.UI;
@@ -19,48 +20,37 @@ namespace Game.UI
         [SerializeField] private TextAsset levelConfigDefault;
         [SerializeField] private TextAsset iconConfigDefault;
 
-
         private void Start()
         {
             Screen.sleepTimeout = SleepTimeout.NeverSleep;
             Application.targetFrameRate = 60;
 
-            var initializer = new ServiceInitializer();
-            initializer.OnProgress += (current, total) =>
-            {
-                progress.fillAmount = (float)current / total;
-            };
-            initializer.OnCompleted += () =>
-            {
-                StartCoroutine(OnAppLoaded());
-            };
-            InitializeConfigManager();
-            _ = initializer.InitializeAllAsync();
-        }
-
-        private void InitializeConfigManager()
-        {
-            var configManager = new DefaultConfigManager();
             var levelConfig = JsonConvert.DeserializeObject<LevelConfig>(levelConfigDefault.text);
             var goodsConfig = JsonConvert.DeserializeObject<GoodsConfig[]>(iconConfigDefault.text);
-            configManager.SetDefaultValue(ConfigKey.LevelConfig, levelConfig);
-            configManager.SetDefaultValue(ConfigKey.GoodsConfig, goodsConfig);
-            ServiceLocator.Instance.Provide(configManager);
+            var initializeData = new ServiceInitializeData(levelConfig, goodsConfig);
+
+            var initializer = new ServiceInitializer();
+            initializer.InitializeAllAsync(
+                initializeData,
+                (current, total) => { progress.fillAmount = (float)current / total; },
+                () => { StartCoroutine(OnAppLoaded()); }
+            ).Forget();
         }
-        
+
         private IEnumerator OnAppLoaded()
         {
             yield return new WaitForSeconds(1f);
             progress.fillAmount = 1f;
             DisappearLoadingBar();
         }
-        
+
         // Disappear loading bar after 0.5 seconds, using tween to move down it
         private void DisappearLoadingBar()
         {
             loadingbar.DOScale(Vector3.zero, 0.5f)
                 .SetEase(Ease.InBack)
-                .OnComplete(() => {
+                .OnComplete(() =>
+                {
                     loadingbar.gameObject.SetActive(false);
                     GoToMenuScene();
                 });
@@ -71,9 +61,7 @@ namespace Game.UI
             ServiceLocator.Instance
                 .Resolve<ISceneLoader>()
                 .LoadScene<MainMenu>(nameof(MainMenu))
-                .Then(mainMenu =>
-                {
-                });
+                .Forget();
         }
     }
 }

@@ -1,6 +1,9 @@
+using System;
 using System.Linq;
+using Cysharp.Threading.Tasks;
 using Defines;
 using Game;
+using manager;
 using manager.Interface;
 using Senspark;
 using Sirenix.OdinInspector;
@@ -11,7 +14,8 @@ namespace UI
 {
     public class GameScene : MonoBehaviour
     {
-        [Header("Level Navigation")] [SerializeField]
+        [Header("Level Navigation")] //
+        [SerializeField]
         private Button nextLevelButton;
 
         [SerializeField] private Button backLevelButton;
@@ -34,16 +38,40 @@ namespace UI
 
         private void Awake()
         {
-            var services = ServiceLocator.Instance;
-            _eventManager = services.Resolve<IEventManager>();
-            _levelLoaderManager = services.Resolve<ILevelLoaderManager>();
-            _levelStoreManager = services.Resolve<ILevelStoreManager>();
-            _configManager = services.Resolve<IConfigManager>();
-            State = GameStateType.Initialized;
+            try
+            {
+                GetServices();
+            }
+            catch (Exception e)
+            {
+                // missing service - re-initialize
+                MockGameInitializer.Initialize()
+                    .ContinueWith(() =>
+                    {
+                        GetServices();
+                        CurrentLevel = 1;
+                        Start();
+                    })
+                    .Forget();
+            }
+
+            return;
+
+            void GetServices()
+            {
+                var services = ServiceLocator.Instance;
+                _eventManager = services.Resolve<IEventManager>();
+                _levelLoaderManager = services.Resolve<ILevelLoaderManager>();
+                _levelStoreManager = services.Resolve<ILevelStoreManager>();
+                _configManager = services.Resolve<IConfigManager>();
+                State = GameStateType.Initialized;
+            }
         }
 
         private void Start()
         {
+            if (State != GameStateType.Initialized) return;
+            
             SetupLevelNavigation();
             if (CurrentLevel > 0)
             {

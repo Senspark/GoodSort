@@ -1,6 +1,9 @@
 using System;
 using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
+using Defines;
 using Factory;
+using JetBrains.Annotations;
 using manager.Interface;
 using Senspark;
 using IAudioManager = manager.Interface.IAudioManager;
@@ -24,11 +27,8 @@ namespace manager
         private int TotalSteps { get; set; }
         private int CurrentStep { get; set; }
 
-
-        public event Action<int, int> OnProgress;
-        public event Action OnCompleted;
-
         #region MyRegion
+
         public IDataManager DataManager { get; set; }
         public IAudioManager AudioManager { get; set; }
         public ILevelStoreManager LevelStoreManager { get; set; }
@@ -39,8 +39,11 @@ namespace manager
 
         #endregion
 
-
-        public async Task InitializeAllAsync()
+        public async UniTask InitializeAllAsync(
+            ServiceInitializeData data,
+            [CanBeNull] Action<int, int> onProgress,
+            [CanBeNull] Action onCompleted
+        )
         {
             DataManager = new DefaultDataManager(new LocalDataStorage());
             AudioManager = new DefaultAudioManager(DataManager);
@@ -49,6 +52,11 @@ namespace manager
             ScoreManager = new DefaultScoreManager(DataManager);
             EventManager = new EventManager();
             LevelLoaderManager = new DefaultLevelLoaderManager();
+
+            var configManager = new DefaultConfigManager();
+            configManager.SetDefaultValue(ConfigKey.LevelConfig, data.LevelConfig);
+            configManager.SetDefaultValue(ConfigKey.GoodsConfig, data.GoodsConfig);
+
             var services = new IService[]
             {
                 DataManager,
@@ -57,7 +65,8 @@ namespace manager
                 SceneLoader,
                 ScoreManager,
                 EventManager,
-                LevelLoaderManager
+                LevelLoaderManager,
+                configManager
             };
             TotalSteps = services.Length;
             CurrentStep = 0;
@@ -66,13 +75,26 @@ namespace manager
                 CurrentStep++;
                 await service.Initialize();
                 ServiceLocator.Instance.Provide(service);
-                OnProgress?.Invoke(CurrentStep, TotalSteps);
+                onProgress?.Invoke(CurrentStep, TotalSteps);
             }
-            OnCompleted?.Invoke();
-            
+
+            onCompleted?.Invoke();
+
             // Initialize factory
             var factoryInitializer = new FactoryInitializer();
             factoryInitializer.Initialize(this);
         }
+    }
+}
+
+public class ServiceInitializeData
+{
+    public readonly LevelConfig LevelConfig;
+    public readonly GoodsConfig[] GoodsConfig;
+
+    public ServiceInitializeData(LevelConfig levelConfig, GoodsConfig[] goodsConfig)
+    {
+        LevelConfig = levelConfig;
+        GoodsConfig = goodsConfig;
     }
 }
