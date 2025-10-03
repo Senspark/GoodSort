@@ -2,7 +2,6 @@ using UnityEngine;
 using manager.Interface;
 using Senspark;
 using TMPro;
-using UnityEngine.UI;
 using Utilities;
 
 namespace UI
@@ -21,7 +20,7 @@ namespace UI
             .Resolve<ISceneLoader>()
             .LoadScene<GameScene>(nameof(GameScene)).Then(gameScene =>
             {
-                gameScene.CurrentLevel = int.Parse(tmpInputField.text);
+                gameScene.SetLevel(int.Parse(tmpInputField.text));
             });
     }
     }

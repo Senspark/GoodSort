@@ -1,11 +1,9 @@
-using System.Collections;
 using System.Linq;
-using System.Threading.Tasks;
-using Constant;
 using Defines;
 using Game;
 using manager.Interface;
 using Senspark;
+using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -13,12 +11,12 @@ namespace UI
 {
     public class GameScene : MonoBehaviour
     {
-        private static GameScene _sharedInstance = null;
-        [Header("Level Navigation")]
-        [SerializeField] private Button nextLevelButton;
+        [Header("Level Navigation")] [SerializeField]
+        private Button nextLevelButton;
+
         [SerializeField] private Button backLevelButton;
         [SerializeField] private Text currentLevelText;
-        
+
         private IEventManager _eventManager;
         private ILevelLoaderManager _levelLoaderManager;
         private ILevelStoreManager _levelStoreManager;
@@ -27,58 +25,60 @@ namespace UI
         public GameObject holdingGoods;
         private Goods _pickedGoods;
         private LevelView _levelView;
-        
-        private int _currentLevel = 2;
+
         private const int MIN_LEVEL = 1;
         private const int MAX_LEVEL = 10;
 
-        public int CurrentLevel
-        {
-            get => _currentLevel;
-            set => _currentLevel = value;
-        }
+        public int CurrentLevel { get; private set; }
+        public GameStateType State { get; private set; } = GameStateType.UnInitialize;
 
         private void Awake()
         {
-            _sharedInstance = this;
             var services = ServiceLocator.Instance;
             _eventManager = services.Resolve<IEventManager>();
             _levelLoaderManager = services.Resolve<ILevelLoaderManager>();
             _levelStoreManager = services.Resolve<ILevelStoreManager>();
             _configManager = services.Resolve<IConfigManager>();
+            State = GameStateType.Initialized;
         }
-        
-        public static GameScene Instance
-        {
-            get
-            {
-                if (_sharedInstance == null)
-                {
-                   throw new System.Exception("GameScene is null");
-                }
-                return _sharedInstance;
-            }
-        }
-        
+
         private void Start()
         {
             SetupLevelNavigation();
-            // Debug.Log("Current level: " + _currentLevel);
-            StartCoroutine(LoadLevelAsync(_currentLevel));
+            if (CurrentLevel > 0)
+            {
+                LoadLevel(CurrentLevel);
+            }
+
+            State = GameStateType.Loaded;
         }
-        
+
+        [Button]
+        public void SetLevel(int level)
+        {
+            if (State <= GameStateType.Initialized)
+            {
+                CurrentLevel = level;
+            }
+            else
+            {
+                CurrentLevel = level;
+                LoadLevel(level);
+            }
+        }
+
         // public void LoadLevel(int level)
         // {
         //     _currentLevel = level;
         //     StartCoroutine(LoadLevelAsync(level));
         // }
-        
+
         private void SetupLevelNavigation()
         {
             // nextLevelButton.onClick.AddListener(NextLevel);
             // backLevelButton.onClick.AddListener(BackLevel);
         }
-        
+
         // private void NextLevel()
         // {
         //     if (_currentLevel < MAX_LEVEL)
@@ -101,14 +101,12 @@ namespace UI
         //     }
         // }
 
-        private IEnumerator LoadLevelAsync(int level)
+        private void LoadLevel(int level)
         {
-            yield return new WaitForEndOfFrame();
-            var levelLoaderManager = ServiceLocator.Instance.Resolve<ILevelLoaderManager>();
-            var configManager = ServiceLocator.Instance.Resolve<IConfigManager>();
-            var strategy = configManager.GetValue<LevelConfig>(ConfigKey.LevelConfig).LevelStrategies[level - 1];
-            var goodsConfig = configManager.GetValue<GoodsConfig[]>(ConfigKey.GoodsConfig);
-            var builder = new LevelConfigBuilder(levelLoaderManager)
+            CleanUp();
+            var strategy = _configManager.GetValue<LevelConfig>(ConfigKey.LevelConfig).LevelStrategies[level - 1];
+            var goodsConfig = _configManager.GetValue<GoodsConfig[]>(ConfigKey.GoodsConfig);
+            var builder = new LevelConfigBuilder(_levelLoaderManager)
                 .SetLevelStrategy(strategy)
                 .SetGoodsArray(goodsConfig.ToList())
                 .Build();
@@ -118,7 +116,18 @@ namespace UI
             leveView.transform.SetParent(transform, false);
             _levelView = leveView;
         }
-        
+
+        private void CleanUp()
+        {
+            if (!_levelView)
+            {
+                return;
+            }
+
+            Destroy(_levelView.gameObject);
+            _levelView = null;
+        }
+
         // public void OnPickGoods(Goods goods, Vector2 position)
         // {
         //     _pickedGoods = goods;
@@ -142,7 +151,7 @@ namespace UI
         // {
         //     holdingGoods.transform.position = position;
         // }
-        
+
         // public void OnDropGoods()
         // {
         //     var isSuccess = false;
@@ -179,6 +188,5 @@ namespace UI
         //     Destroy(holdingGoods.gameObject);
         //     holdingGoods = null;
         // }
-        
     }
 }

@@ -1,5 +1,5 @@
 using Defines;
-using UnityEditor;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace Utilities
@@ -28,6 +28,7 @@ namespace Utilities
             Debug.Log(configs.LevelStrategies[0].NormalLockedBox);
         }
 
+        [Button]
         public void Generate()
         {
             LoadConfigs();
@@ -78,20 +79,4 @@ namespace Utilities
             }
         }
     }
-#if UNITY_EDITOR
-    [CustomEditor(typeof(AutoGenerateLevel))]
-    public class AutoGenerateLevelEditor : Editor
-    {
-        public override void OnInspectorGUI()
-        {
-            DrawDefaultInspector();
-
-            AutoGenerateLevel script = (AutoGenerateLevel)target;
-            if (GUILayout.Button("Generate Level"))
-            {
-                script.Generate();
-            }
-        }
-    }
-#endif
 }
