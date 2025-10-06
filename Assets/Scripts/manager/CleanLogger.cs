@@ -24,6 +24,7 @@ namespace manager
         public void PrintLogs()
         {
             CleanLogger.Log(_builder.ToString());
+            _builder.Clear();
         }
     }
 }

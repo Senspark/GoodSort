@@ -24,7 +24,6 @@ namespace Game
             base.Start();
             StartCoroutine(OnTrySupplyGoods());
         }
-
         
         private IEnumerator OnTrySupplyGoods()
         {
@@ -35,7 +34,7 @@ namespace Game
             }
         }
 
-        public override Goods CreateGoods(int goodsId, int slotId, int layer)
+        public override ShelfItem CreateGoods(int goodsId, int slotId, int layer)
         {
             var goodsNode = Instantiate(goodsPrefab, layers[layer].transform);
             var goods = goodsNode.GetComponent<Goods>();
@@ -50,7 +49,8 @@ namespace Game
                 goodsDrop.CurrentZone = slot[slotId];
             }
             
-            return goods;
+            var item = new ShelfItem(goods, goodsDrop);
+            return item;
         }
         
         public override int GetSlot(Vector3 goodsPos)
@@ -72,7 +72,7 @@ namespace Game
         public override void PlaceGoods(int goodsId, int slotId)
         {
             var goods = CreateGoods(goodsId, 0, 0);
-            goods.Bounce();
+            goods.Goods.Bounce();
         }
         
         protected override void OnPlaceGood()
@@ -118,12 +118,17 @@ namespace Game
             }
         }
 
+        public DropZone FindAnyEmptyZone()
+        {
+            return slot.FirstOrDefault(e => !e.isOccupied);
+        }
+
         private void LoadLayerData(int layerIndex, List<int> goodsData)
         {
-            // random range int
-            foreach (var t in goodsData)
+            Items = new ShelfItem[goodsData.Count];
+            for (var i = 0; i < goodsData.Count; i++)
             {
-                CreateGoods(t, 0, layerIndex);
+                Items[i] = CreateGoods(goodsData[i], 0, layerIndex);
             }
         }
         

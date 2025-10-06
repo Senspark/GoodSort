@@ -260,13 +260,13 @@ namespace Game
         }
 
         /**
-         * Sort by: Y position from High to Low, X Position From Left To Right
+         * Sort by: Y position from Low to High, X Position From Left To Right
          */
         private static void Sort(List<ShelveBase> shelves)
         {
             shelves.Sort((a, b) =>
             {
-                var yCompare = b.transform.position.y.CompareTo(a.transform.position.y); // High to Low
+                var yCompare = a.transform.position.y.CompareTo(b.transform.position.y); // Low to High
                 if (yCompare != 0) return yCompare;
                 return a.transform.position.x.CompareTo(b.transform.position.x); // Left to Right
             });

@@ -9,7 +9,7 @@ using Game;
 using manager.Interface;
 using Senspark;
 
-public class ShelveBase : MonoBehaviour, IShelf
+public abstract class ShelveBase : MonoBehaviour, IShelf
 {
     private ShelfPuzzleInputData _input;
     protected Queue<List<int>> _layerQueue = new();
@@ -17,10 +17,13 @@ public class ShelveBase : MonoBehaviour, IShelf
     public int Id { get; private set; }
 
     public bool IsTargetTouched() => _isTargetTouched;
+    protected ShelfItem[] Items;
+    protected IEventManager EventManager;
 
     protected virtual void Awake()
     {
-        ServiceLocator.Instance.Resolve<IEventManager>().AddListener(EventKey.PlaceGood, OnPlaceGood);
+        EventManager = ServiceLocator.Instance.Resolve<IEventManager>(); 
+        EventManager.AddListener(EventKey.PlaceGood, OnPlaceGood);
     }
 
     protected virtual void Start()
@@ -29,7 +32,7 @@ public class ShelveBase : MonoBehaviour, IShelf
 
     protected virtual void OnDestroy()
     {
-        ServiceLocator.Instance.Resolve<IEventManager>().RemoveListener(EventKey.PlaceGood, OnPlaceGood);
+        EventManager.RemoveListener(EventKey.PlaceGood, OnPlaceGood);
     }
 
     public void SetLayerQueue(int shelfId, ShelfPuzzleInputData input)
@@ -65,7 +68,7 @@ public class ShelveBase : MonoBehaviour, IShelf
         return false;
     }
 
-    public bool IsAllSlotOccupied()
+    public virtual bool IsAllSlotOccupied()
     {
         return false;
     }
@@ -75,7 +78,7 @@ public class ShelveBase : MonoBehaviour, IShelf
         return false;
     }
 
-    public virtual Goods CreateGoods(int goodsId, int slotId, int layer)
+    public virtual ShelfItem CreateGoods(int goodsId, int slotId, int layer)
     {
         return null;
     }
@@ -91,6 +94,11 @@ public class ShelveBase : MonoBehaviour, IShelf
     public int[][] ExportData()
     {
         return _input != null ? _input.Data : Array.Empty<int[]>();
+    }
+
+    public ShelfItem FindItem(int id)
+    {
+        return Items.FirstOrDefault(e => e.Goods.Id == id);
     }
 
     protected void OnTriggerStay2D(Collider2D other)

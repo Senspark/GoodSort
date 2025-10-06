@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Cysharp.Threading.Tasks;
 using Defines;
@@ -9,6 +10,7 @@ using manager.Interface;
 using Newtonsoft.Json;
 using Senspark;
 using Sirenix.OdinInspector;
+using Strategy.Level;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -164,8 +166,17 @@ namespace UI
             var data = _levelView.ExportData();
             var logger = new AppendLogger();
             logger.Log($"Input: {JsonConvert.SerializeObject(data)}");
-            new PuzzleSolver(logger).SolvePuzzleWithStateChanges(data);
             logger.PrintLogs();
+
+            UniTask.Void(async () =>
+            {
+                await UniTask.SwitchToThreadPool();
+                var solution = new PuzzleSolver(logger).SolvePuzzleWithStateChanges(data);
+
+                await UniTask.SwitchToMainThread();
+                logger.PrintLogs();
+                AutoPlay.Play(_levelView, solution);    
+            });
         }
 
         // public void OnPickGoods(Goods goods, Vector2 position)

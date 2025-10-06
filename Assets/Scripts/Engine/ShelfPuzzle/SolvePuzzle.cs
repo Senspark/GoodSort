@@ -51,19 +51,19 @@ namespace Engine.ShelfPuzzle
         /// <summary>
         /// Solve and print detailed state changes (from -> to)
         /// </summary>
-        public void SolvePuzzleWithStateChanges(ShelfPuzzleInputData[] puzzle)
+        public List<ShelfPuzzleNode> SolvePuzzleWithStateChanges(ShelfPuzzleInputData[] puzzle)
         {
             var solution = SolvePuzzle(puzzle);
 
             if (solution == null)
             {
                 _logger.Log("No solution found!");
-                return;
+                return new List<ShelfPuzzleNode>();
             }
 
             _logger.Log($"\n=== Solution found in {solution.Count - 1} moves ===");
 
-            for (int i = 0; i < solution.Count; i++)
+            for (var i = 0; i < solution.Count; i++)
             {
                 var currentState = solution[i];
 
@@ -93,8 +93,9 @@ namespace Engine.ShelfPuzzle
                 }
             }
 
-            var finalState = solution[solution.Count - 1];
+            var finalState = solution[^1];
             _logger.Log($"\n🏆 GOAL REACHED! Final score: {finalState.CalculateTotalScore()}");
+            return solution;
         }
 
         private void PrintState(ShelfPuzzleNode state, string indent = "")
