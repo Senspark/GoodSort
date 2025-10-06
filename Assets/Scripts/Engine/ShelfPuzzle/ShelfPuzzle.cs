@@ -9,10 +9,10 @@ namespace Engine.ShelfPuzzle
     {
         private readonly int targetScore;
 
-        public ShelfPuzzle(int[][][] initialShelves)
+        public ShelfPuzzle(ShelfPuzzleInputData[] inputData)
         {
             // Preprocess and calculate target score
-            var processed = PreprocessPuzzle(initialShelves);
+            var processed = PreprocessPuzzle(inputData);
             targetScore = CalculateTargetScore(processed);
         }
 
@@ -68,6 +68,9 @@ namespace Engine.ShelfPuzzle
                 for (int toIdx = 0; toIdx < node.ActiveShelves.Length; toIdx++)
                 {
                     if (fromIdx == toIdx) continue;
+
+                    // Skip TakeOnly shelves as destinations
+                    if (node.ShelfTypes[toIdx] == ShelfType.TakeOnly) continue;
 
                     var toShelf = node.ActiveShelves[toIdx];
                     if (toShelf.Length == 0) continue;
@@ -157,8 +160,13 @@ namespace Engine.ShelfPuzzle
                     }
                     else if (IsLayerEmpty(layer))
                     {
-                        // Also trim empty layers
-                        // No score change, no item count change
+                        // Trim empty layers
+                        // For TakeOnly shelves, also update item count (since 1-slot layers are consumed)
+                        if (node.ShelfTypes[i] == ShelfType.TakeOnly && layer.Length == 1)
+                        {
+                            // Item was already taken, no count update needed (handled in source removal)
+                        }
+                        // No score change for empty layers
                     }
                     else
                     {
@@ -166,9 +174,24 @@ namespace Engine.ShelfPuzzle
                     }
                 }
 
-                // ALWAYS maintain shelf structure for buffer capability
-                // If all layers were trimmed, shelf becomes empty buffer
-                node.ActiveShelves[i] = newShelf.Count > 0 ? newShelf.ToArray() : new[] { new int[] { 0, 0, 0 } };
+                // Maintain shelf structure based on type
+                if (newShelf.Count > 0)
+                {
+                    node.ActiveShelves[i] = newShelf.ToArray();
+                }
+                else
+                {
+                    // Only Common shelves become empty buffers when all layers trimmed
+                    if (node.ShelfTypes[i] == ShelfType.Common)
+                    {
+                        node.ActiveShelves[i] = new[] { new int[] { 0, 0, 0 } };
+                    }
+                    else
+                    {
+                        // TakeOnly shelf with no layers left becomes empty array
+                        node.ActiveShelves[i] = new int[][] { };
+                    }
+                }
             }
         }
 
@@ -192,17 +215,19 @@ namespace Engine.ShelfPuzzle
             return 0;
         }
 
-        private ShelfPuzzleNode PreprocessPuzzle(int[][][] shelves)
+        private ShelfPuzzleNode PreprocessPuzzle(ShelfPuzzleInputData[] inputData)
         {
             var activeShelves = new List<int[][]>();
+            var shelfTypes = new List<ShelfType>();
             int completedScore = 0;
             var itemCounts = new Dictionary<int, int>();
 
-            foreach (var shelf in shelves)
+            foreach (var shelfInput in inputData)
             {
                 var activeLayersForShelf = new List<int[]>();
+                var shelfType = shelfInput.Type;
 
-                foreach (var layer in shelf)
+                foreach (var layer in shelfInput.Data)
                 {
                     if (IsLayerComplete(layer))
                     {
@@ -221,26 +246,35 @@ namespace Engine.ShelfPuzzle
                                 {
                                     itemCounts[item] = 0;
                                 }
-
                                 itemCounts[item]++;
                             }
                         }
                     }
                 }
 
-                // Always maintain shelf structure - empty shelves can be buffers
+                // Maintain shelf structure based on type
                 if (activeLayersForShelf.Count > 0)
                 {
                     activeShelves.Add(activeLayersForShelf.ToArray());
                 }
                 else
                 {
-                    // Shelf with all completed layers becomes empty buffer
-                    activeShelves.Add(new[] { new int[] { 0, 0, 0 } });
+                    // Only Common shelves can become empty buffers
+                    if (shelfType == ShelfType.Common)
+                    {
+                        activeShelves.Add(new[] { new int[] { 0, 0, 0 } });
+                    }
+                    else
+                    {
+                        // TakeOnly shelf with no items is completely removed
+                        activeShelves.Add(new int[][] { });
+                    }
                 }
+
+                shelfTypes.Add(shelfType);
             }
 
-            return new ShelfPuzzleNode(activeShelves.ToArray(), completedScore, itemCounts, 0);
+            return new ShelfPuzzleNode(activeShelves.ToArray(), shelfTypes.ToArray(), completedScore, itemCounts, 0);
         }
 
         private int CalculateTargetScore(ShelfPuzzleNode processed)
@@ -258,9 +292,9 @@ namespace Engine.ShelfPuzzle
         }
 
         // Public method to get preprocessed initial state
-        public ShelfPuzzleNode GetInitialState(int[][][] shelves)
+        public ShelfPuzzleNode GetInitialState(ShelfPuzzleInputData[] inputData)
         {
-            return PreprocessPuzzle(shelves);
+            return PreprocessPuzzle(inputData);
         }
     }
 }

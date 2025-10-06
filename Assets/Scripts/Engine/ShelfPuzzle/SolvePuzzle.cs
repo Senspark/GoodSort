@@ -16,9 +16,9 @@ namespace Engine.ShelfPuzzle
         /// <summary>
         /// Solve a shelf puzzle with one line of code
         /// </summary>
-        /// <param name="puzzle">The puzzle configuration as 3D array</param>
+        /// <param name="puzzle">The puzzle configuration as ShelfPuzzleInputData array</param>
         /// <returns>Array of solution steps, or null if no solution</returns>
-        public List<ShelfPuzzleNode> SolvePuzzle(int[][][] puzzle)
+        public List<ShelfPuzzleNode>? SolvePuzzle(ShelfPuzzleInputData[] puzzle)
         {
             var puzzleInstance = new ShelfPuzzle(puzzle);
             var startNode = puzzleInstance.GetInitialState(puzzle);
@@ -28,7 +28,7 @@ namespace Engine.ShelfPuzzle
         /// <summary>
         /// Solve and print solution steps
         /// </summary>
-        public void SolvePuzzleAndPrint(int[][][] puzzle)
+        public void SolvePuzzleAndPrint(ShelfPuzzleInputData[] puzzle)
         {
             var solution = SolvePuzzle(puzzle);
 
@@ -51,7 +51,7 @@ namespace Engine.ShelfPuzzle
         /// <summary>
         /// Solve and print detailed state changes (from -> to)
         /// </summary>
-        public void SolvePuzzleWithStateChanges(int[][][] puzzle)
+        public void SolvePuzzleWithStateChanges(ShelfPuzzleInputData[] puzzle)
         {
             var solution = SolvePuzzle(puzzle);
 

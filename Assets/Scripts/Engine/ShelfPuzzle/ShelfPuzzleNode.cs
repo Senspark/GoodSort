@@ -1,12 +1,27 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Engine.AStar;
+using Newtonsoft.Json;
 
 namespace Engine.ShelfPuzzle
 {
+    public enum ShelfType
+    {
+        Common, // Can give and receive items (3-slot layers)
+        TakeOnly // Can only give items (1-slot layers)
+    }
+
+    public class ShelfPuzzleInputData
+    {
+        [JsonProperty(PropertyName = "t")] public ShelfType Type { get; set; }
+        [JsonProperty(PropertyName = "d")] public int[][] Data { get; set; } = Array.Empty<int[]>();
+    }
+
     public class ShelfPuzzleNode : IAStarNode
     {
         public int[][][] ActiveShelves { get; set; } // Only incomplete layers
+        public ShelfType[] ShelfTypes { get; set; } // Type of each shelf
         public int CompletedScore { get; set; } // Sum of completed layer scores
         public Dictionary<int, int> RemainingItemCounts { get; set; } // Track items still in play
         public int MoveCount { get; set; }
@@ -14,12 +29,14 @@ namespace Engine.ShelfPuzzle
 
         public ShelfPuzzleNode(
             int[][][] activeShelves,
+            ShelfType[] shelfTypes,
             int completedScore,
             Dictionary<int, int> remainingItemCounts,
             int moveCount = 0,
             Move lastMove = null)
         {
             ActiveShelves = activeShelves;
+            ShelfTypes = shelfTypes;
             CompletedScore = completedScore;
             RemainingItemCounts = remainingItemCounts;
             MoveCount = moveCount;
@@ -52,6 +69,7 @@ namespace Engine.ShelfPuzzle
         {
             return new ShelfPuzzleNode(
                 DeepCloneShelves(ActiveShelves),
+                (ShelfType[])ShelfTypes.Clone(),
                 CompletedScore,
                 new Dictionary<int, int>(RemainingItemCounts),
                 MoveCount,

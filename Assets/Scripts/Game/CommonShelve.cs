@@ -199,11 +199,9 @@ namespace Game
 
         private void LoadLayerData(int layerIndex, List<int> goodsData)
         {
-            var randomSlotId = new[] { 0, 1, 2 };
-            ArrayUtils.Shuffle(randomSlotId);
             for (var i = 0; i < goodsData.Count; i++)
             {
-                CreateGoods(goodsData[i], randomSlotId[i], layerIndex);
+                CreateGoods(goodsData[i], i, layerIndex);
             }
         }
         
