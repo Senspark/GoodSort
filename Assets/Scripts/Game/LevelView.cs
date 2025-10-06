@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Core;
 using Defines;
+using manager;
 using manager.Interface;
 using Strategy.Level;
 using UnityEngine;
@@ -17,13 +19,7 @@ namespace Game
 
     public class LevelView : MonoBehaviour, ILevelView
     {
-        private List<ShelveBase> _shelves;
-
-        public List<ShelveBase> Shelves
-        {
-            get => _shelves;
-            set => _shelves = value;
-        }
+        public List<ShelveBase> Shelves { get; private set; }
 
         /// <summary>
         /// 
@@ -34,22 +30,21 @@ namespace Game
             var levelObject = level.LevelObject;
             var goodsIDArray = level.GoodsArray.Select(x => x.Id).ToList();
 
-            _shelves = levelObject.GetComponentsInChildren<ShelveBase>().ToList();
+            Shelves = levelObject.GetComponentsInChildren<ShelveBase>().ToList();
             var subset = DistributeGoods(goodsIDArray, level.LevelStrategy);
-            PopulateSubsetToShelve(subset);
+            PopulateSubsetToShelve(Shelves, subset);
+            GameExportData.ExportData(Shelves.Select(e => (IShelf)e).ToList());
         }
 
-        private void PopulateSubsetToShelve(List<List<int>> subset)
+        private static void PopulateSubsetToShelve(List<ShelveBase> shelves, List<List<int>> subset)
         {
-           
-            for(int i = 0; i < _shelves.Count; i++)
+            var shelvesCount = shelves.Count;
+
+            for (var i = 0; i < shelvesCount; i++)
             {
                 //Log subset 
                 Debug.Log($"Subset {i}: [{string.Join(",", subset[i])}]");
             }
-            
-            
-            var shelvesCount = _shelves.Count;
 
             var shelveQueue = new Dictionary<int, Queue<List<int>>>();
             for (int i = 0; i < shelvesCount; i++)
@@ -65,7 +60,7 @@ namespace Game
             // Gán queue cho từng shelve
             for (int j = 0; j < shelvesCount; j++)
             {
-                var shelve = _shelves[j];
+                var shelve = shelves[j];
                 if (!shelve) continue;
 
                 if (shelve is CommonShelve common)
@@ -88,7 +83,7 @@ namespace Game
             }
         }
 
-        private void SetShelveQueue(ShelveBase shelve, Queue<List<int>> layerQueue)
+        private static void SetShelveQueue(ShelveBase shelve, Queue<List<int>> layerQueue)
         {
             shelve.Clear();
             shelve.SetLayerQueue(layerQueue);

@@ -1,19 +1,21 @@
 using System;
 using System.Collections.Generic;
 using Constant;
+using Core;
 using manager;
 using UnityEngine;
 using Game;
 using manager.Interface;
 using Senspark;
 
-public class ShelveBase : MonoBehaviour
+public class ShelveBase : MonoBehaviour, IShelf
 {
+    private int[][] _cachedData;
     protected Queue<List<int>> _layerQueue = new();
     private bool _isTargetTouched = false;
     protected int id;
     public int Id { get => id; set => id = value; }
-
+    
     public bool IsTargetTouched() => _isTargetTouched;
 
     protected virtual void Awake()
@@ -32,6 +34,17 @@ public class ShelveBase : MonoBehaviour
     public void SetLayerQueue(Queue<List<int>> layerQueue)
     {
         _layerQueue = layerQueue;
+        
+        // Cached export Data
+        var layers = layerQueue.ToArray();
+        var result = new int[layers.Length][];
+
+        for (var i = 0; i < layers.Length; i++)
+        {
+            result[i] = layers[i].ToArray();
+        }
+
+        _cachedData = result;
     }
     
     public virtual void LoadNextLayers(){}
@@ -80,6 +93,11 @@ public class ShelveBase : MonoBehaviour
     public virtual void Clear()
     {
         
+    }
+    
+    public int[][] ExportData()
+    {
+        return _cachedData ?? Array.Empty<int[]>();
     }
 
     protected void OnTriggerStay2D(Collider2D other)
