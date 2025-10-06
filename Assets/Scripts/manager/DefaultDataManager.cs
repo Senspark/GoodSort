@@ -1,4 +1,4 @@
-using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using manager.Interface;
 
 namespace manager
@@ -6,15 +6,15 @@ namespace manager
     public class DefaultDataManager : IDataManager
     {
         private readonly IDataStorage _storage;
-        
+
         public DefaultDataManager(IDataStorage storage)
         {
             _storage = storage;
         }
-        
-        public Task<bool> Initialize()
+
+        public UniTask<bool> Initialize()
         {
-            return Task.FromResult(true);
+            return UniTask.FromResult(true);
         }
         
         public int GetInt(string key, int defaultValue)

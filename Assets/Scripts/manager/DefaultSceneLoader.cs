@@ -1,4 +1,4 @@
-using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using manager.Interface;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -8,12 +8,12 @@ namespace manager
 {
     public class DefaultSceneLoader : ISceneLoader
     {
-        public Task<bool> Initialize()
+        public UniTask<bool> Initialize()
         {
-            return Task.FromResult(true);
+            return UniTask.FromResult(true);
         }
-        
-        public async Task<T> LoadScene<T>(string sceneName) where T : MonoBehaviour
+
+        public async UniTask<T> LoadScene<T>(string sceneName) where T : MonoBehaviour
         {
             await SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Single);
             var item = Object.FindFirstObjectByType<T>();

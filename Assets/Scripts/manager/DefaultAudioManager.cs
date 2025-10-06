@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
 using Game.Audio;
 using UnityEngine;
@@ -19,10 +18,10 @@ namespace manager
         {
             this.dataManager = dataManager;
         }
-        
-        public Task<bool> Initialize()
+
+        public UniTask<bool> Initialize()
         {
-            return initialized ? Task.FromResult(true) : InitializeImpl();
+            return initialized ? UniTask.FromResult(true) : InitializeImpl();
         }
 
         public bool MusicEnabled
@@ -108,26 +107,28 @@ namespace manager
             AudioPlayer.Instance.PlaySound(clip, volume);
         }
         
-        private async Task<bool> InitializeImpl()
+        private async UniTask<bool> InitializeImpl()
         {
             var MusicVolume = 0.4f;
             var SoundVolume = 0.6f;
-            await Task.WhenAll(
+            await UniTask.WhenAll(
                 LoadAudioClipAsync(Audio.Music1, ("Music1", MusicVolume)),
                 LoadAudioClipAsync(Audio.Music2, ("Music2", MusicVolume))
             );
-            
+
             initialized = true;
             return true;
         }
 
-        private async Task LoadAudioClipAsync(Audio audio, params (string path, float volume)[] paths)
+        private async UniTask LoadAudioClipAsync(Audio audio, params (string path, float volume)[] paths)
         {
-            var items = await Task.WhenAll(Enumerable.Select(paths, async key => {
+            var tasks = paths.Select(async key => {
                 var path = $"Audio/{key.path}";
                 var clip = await Resources.LoadAsync<AudioClip>(path) as AudioClip;
                 return (clip, key.volume);
-            }).ToArray());
+            }).ToArray();
+
+            var items = await UniTask.WhenAll(tasks);
             var infos = GetClipsInfo(audio);
             infos.AddRange(items);
         }

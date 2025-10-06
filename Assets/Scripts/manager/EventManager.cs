@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System;
-using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using Constant;
 using manager.Interface;
 
@@ -11,10 +11,10 @@ namespace manager
     {
         private readonly Dictionary<EventKey,Action> eventTable = new();
         private readonly Dictionary<EventKey, Action<object>> eventTableWithParam = new();
-        
-        public Task<bool> Initialize()
+
+        public UniTask<bool> Initialize()
         {
-            return Task.FromResult(true);
+            return UniTask.FromResult(true);
         }
         
         

@@ -1,15 +1,15 @@
-using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using manager.Interface;
 
 namespace manager
 {
     public class DefaultLevelStoreManager : ILevelStoreManager
     {
-        public Task<bool> Initialize()
+        public UniTask<bool> Initialize()
         {
-            return Task.FromResult(true);
+            return UniTask.FromResult(true);
         }
-        
+
         // constructor
         public DefaultLevelStoreManager(IDataManager dataManager)
         {
