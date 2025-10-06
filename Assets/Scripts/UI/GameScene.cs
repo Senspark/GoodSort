@@ -2,9 +2,11 @@ using System;
 using System.Linq;
 using Cysharp.Threading.Tasks;
 using Defines;
+using Engine.ShelfPuzzle;
 using Game;
 using manager;
 using manager.Interface;
+using Newtonsoft.Json;
 using Senspark;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -71,7 +73,7 @@ namespace UI
         private void Start()
         {
             if (State != GameStateType.Initialized) return;
-            
+
             SetupLevelNavigation();
             if (CurrentLevel > 0)
             {
@@ -154,6 +156,16 @@ namespace UI
 
             Destroy(_levelView.gameObject);
             _levelView = null;
+        }
+
+        [Button]
+        private void AutoSolve()
+        {
+            var data = _levelView.ExportData();
+            var logger = new AppendLogger();
+            logger.Log($"Input: {JsonConvert.SerializeObject(data)}");
+            new PuzzleSolver(logger).SolvePuzzleWithStateChanges(data);
+            logger.PrintLogs();
         }
 
         // public void OnPickGoods(Goods goods, Vector2 position)

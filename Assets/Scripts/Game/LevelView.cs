@@ -1,20 +1,16 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Core;
-using Defines;
-using manager;
-using manager.Interface;
 using Strategy.Level;
 using UnityEngine;
 using Utilities;
-using Random = UnityEngine.Random;
 
 namespace Game
 {
     public interface ILevelView
     {
         public void Load(LevelConfigBuilder level);
+        public int[][][] ExportData();
     }
 
     public class LevelView : MonoBehaviour, ILevelView
@@ -33,7 +29,40 @@ namespace Game
             Shelves = levelObject.GetComponentsInChildren<ShelveBase>().ToList();
             var subset = DistributeGoods(goodsIDArray, level.LevelStrategy);
             PopulateSubsetToShelve(Shelves, subset);
-            GameExportData.ExportData(Shelves.Select(e => (IShelf)e).ToList());
+        }
+
+        public int[][][] ExportData()
+        {
+            var exportData = new int[Shelves.Count][][];
+            for (var sId = 0; sId < Shelves.Count; sId++)
+            {
+                var shelf = Shelves[sId];
+                var layers = shelf.ExportData();
+                exportData[sId] = new int[layers.Length][];
+                
+                for (var lId = 0; lId < layers.Length; lId++)
+                {
+                    var layer = layers[lId];
+                    const int maxItem = 3;
+                    var newLayer = new int[maxItem];
+                    
+                    for (var iId = 0; iId < maxItem; iId++)
+                    {
+                        if (iId + 1 <= layer.Length)
+                        {
+                            newLayer[iId] = layer[iId];
+                        }
+                        else
+                        {
+                            newLayer[iId] = 0;
+                        }
+                    }
+
+                    exportData[sId][lId] = newLayer;
+                }
+            }
+
+            return exportData;
         }
 
         private static void PopulateSubsetToShelve(List<ShelveBase> shelves, List<List<int>> subset)
@@ -94,10 +123,11 @@ namespace Game
         {
             var totalLayer = levelStrategy.GetTotalLayer();
             var density = levelStrategy.Density;
-            
+
             Debug.Log($"Total layer: {totalLayer}, Density: {density}");
-            
-            if (totalLayer < levelStrategy.Group || totalLayer > 3 * levelStrategy.Group) {
+
+            if (totalLayer < levelStrategy.Group || totalLayer > 3 * levelStrategy.Group)
+            {
                 throw new ArgumentException("Invalid input");
             }
 
@@ -110,7 +140,7 @@ namespace Game
             // 1. Nếu có single shelve thì tạo nó trước
             for (var i = 0; i < levelStrategy.SpecialBox; i++)
             {
-                var first5 = source.OrderBy(_ => rand.Next()).Take(5).ToList(); 
+                var first5 = source.OrderBy(_ => rand.Next()).Take(5).ToList();
                 subsets.Add(first5);
                 foreach (var x in first5) pool[x]--;
             }
@@ -178,12 +208,13 @@ namespace Game
                 else
                     throw new Exception($"Không thể đặt {x} vào tập con nào");
             }
-            
+
             // Log ra thử coi có đúng ko  
             foreach (var (subset, idx) in subsets.Select((s, i) => (s, i)))
             {
                 Debug.Log($"Subset {idx}: [{string.Join(",", subset)}]");
             }
+
             // Shuffle subsets
             ArrayUtils.Shuffle(subsets);
 
