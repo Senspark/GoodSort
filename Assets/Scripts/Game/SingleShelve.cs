@@ -10,7 +10,7 @@ namespace Game
     {
         [SerializeField] private GameObject[] layers;
         [SerializeField] private GameObject goodsPrefab;
-        [SerializeField] private DropZone[] slot;
+        // [SerializeField] private DropZone[] slot;
         // private readonly Dictionary<int, int> _layer0GoodMap = new();
         // private Queue<List<int>> _layerQueue = new();
 
@@ -39,16 +39,16 @@ namespace Game
         {
             var goodsNode = Instantiate(goodsPrefab, layers[layer].transform);
             var goods = goodsNode.GetComponent<Goods>();
-            var goodsDrop = goodsNode.GetComponent<DragDrop>();
+            // var goodsDrop = goodsNode.GetComponent<DragDrop>();
             goods.Id = goodsId;
             goods.Layer = layer;
             goods.Slot = slotId;
             goods.StartPos = new Vector3(0, 0, 0);
-            if (layer == 0)
-            {
-                slot[slotId].isOccupied = true;
-                goodsDrop.CurrentZone = slot[slotId];
-            }
+            // if (layer == 0)
+            // {
+            //     slot[slotId].isOccupied = true;
+            //     goodsDrop.CurrentZone = slot[slotId];
+            // }
             
             return goods;
         }
@@ -83,13 +83,13 @@ namespace Game
 
         public override void Clear()
         {
-            if (slot != null)
-            {
-                foreach (var s in slot)
-                {
-                    s.isOccupied = false;
-                }
-            }
+            // if (slot != null)
+            // {
+            //     foreach (var s in slot)
+            //     {
+            //         s.isOccupied = false;
+            //     }
+            // }
             for (var i = 0; i < layers.Length; i++)
             {
                 var layer = layers[i];
@@ -134,18 +134,18 @@ namespace Game
             if (layer0.transform.childCount <= 0)
             {
                 var goodsInLayer1 = layer1.GetComponentsInChildren<Goods>();
-                foreach (var t in slot)
-                {
-                    t.isOccupied = false;
-                }
+                // foreach (var t in slot)
+                // {
+                //     t.isOccupied = false;
+                // }
                 foreach (var goods in goodsInLayer1)
                 {
                     goods.Layer = 0;
                     goods.transform.SetParent(layer0.transform);
                     goods.transform.position -= new Vector3(0, 0.1f, 0);
-                    var goodsDrag = goods.GetComponent<DragDrop>();
-                    goodsDrag.CurrentZone = slot[0];
-                    goods.Bounce();
+                    // var goodsDrag = goods.GetComponent<DragDrop>();
+                    // goodsDrag.CurrentZone = slot[0];
+                    // goods.Bounce();
                 }
 
                 if (_layerQueue.Count > 0)

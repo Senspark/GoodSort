@@ -138,7 +138,7 @@ namespace Core
                 // Snap position if needed
                 if (targetZone.ShouldSnapToCenter())
                 {
-                    _currentDraggingObject.UpdatePosition(targetZone.GetSnapPosition());
+                    _currentDraggingObject.UpdatePosition(targetZone.GetSnapPosition(0));
                 }
 
                 successfulDrop = true;

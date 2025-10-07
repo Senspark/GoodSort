@@ -500,55 +500,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 774581031}
   m_CullTransparentMesh: 1
---- !u!1 &785004633
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 785004635}
-  - component: {fileID: 785004634}
-  m_Layer: 0
-  m_Name: DragDropManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &785004634
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 785004633}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7bf0499b48164d99b8fdbee3cf142d3f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  dragZOffset: -1
-  container: {fileID: 921653995}
-  enableVisualFeedback: 1
-  dragColor: {r: 1, g: 1, b: 1, a: 0.8}
-  dragScale: {x: 1.1, y: 1.1, z: 1}
---- !u!4 &785004635
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 785004633}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &807555107
 GameObject:
   m_ObjectHideFlags: 0
@@ -2268,6 +2219,5 @@ SceneRoots:
   - {fileID: 1800118257}
   - {fileID: 1472828015}
   - {fileID: 697549702}
-  - {fileID: 785004635}
   - {fileID: 921653995}
   - {fileID: 1882848724}
