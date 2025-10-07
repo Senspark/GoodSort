@@ -6,7 +6,7 @@ namespace Engine.AStar
     // Generic A* Solver
     public class AStarSolver<T> where T : IAStarNode
     {
-        private List<AStarNodeWrapper<T>> openList = new List<AStarNodeWrapper<T>>();
+        private PriorityQueue<AStarNodeWrapper<T>, double> openList = new PriorityQueue<AStarNodeWrapper<T>, double>();
         private Dictionary<string, AStarNodeWrapper<T>> closedList = new Dictionary<string, AStarNodeWrapper<T>>();
         private Dictionary<string, AStarNodeWrapper<T>> openListMap = new Dictionary<string, AStarNodeWrapper<T>>();
         private readonly IAStarPuzzle<T> puzzle;
@@ -20,10 +20,10 @@ namespace Engine.AStar
         /// Giải puzzle từ startNode
         /// </summary>
         /// <returns>Mảng các node từ start đến goal, hoặc null nếu không tìm thấy</returns>
-        public List<T> Solve(T startNode)
+        public List<T>? Solve(T startNode)
         {
             // Reset lists
-            openList = new List<AStarNodeWrapper<T>>();
+            openList = new PriorityQueue<AStarNodeWrapper<T>, double>();
             closedList.Clear();
             openListMap.Clear();
 
@@ -110,7 +110,7 @@ namespace Engine.AStar
         public IEnumerable<SolveStep<T>> SolveStepByStep(T startNode)
         {
             // Reset lists
-            openList = new List<AStarNodeWrapper<T>>();
+            openList = new PriorityQueue<AStarNodeWrapper<T>, double>();
             closedList.Clear();
             openListMap.Clear();
 
@@ -131,10 +131,10 @@ namespace Engine.AStar
             {
                 var current = GetLowestFNode();
 
-                // Yield current state
+                // Yield current state (note: cannot enumerate PriorityQueue directly)
                 yield return new SolveStep<T>(
                     current.Node,
-                    openList.Select(w => w.Node).ToList(),
+                    openListMap.Values.Select(w => w.Node).ToList(), // Use map instead
                     closedList.Values.Select(w => w.Node).ToList(),
                     current.Node.IsGoal()
                 );
@@ -190,30 +190,23 @@ namespace Engine.AStar
 
         private void AddToOpenList(AStarNodeWrapper<T> wrapper)
         {
-            openList.Add(wrapper);
+            // Priority = F score (lower is better). For ties, H is used as secondary priority
+            // Since PriorityQueue uses min-heap, lower F values have higher priority
+            var priority = wrapper.F + (wrapper.H * 0.0001); // H as tiebreaker
+            openList.Enqueue(wrapper, priority);
             openListMap[wrapper.Node.GetId()] = wrapper;
         }
 
         private void RemoveFromOpenList(AStarNodeWrapper<T> wrapper)
         {
-            openList.Remove(wrapper);
+            // Note: PriorityQueue.Dequeue already removes the element
             openListMap.Remove(wrapper.Node.GetId());
         }
 
         private AStarNodeWrapper<T> GetLowestFNode()
         {
-            // Sort by F ascending, then by H ascending
-            openList.Sort((a, b) =>
-            {
-                var fCompare = a.F.CompareTo(b.F);
-                if (fCompare != 0)
-                {
-                    return fCompare;
-                }
-                return a.H.CompareTo(b.H);
-            });
-
-            return openList[0];
+            // PriorityQueue.Dequeue automatically returns lowest priority (F score)
+            return openList.Dequeue();
         }
 
         private List<T> ReconstructPath(AStarNodeWrapper<T> goalWrapper)

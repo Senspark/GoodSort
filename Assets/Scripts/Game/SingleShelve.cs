@@ -125,10 +125,10 @@ namespace Game
 
         private void LoadLayerData(int layerIndex, List<int> goodsData)
         {
-            Items = new ShelfItem[goodsData.Count];
-            for (var i = 0; i < goodsData.Count; i++)
+            VisibleItems ??= new List<ShelfItem>();
+            foreach (var g in goodsData)
             {
-                Items[i] = CreateGoods(goodsData[i], 0, layerIndex);
+                VisibleItems.Add(CreateGoods(g, 0, layerIndex));
             }
         }
         

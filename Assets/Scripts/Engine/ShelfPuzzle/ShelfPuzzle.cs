@@ -25,33 +25,99 @@ namespace Engine.ShelfPuzzle
         {
             if (node.IsGoal()) return 0;
 
-            // Improved heuristic based on remaining items
-            int estimatedMoves = 0;
+            double totalCost = 0;
 
-            foreach (var (item, count) in node.RemainingItemCounts)
+            // Track item locations for distribution analysis
+            var itemLocations = new Dictionary<int, List<(int shelfIdx, int layerIdx)>>();
+
+            // Collect all item positions
+            for (int shelfIdx = 0; shelfIdx < node.ActiveShelves.Length; shelfIdx++)
             {
-                if (count > 0)
+                var shelf = node.ActiveShelves[shelfIdx];
+                for (int layerIdx = 0; layerIdx < shelf.Length; layerIdx++)
                 {
-                    // Each group of 3 needs to be completed
-                    var completeGroups = count / 3;
-                    var remainder = count % 3;
-
-                    if (remainder > 0)
+                    var layer = shelf[layerIdx];
+                    foreach (var item in layer)
                     {
-                        // Incomplete group needs moves to either:
-                        // - Get to 3 (needs 3-remainder items)
-                        // - Disperse to other groups
-                        estimatedMoves += Math.Min(3 - remainder, remainder);
+                        if (item != 0)
+                        {
+                            if (!itemLocations.ContainsKey(item))
+                                itemLocations[item] = new List<(int, int)>();
+                            itemLocations[item].Add((shelfIdx, layerIdx));
+                        }
                     }
                 }
             }
 
-            return Math.Max(1, estimatedMoves);
+            // Calculate cost for each item type
+            foreach (var (item, count) in node.RemainingItemCounts)
+            {
+                if (count <= 0) continue;
+
+                var completeGroups = count / 3;
+                var remainder = count % 3;
+                var locations = itemLocations.ContainsKey(item) ? itemLocations[item] : new List<(int, int)>();
+
+                // 1. Base cost: moves needed to complete groups
+                // Each complete group needs at least 2 moves (gather 3 items)
+                totalCost += completeGroups * 2;
+
+                // 2. Remainder penalty
+                if (remainder > 0)
+                {
+                    // Need moves to either complete or disperse
+                    totalCost += Math.Min(3 - remainder, remainder);
+                }
+
+                // 3. Layer depth penalty - items in lower layers need more moves
+                foreach (var location in locations)
+                {
+                    // Items not in top layer need extraction
+                    if (location.Item2 > 0)
+                    {
+                        totalCost += location.Item2 * 0.5; // Penalty for buried items
+                    }
+                }
+
+                // 4. Distribution penalty - scattered items are harder
+                if (locations.Count > 1)
+                {
+                    // Calculate unique shelves
+                    var uniqueShelves = locations.Select(loc => loc.Item1).Distinct().Count();
+                    if (uniqueShelves > 1)
+                    {
+                        // Items scattered across multiple shelves need consolidation
+                        totalCost += (uniqueShelves - 1) * 0.3;
+                    }
+                }
+            }
+
+            // 5. Buffer availability penalty
+            int availableBuffers = 0;
+            for (int i = 0; i < node.ActiveShelves.Length; i++)
+            {
+                if (node.ShelfTypes[i] == ShelfType.Common)
+                {
+                    var shelf = node.ActiveShelves[i];
+                    if (shelf.Length == 1 && shelf[0].All(x => x == 0))
+                    {
+                        availableBuffers++;
+                    }
+                }
+            }
+
+            // Fewer buffers = harder (need at least 1 for maneuvering)
+            if (availableBuffers == 0 && !node.IsGoal())
+            {
+                totalCost += 5; // Significant penalty for no buffers
+            }
+
+            return Math.Max(1, totalCost);
         }
 
         public List<ShelfPuzzleNode> GetNeighbours(ShelfPuzzleNode node)
         {
-            var neighbours = new List<ShelfPuzzleNode>();
+            var neighbours = new List<(ShelfPuzzleNode node, int priority)>();
 
             // For each shelf that can provide items
             for (int fromIdx = 0; fromIdx < node.ActiveShelves.Length; fromIdx++)
@@ -90,7 +156,9 @@ namespace Engine.ShelfPuzzle
                                 var newNode = ExecuteMove(node, fromIdx, toIdx, item);
                                 if (newNode != null)
                                 {
-                                    neighbours.Add(newNode);
+                                    // Calculate move priority (higher = better)
+                                    int priority = CalculateMovePriority(item, toLayer);
+                                    neighbours.Add((newNode, priority));
                                 }
                             }
                         }
@@ -98,7 +166,47 @@ namespace Engine.ShelfPuzzle
                 }
             }
 
-            return neighbours;
+            // Sort by priority (descending) and limit to top moves
+            const int MAX_NEIGHBORS = 100; // Limit branching factor
+            return neighbours
+                .OrderByDescending(n => n.priority)
+                .Take(MAX_NEIGHBORS)
+                .Select(n => n.node)
+                .ToList();
+        }
+
+        /// <summary>
+        /// Calculate priority for a move. Higher priority = better move.
+        /// </summary>
+        private int CalculateMovePriority(int item, int[] destinationLayer)
+        {
+            int priority = 0;
+
+            // Count matching items already in destination
+            int matchCount = destinationLayer.Count(x => x == item);
+
+            // Highest priority: Creates a complete set (2 matching + 1 new = 3)
+            if (matchCount == 2)
+            {
+                priority += 1000; // Very high priority - completes a layer!
+            }
+            // High priority: Creates a pair (1 matching + 1 new = 2)
+            else if (matchCount == 1)
+            {
+                priority += 100; // High priority - makes progress
+            }
+            // Medium priority: Move to empty buffer
+            else if (destinationLayer.All(x => x == 0))
+            {
+                priority += 10; // Buffer moves are useful for maneuvering
+            }
+            // Low priority: Move to layer with different items (might cause blocking)
+            else
+            {
+                priority += 1; // Low priority - might not help
+            }
+
+            return priority;
         }
 
         private ShelfPuzzleNode? ExecuteMove(

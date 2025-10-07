@@ -17,7 +17,7 @@ public abstract class ShelveBase : MonoBehaviour, IShelf
     public int Id { get; private set; }
 
     public bool IsTargetTouched() => _isTargetTouched;
-    protected ShelfItem[] Items;
+    protected List<ShelfItem> VisibleItems;
     protected IEventManager EventManager;
 
     protected virtual void Awake()
@@ -35,9 +35,7 @@ public abstract class ShelveBase : MonoBehaviour, IShelf
         EventManager.RemoveListener(EventKey.PlaceGood, OnPlaceGood);
     }
 
-    public virtual void LoadNextLayers()
-    {
-    }
+    public abstract void LoadNextLayers();
 
     public virtual void Init()
     {
@@ -100,7 +98,7 @@ public abstract class ShelveBase : MonoBehaviour, IShelf
 
     public ShelfItem FindItem(int id)
     {
-        return Items.FirstOrDefault(e => e.Goods.Id == id);
+        return VisibleItems.FirstOrDefault(e => e?.Goods.Id == id);
     }
 
     protected void OnTriggerStay2D(Collider2D other)

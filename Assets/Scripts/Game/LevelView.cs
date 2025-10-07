@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Engine.ShelfPuzzle;
+using manager;
 using Strategy.Level;
 using UnityEngine;
 using Utilities;
@@ -38,6 +39,24 @@ namespace Game
         public ShelfPuzzleInputData[] ExportData()
         {
             return _input;
+        }
+
+        public void ImportData(ShelfPuzzleInputData[] levelData)
+        {
+            if (Shelves.Count != levelData.Length)
+            {
+                CleanLogger.Error("Level không phù hợp với Data");
+                return;
+            }
+
+            _input = levelData;
+            for (var id = 0; id < levelData.Length; id++)
+            {
+                var shelf = Shelves[id];
+                var shelfData = levelData[id];
+                
+                shelf.ImportData(id, shelfData);
+            }
         }
 
         private static ShelfPuzzleInputData[] PopulateSubsetToShelve(List<ShelveBase> shelves, List<List<int>> subset)

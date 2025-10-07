@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Core;
 using Cysharp.Threading.Tasks;
 using Defines;
@@ -40,6 +41,8 @@ namespace UI
 
         public int CurrentLevel { get; private set; }
         public GameStateType State { get; private set; } = GameStateType.UnInitialize;
+
+        public static List<ShelfPuzzleNode> Solution;
 
         private void Awake()
         {
@@ -162,9 +165,17 @@ namespace UI
         }
 
         [Button]
-        private void ImportLevelJson(string json)
+        private void ImportLevelJson(string levelDataJson)
         {
-            LevelImporter.Import(_levelView.Shelves.Select(e => (IShelf)e).ToList(), json);
+            try
+            {
+                var levelData = JsonConvert.DeserializeObject<ShelfPuzzleInputData[]>(levelDataJson);
+                _levelView.ImportData(levelData);
+            }
+            catch (Exception e)
+            {
+                CleanLogger.Error(e);
+            }
         }
 
         [Button]
@@ -175,15 +186,49 @@ namespace UI
             logger.Log($"Input: {JsonConvert.SerializeObject(data)}");
             logger.PrintLogs();
 
-            UniTask.Void(async () =>
+            var autoPlay = GetComponent<AutoPlayComponent>();
+            if (!autoPlay)
             {
-                await UniTask.SwitchToThreadPool();
-                var solution = new PuzzleSolver(logger).SolvePuzzleWithStateChanges(data);
+                autoPlay = gameObject.AddComponent<AutoPlayComponent>();
+                autoPlay.levelView = _levelView;
+            }
 
-                await UniTask.SwitchToMainThread();
+            Task.Run(() =>
+            {
+                var solution = new PuzzleSolver(logger).SolvePuzzleWithStateChanges(data);
                 logger.PrintLogs();
-                AutoPlay.Play(_levelView, solution);    
+                AutoPlayComponent.Solution = solution;
             });
+
+            // UniTask.Void(async () =>
+            // {
+            //     await UniTask.SwitchToThreadPool();
+            //     var solution = new PuzzleSolver(logger).SolvePuzzleWithStateChanges(data);
+            //
+            //     await UniTask.SwitchToMainThread();
+            //     logger.PrintLogs();
+            //     AutoPlay.Play(_levelView, solution);
+            // });
+        }
+
+        [Button]
+        private void ManualSolve(string solveStepJson)
+        {
+            try
+            {
+                var levelData = JsonConvert.DeserializeObject<Move[]>(solveStepJson);
+                var solution = new List<ShelfPuzzleNode>();
+                foreach (var puzzleNode in levelData)
+                {
+                    solution.Add(new ShelfPuzzleNode(null, null, 0, null, 0, puzzleNode));
+                }
+
+                AutoPlay.Play(_levelView, solution);
+            }
+            catch (Exception e)
+            {
+                CleanLogger.Error(e);
+            }
         }
 
         // public void OnPickGoods(Goods goods, Vector2 position)

@@ -148,7 +148,6 @@ namespace Game
 
         protected override void OnPlaceGood()
         {
-            Debug.Log("OnPlaceGood - CommonShelve");
             CheckMerge();
             // DO NOTHING
         }
@@ -199,19 +198,22 @@ namespace Game
 
         private void LoadLayerData(int layerIndex, List<int> goodsData)
         {
-            Items = new ShelfItem[goodsData.Count];
+            var items = new ShelfItem[goodsData.Count];
             for (var i = 0; i < goodsData.Count; i++)
             {
                 var g = goodsData[i];
                 if (g > 0)
                 {
-                    Items[i] = CreateGoods(goodsData[i], i, layerIndex);
+                    items[i] = CreateGoods(goodsData[i], i, layerIndex);
                 }
                 else
                 {
-                    Items[i] = null;
+                    items[i] = null;
                 }
             }
+
+            VisibleItems ??= new List<ShelfItem>();
+            VisibleItems.AddRange(items);
         }
 
         private void TrySupplyGoods()
