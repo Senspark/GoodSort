@@ -14,8 +14,8 @@ namespace Engine.ShelfPuzzle
 
     public class ShelfPuzzleInputData
     {
-        [JsonProperty(PropertyName = "t")] public ShelfType Type { get; set; }
-        [JsonProperty(PropertyName = "d")] public int[][] Data { get; set; } = Array.Empty<int[]>();
+        public ShelfType Type { get; set; }
+        public int[][] Data { get; set; } = Array.Empty<int[]>();
     }
 
     public class ShelfPuzzleNode : IAStarNode

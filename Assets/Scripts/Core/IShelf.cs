@@ -1,3 +1,5 @@
+using Engine.ShelfPuzzle;
+
 namespace Core
 {
     public interface IShelf
@@ -14,5 +16,7 @@ namespace Core
          * ]
          */
         int[][] ExportData();
+        
+        void ImportData(int id, ShelfPuzzleInputData input);
     }
 }

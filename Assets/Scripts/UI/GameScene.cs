@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Core;
 using Cysharp.Threading.Tasks;
 using Defines;
 using Engine.ShelfPuzzle;
@@ -158,6 +159,12 @@ namespace UI
 
             Destroy(_levelView.gameObject);
             _levelView = null;
+        }
+
+        [Button]
+        private void ImportLevelJson(string json)
+        {
+            LevelImporter.Import(_levelView.Shelves.Select(e => (IShelf)e).ToList(), json);
         }
 
         [Button]

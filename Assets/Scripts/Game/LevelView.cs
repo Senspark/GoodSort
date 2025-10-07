@@ -31,8 +31,8 @@ namespace Game
 
             Shelves = levelObject.GetComponentsInChildren<ShelveBase>().ToList();
             Sort(Shelves);
-            var subset = DistributeGoods(goodsIDArray, level.LevelStrategy);
-            _input = PopulateSubsetToShelve(Shelves, subset);
+            // var subset = DistributeGoods(goodsIDArray, level.LevelStrategy);
+            //_input = PopulateSubsetToShelve(Shelves, subset);
         }
 
         public ShelfPuzzleInputData[] ExportData()
@@ -108,7 +108,7 @@ namespace Game
                 Data = flat.ToArray()
             };
 
-            SetShelveQueue(id, single, input);
+            single.ImportData(id, input);
         }
 
         private static void AddItemForCommonShelf(
@@ -145,14 +145,7 @@ namespace Game
                 Type = ShelfType.Common,
                 Data = array
             };
-            SetShelveQueue(id, common, input);
-        }
-
-        private static void SetShelveQueue(int shelfId, ShelveBase shelve, ShelfPuzzleInputData input)
-        {
-            shelve.Clear();
-            shelve.SetLayerQueue(shelfId, input);
-            shelve.LoadNextLayers();
+            common.ImportData(id, input);
         }
 
         private static List<List<int>> DistributeGoods(List<int> source, LevelStrategy levelStrategy)

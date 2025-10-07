@@ -35,17 +35,6 @@ public abstract class ShelveBase : MonoBehaviour, IShelf
         EventManager.RemoveListener(EventKey.PlaceGood, OnPlaceGood);
     }
 
-    public void SetLayerQueue(int shelfId, ShelfPuzzleInputData input)
-    {
-        Id = shelfId;
-        _input = input;
-        _layerQueue = new Queue<List<int>>();
-        foreach (var layer in input.Data)
-        {
-            _layerQueue.Enqueue(layer.ToList());
-        }
-    }
-
     public virtual void LoadNextLayers()
     {
     }
@@ -89,6 +78,19 @@ public abstract class ShelveBase : MonoBehaviour, IShelf
 
     public virtual void Clear()
     {
+    }
+    
+    public void ImportData(int shelfId, ShelfPuzzleInputData input)
+    {
+        Clear();
+        Id = shelfId;
+        _input = input;
+        _layerQueue = new Queue<List<int>>();
+        foreach (var layer in input.Data)
+        {
+            _layerQueue.Enqueue(layer.ToList());
+        }
+        LoadNextLayers();
     }
 
     public int[][] ExportData()
