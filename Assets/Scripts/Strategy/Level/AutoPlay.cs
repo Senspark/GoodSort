@@ -55,7 +55,7 @@ namespace Strategy.Level
                     yield break;
                 }
 
-                if (!drop.CanAcceptItem(item.Drag))
+                if (!drop.CanAcceptObject(item.Drag))
                 {
                     Debug.LogError($"To #{to.Id} không chấp nhận Drag #{item.Goods.Id}");
                     yield break;
@@ -100,7 +100,7 @@ namespace Strategy.Level
                 yield return null;
             }
 
-            drop.AcceptItem(drag);
+            drop.AddObject(drag);
         }
     }
 }

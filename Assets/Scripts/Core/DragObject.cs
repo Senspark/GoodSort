@@ -2,13 +2,15 @@ using UnityEngine;
 
 namespace Core
 {
-    public class DragObject : MonoBehaviour
+    public class DragObject : MonoBehaviour, IDragObject
     {
         [SerializeField] private SpriteRenderer spriteRenderer;
 
         [Header("Settings")] [SerializeField] private bool isDraggable = true;
         [SerializeField] private bool returnToOriginal = true;
         [SerializeField] private string objectType = "default";
+        
+        public int Id { get; private set; }
 
         // State
         private Vector3 _originalPosition;
@@ -18,7 +20,7 @@ namespace Core
         private DropZone _currentZone;
         private bool _isBeingDragged = false;
 
-        void Start()
+        private void Start()
         {
             // Store original values
             _originalPosition = transform.position;
@@ -27,10 +29,17 @@ namespace Core
             _originalSortingOrder = spriteRenderer.sortingOrder;
         }
 
+        public void Init(int id)
+        {
+            Id = id;
+        }
+
         // Called by manager
         public bool ContainsPosition(Vector2 position)
         {
-            return spriteRenderer.bounds.Contains(position);
+            var bounds = spriteRenderer.bounds;
+            var testPos = new Vector3(position.x, position.y, bounds.center.z);
+            return bounds.Contains(testPos);
         }
 
         public bool CanBeDragged()
@@ -75,7 +84,6 @@ namespace Core
         public void ReturnToOriginalPosition()
         {
             transform.position = _originalPosition;
-            _currentZone = null;
         }
 
         // Getters/Setters

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Core;
 using UnityEngine;
 using Utilities;
 
@@ -49,7 +50,7 @@ namespace Game
             //     goodsDrop.CurrentZone = slot[slotId];
             // }
             
-            var item = new ShelfItem(goods, goodsDrop);
+            var item = new ShelfItem(goods, null);
             return item;
         }
         
@@ -120,7 +121,7 @@ namespace Game
 
         public DropZone FindAnyEmptyZone()
         {
-            return slot.FirstOrDefault(e => !e.isOccupied);
+            return null;
         }
 
         private void LoadLayerData(int layerIndex, List<int> goodsData)

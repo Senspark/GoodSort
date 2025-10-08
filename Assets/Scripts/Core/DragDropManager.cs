@@ -22,14 +22,14 @@ namespace Core
 
         // Registered objects
         private List<DragObject> _dragObjects;
-        private List<DropZone> _dropZones;
+        private List<DropZoneData> _dropZones;
 
         // Current drag state
         private DragObject _currentDraggingObject;
         private Vector3 _dragOffset;
         private Camera _mainCamera;
 
-        void Awake()
+        private void Awake()
         {
             _mainCamera = Camera.main;
             if (!_mainCamera)
@@ -38,27 +38,73 @@ namespace Core
             }
             
             _dragObjects = new List<DragObject>();
-            _dropZones = new List<DropZone>();
-            
-            var drags = container.GetComponentsInChildren<DragObject>();
-            foreach (var c in drags)
-            {
-                RegisterDragObject(c);
-            }
-            
-            var drops = container.GetComponentsInChildren<DropZone>();
-            foreach (var c in drops)
-            {
-                RegisterDropZone(c);
-            }
+            _dropZones = new List<DropZoneData>();
         }
 
-        void Update()
+        private void Update()
         {
             HandleMouseInput();
             UpdateDragging();
-            UpdateDropZoneHighlights();
         }
+        
+        #region PUBLIC_METHODS
+
+        // Public registration methods
+        public void RegisterDragObject(DragObject dragObject)
+        {
+            if (!_dragObjects.Contains(dragObject))
+            {
+                _dragObjects.Add(dragObject);
+            }
+        }
+
+        public void UnregisterDragObject(DragObject dragObject)
+        {
+            _dragObjects.Remove(dragObject);
+        }
+
+        public void RegisterDropZone(DropZoneData dropZone)
+        {
+            UnregisterDropZone(dropZone.Zone);
+            _dropZones.Add(dropZone);
+        }
+
+        public void UnregisterDropZone(DropZone dropZone)
+        {
+            var index = _dropZones.FindIndex(e => e.Zone == dropZone);
+            if (index >= 0)
+            {
+                _dropZones.RemoveAt(index);
+            }
+        }
+
+        // Public utility methods
+        public bool IsDragging()
+        {
+            return _currentDraggingObject != null;
+        }
+
+        public DragObject GetCurrentDraggingObject()
+        {
+            return _currentDraggingObject;
+        }
+
+        public void ResetAllObjects()
+        {
+            foreach (var obj in _dragObjects)
+            {
+                obj.ReturnToOriginalPosition();
+            }
+
+            foreach (var zone in _dropZones)
+            {
+                zone.Zone.ClearAllObjects();
+            }
+        }
+
+        #endregion
+
+        #region PRIVATE_METHODS
 
         private void HandleMouseInput()
         {
@@ -119,7 +165,8 @@ namespace Core
 
             // Find drop zone at current position
             var dropPosition = _currentDraggingObject.transform.position;
-            var targetZone = GetDropZoneAtPosition(dropPosition);
+            var targetZoneData = GetDropZoneAtPosition(dropPosition);
+            var targetZone = targetZoneData.Zone;
 
             var successfulDrop = false;
 
@@ -141,6 +188,9 @@ namespace Core
                     _currentDraggingObject.UpdatePosition(targetZone.GetSnapPosition(0));
                 }
 
+                targetZoneData.OnDropped(_currentDraggingObject.Id);
+                
+
                 successfulDrop = true;
             }
 
@@ -155,30 +205,6 @@ namespace Core
             _currentDraggingObject = null;
         }
 
-        private void UpdateDropZoneHighlights()
-        {
-            if (!_currentDraggingObject)
-            {
-                // Reset all highlights when not dragging
-                foreach (var zone in _dropZones)
-                {
-                    zone.SetHighlight(false, false);
-                }
-
-                return;
-            }
-
-            // Update highlights based on current drag position
-            var dragPos = _currentDraggingObject.transform.position;
-
-            foreach (var zone in _dropZones)
-            {
-                var isOver = zone.ContainsPosition(dragPos);
-                var canAccept = zone.CanAcceptObject(_currentDraggingObject);
-                zone.SetHighlight(isOver, canAccept);
-            }
-        }
-
         // Helper methods
         private Vector3 GetMouseWorldPosition()
         {
@@ -191,7 +217,7 @@ namespace Core
         {
             foreach (var dragObj in _dragObjects)
             {
-                if (dragObj.ContainsPosition(position))
+                if (dragObj.isActiveAndEnabled && dragObj.ContainsPosition(position))
                 {
                     return dragObj;
                 }
@@ -200,12 +226,12 @@ namespace Core
             return null;
         }
 
-        private DropZone GetDropZoneAtPosition(Vector2 position)
+        private DropZoneData GetDropZoneAtPosition(Vector2 position)
         {
             // Check zones in reverse order (top to bottom)
             for (var i = _dropZones.Count - 1; i >= 0; i--)
             {
-                if (_dropZones[i].ContainsPosition(position))
+                if (_dropZones[i].Zone.ContainsPosition(position))
                 {
                     return _dropZones[i];
                 }
@@ -214,57 +240,12 @@ namespace Core
             return null;
         }
 
-        // Public registration methods
-        public void RegisterDragObject(DragObject dragObject)
-        {
-            if (!_dragObjects.Contains(dragObject))
-            {
-                _dragObjects.Add(dragObject);
-            }
-        }
+        #endregion
+    }
 
-        public void UnregisterDragObject(DragObject dragObject)
-        {
-            _dragObjects.Remove(dragObject);
-        }
-
-        public void RegisterDropZone(DropZone dropZone)
-        {
-            if (!_dropZones.Contains(dropZone))
-            {
-                _dropZones.Add(dropZone);
-                // Sort by sorting order for proper overlap detection
-                _dropZones.Sort((a, b) => a.GetSortingOrder().CompareTo(b.GetSortingOrder()));
-            }
-        }
-
-        public void UnregisterDropZone(DropZone dropZone)
-        {
-            _dropZones.Remove(dropZone);
-        }
-
-        // Public utility methods
-        public bool IsDragging()
-        {
-            return _currentDraggingObject != null;
-        }
-
-        public DragObject GetCurrentDraggingObject()
-        {
-            return _currentDraggingObject;
-        }
-
-        public void ResetAllObjects()
-        {
-            foreach (var obj in _dragObjects)
-            {
-                obj.ReturnToOriginalPosition();
-            }
-
-            foreach (var zone in _dropZones)
-            {
-                zone.ClearAllObjects();
-            }
-        }
+    public class DropZoneData
+    {
+        public DropZone Zone;
+        public Action<int> OnDropped;
     }
 }
