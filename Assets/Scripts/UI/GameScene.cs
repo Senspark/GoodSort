@@ -26,6 +26,7 @@ namespace UI
         private ILevelLoaderManager _levelLoaderManager;
         private ILevelStoreManager _levelStoreManager;
         private IConfigManager _configManager;
+        private DragDropGameManager _dragDropGameManager;
 
         public GameObject holdingGoods;
         private Goods _pickedGoods;
@@ -144,16 +145,28 @@ namespace UI
             leveView.Load(builder);
             leveView.transform.SetParent(transform, false);
             _levelView = leveView;
-            var dragDropManager = _levelView.GetComponent<DragDropGameManager>();
+            _dragDropGameManager = _levelView.GetComponent<DragDropGameManager>();
+            RegisterDragObject();
+            RegisterDropZone();
+        }
+
+        private void RegisterDragObject()
+        {
+            if (!_dragDropGameManager) return;
             foreach (var c in _levelView.GetComponentsInChildren<DragObject>())
             {
-                dragDropManager.RegisterDragObject(c);
+                _dragDropGameManager.RegisterDragObject(c);
             }
-            
+        }
+
+        private void RegisterDropZone()
+        {
+            if (!_dragDropGameManager) return;
             foreach (var c in _levelView.GetComponentsInChildren<DropZone>())
             {
-                dragDropManager.RegisterDropZone(c);
+                _dragDropGameManager.RegisterDropZone(c);
             }
+            
         }
 
         private void CleanUp()

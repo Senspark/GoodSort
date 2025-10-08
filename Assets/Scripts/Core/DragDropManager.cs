@@ -40,19 +40,17 @@ namespace Core
             _dragObjects = new List<DragObject>();
             _dropZones = new List<DropZone>();
             
-            var drags = container.GetComponentsInChildren<DragObject>();
-            Debug.Log("Drag Object Count: " + drags.Length);
-            foreach (var c in drags)
-            {
-                RegisterDragObject(c);
-            }
-            
-            var drops = container.GetComponentsInChildren<DropZone>();
-            Debug.Log("Drop Zone Count: " + drops.Length);
-            foreach (var c in drops)
-            {
-                RegisterDropZone(c);
-            }
+            // var drags = container.GetComponentsInChildren<DragObject>();
+            // foreach (var c in drags)
+            // {
+            //     RegisterDragObject(c);
+            // }
+            //
+            // var drops = container.GetComponentsInChildren<DropZone>();
+            // foreach (var c in drops)
+            // {
+            //     RegisterDropZone(c);
+            // }
         }
 
         void Update()
@@ -80,10 +78,12 @@ namespace Core
         private void TryStartDrag()
         {
             var mouseWorldPos = GetMouseWorldPosition();
-            var objectUnderMouse = GetDragObjectAtPosition(mouseWorldPos);
+            Debug.Log(mouseWorldPos);
+            var objectUnderMouse = GetDragObjectsAtPosition(mouseWorldPos);
 
-            if (objectUnderMouse && objectUnderMouse.CanBeDragged())
+            if (objectUnderMouse)
             {
+                Debug.Log("Start drag");
                 StartDrag(objectUnderMouse);
             }
         }
@@ -195,11 +195,21 @@ namespace Core
             {
                 if (dragObj.ContainsPosition(position))
                 {
-                    Debug.Log("Tim thay");
                     return dragObj;
                 }
             }
-            Debug.Log("Tim khong thay");
+            return null;
+        }
+        
+        private DragObject GetDragObjectsAtPosition(Vector2 position)
+        {
+            foreach (var dragObj in _dragObjects)
+            {
+                if (dragObj.ContainsPosition(position) && dragObj.CanBeDragged())
+                {
+                    return dragObj;
+                }
+            }
             return null;
         }
 
