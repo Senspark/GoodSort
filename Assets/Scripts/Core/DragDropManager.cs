@@ -41,12 +41,14 @@ namespace Core
             _dropZones = new List<DropZone>();
             
             var drags = container.GetComponentsInChildren<DragObject>();
+            Debug.Log("Drag Object Count: " + drags.Length);
             foreach (var c in drags)
             {
                 RegisterDragObject(c);
             }
             
             var drops = container.GetComponentsInChildren<DropZone>();
+            Debug.Log("Drop Zone Count: " + drops.Length);
             foreach (var c in drops)
             {
                 RegisterDropZone(c);
@@ -193,10 +195,11 @@ namespace Core
             {
                 if (dragObj.ContainsPosition(position))
                 {
+                    Debug.Log("Tim thay");
                     return dragObj;
                 }
             }
-
+            Debug.Log("Tim khong thay");
             return null;
         }
 

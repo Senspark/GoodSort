@@ -42,12 +42,6 @@ namespace Game
         private void PopulateSubsetToShelve(List<List<int>> subset)
         {
            
-            for(int i = 0; i < _shelves.Count; i++)
-            {
-                //Log subset 
-                Debug.Log($"Subset {i}: [{string.Join(",", subset[i])}]");
-            }
-            
             
             var shelvesCount = _shelves.Count;
 
@@ -99,8 +93,6 @@ namespace Game
         {
             var totalLayer = levelStrategy.GetTotalLayer();
             var density = levelStrategy.Density;
-            
-            Debug.Log($"Total layer: {totalLayer}, Density: {density}");
             
             if (totalLayer < levelStrategy.Group || totalLayer > 3 * levelStrategy.Group) {
                 throw new ArgumentException("Invalid input");
@@ -184,12 +176,6 @@ namespace Game
                     throw new Exception($"Không thể đặt {x} vào tập con nào");
             }
             
-            // Log ra thử coi có đúng ko  
-            foreach (var (subset, idx) in subsets.Select((s, i) => (s, i)))
-            {
-                Debug.Log($"Subset {idx}: [{string.Join(",", subset)}]");
-            }
-            // Shuffle subsets
             ArrayUtils.Shuffle(subsets);
 
             return subsets;

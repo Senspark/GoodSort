@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using Core;
 using Cysharp.Threading.Tasks;
 using Defines;
 using Game;
@@ -143,6 +144,16 @@ namespace UI
             leveView.Load(builder);
             leveView.transform.SetParent(transform, false);
             _levelView = leveView;
+            var dragDropManager = _levelView.GetComponent<DragDropGameManager>();
+            foreach (var c in _levelView.GetComponentsInChildren<DragObject>())
+            {
+                dragDropManager.RegisterDragObject(c);
+            }
+            
+            foreach (var c in _levelView.GetComponentsInChildren<DropZone>())
+            {
+                dragDropManager.RegisterDropZone(c);
+            }
         }
 
         private void CleanUp()

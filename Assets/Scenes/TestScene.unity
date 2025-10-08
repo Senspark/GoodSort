@@ -407,7 +407,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spriteRenderer: {fileID: 902741571}
   isActive: 1
-  maxObjects: 1
+  maxObjects: 2
   acceptedTypes: []
   snapToCenter: 1
   normalColor: {r: 1, g: 1, b: 1, a: 0.3}
