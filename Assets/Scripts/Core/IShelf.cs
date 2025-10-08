@@ -1,6 +1,5 @@
 using Engine.ShelfPuzzle;
 using Game;
-using UnityEngine;
 
 namespace Core
 {
@@ -28,14 +27,5 @@ namespace Core
         int Id { get; }
         ISpacingData SpacingData { get; }
         IDropZone[]  DropZones { get; }
-    }
-
-    public interface IShelfItem
-    {
-        ShelfItemMeta Meta { get; }
-
-        void SetPosition(Vector3 position);
-        void SetShelf(ShelfItemMeta meta, ISpacingData spacingData);
-        void ResetPosition();
     }
 }

@@ -1,3 +1,5 @@
+using System.Collections;
+using System.Linq;
 using Core;
 using Engine.ShelfPuzzle;
 using Game;
@@ -13,7 +15,7 @@ namespace UI
         public DragDropGameManager dragDropGameManager;
         public GameObject container;
         public ShelfItemBasic shelfItemPrefab;
-        
+
         private LevelDataManager _levelDataManager;
 
         [Button]
@@ -60,13 +62,13 @@ namespace UI
                 dragDropGameManager.RegisterDragObject(drag);
             }
         }
-        
+
         private void OnDropped(int itemId, int shelfId, int slotId)
         {
             CleanLogger.Log($"Dropped {itemId} at shelf {shelfId} slot {slotId}");
             var layerId = _levelDataManager.GetTopLayerOfShelf(shelfId);
             var slotData = _levelDataManager.GetItem(shelfId, layerId, slotId);
-            
+
             if (slotData == null)
             {
                 var item = (ShelfItemBasic)_levelDataManager.FindItem(itemId);
@@ -74,9 +76,10 @@ namespace UI
                 item.transform.parent = shelf.transform;
 
                 _levelDataManager.SetItem(item.Meta.ShelfId, item.Meta.LayerId, item.Meta.SlotId, null);
-                item.SetShelf(item.Meta.Change(shelfId, layerId, slotId), shelf.SpacingData);
-                item.ResetPosition();
+                item.SetShelf(item.Meta.Change(shelfId, layerId, slotId), shelf.SpacingData, ShelfLayerDisplay.Top);
+                item.ResetVisual();
                 _levelDataManager.SetItem(shelfId, layerId, slotId, item);
+                TryMergeLayer(shelfId, layerId);
             }
             else
             {
@@ -86,6 +89,47 @@ namespace UI
                 }
             }
         }
+
+        private void TryMergeLayer(int shelfId, int layerId)
+        {
+            var items = _levelDataManager.GetLayer(shelfId, layerId);
+            var first = items?[0];
+            if (first == null) return;
+            var allTheSame = items.All(e => e != null && e.Meta.TypeId == first.Meta.TypeId);
+            if (!allTheSame) return;
+
+            // Remove top layer
+            foreach (var item in items)
+            {
+                _levelDataManager.SetItem(shelfId, layerId, item.Meta.SlotId, null);
+                dragDropGameManager.UnregisterDragObject(item.DragObject);
+                item.DestroyItem();
+            }
+
+            StartCoroutine(ShowNextLayer(shelfId, layerId));
+        }
+        
+        private IEnumerator ShowNextLayer(int shelfId, int layerId)
+        {
+            yield return new WaitForSeconds(1.0f);
+            
+            // đưa layer dưới lên top
+            var nextTopLayer = _levelDataManager.GetLayer(shelfId, layerId + 1);
+            if (nextTopLayer == null) yield break;
+            foreach (var item in nextTopLayer)
+            {
+                item?.SetDisplay(ShelfLayerDisplay.Top);
+                item?.ResetVisual();
+            }
+
+            // đưa layer dưới lên seconds
+            var nextSecondLayer = _levelDataManager.GetLayer(shelfId, layerId + 2);
+            if (nextSecondLayer == null) yield break;
+            foreach (var item in nextTopLayer)
+            {
+                item?.SetDisplay(ShelfLayerDisplay.Second);
+                item?.ResetVisual();
+            }
+        }
     }
-    
 }

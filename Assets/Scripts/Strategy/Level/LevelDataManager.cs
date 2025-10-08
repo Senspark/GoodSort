@@ -75,9 +75,35 @@ namespace Strategy.Level
 
         public int GetTopLayerOfShelf(int shelfId)
         {
-            if(shelfId < 0 || shelfId >= _shelves.Length) return -1;
+            if (shelfId < 0 || shelfId >= _shelves.Length) return -1;
             var shelf = _shelves[shelfId];
             return FindNotEmptyLayer(shelf);
+        }
+
+        public IShelfItem[] GetTopLayer(int shelfId)
+        {
+            if (shelfId < 0 || shelfId >= _shelves.Length) return null;
+            var shelf = _shelves[shelfId];
+            foreach (var layer in shelf)
+            {
+                foreach (var slot in layer)
+                {
+                    if (slot != null)
+                    {
+                        return layer;
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        public IShelfItem[] GetLayer(int shelfId, int layerId)
+        {
+            if (shelfId < 0 || shelfId >= _shelves.Length) return null;
+            var shelf = _shelves[shelfId];
+            if (layerId < 0 || layerId >= shelf.Length) return null;
+            return shelf[layerId];
         }
 
         public void SetItem(int shelfId, int layerId, int slotId, IShelfItem item)
@@ -111,14 +137,6 @@ namespace Strategy.Level
         private static IShelfItem FindItemTypeInLayer(IShelfItem[] layer, int itemTypeId)
         {
             return layer.FirstOrDefault(slot => slot != null && slot.Meta.TypeId == itemTypeId);
-        }
-    }
-
-    public class LevelController
-    {
-        public void DropItem(int itemId, int shelfId, int slotId)
-        {
-            
         }
     }
 }

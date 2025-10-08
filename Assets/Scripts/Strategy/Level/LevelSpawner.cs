@@ -110,10 +110,20 @@ namespace Strategy.Level
             }
 
             var obj = Object.Instantiate(_prefab, parent);
-            obj.Init(meta, spacingData, spr);
-            obj.ResetPosition();
+            obj.Init(meta, spacingData, FromLayerId(meta.LayerId), spr);
+            obj.ResetVisual();
 
             return obj;
+        }
+
+        private static ShelfLayerDisplay FromLayerId(int layerId)
+        {
+            return layerId switch
+            {
+                0 => ShelfLayerDisplay.Top,
+                1 => ShelfLayerDisplay.Second,
+                _ => ShelfLayerDisplay.Hidden
+            };
         }
     }
 

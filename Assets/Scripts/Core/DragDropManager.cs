@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -61,6 +62,10 @@ namespace Core
         public void UnregisterDragObject(IDragObject dragObject)
         {
             _dragObjects.Remove(dragObject);
+            foreach (var zone in _dropZones)
+            {
+                zone.Zone.RemoveObject(dragObject);
+            }
         }
 
         public void RegisterDropZone(DropZoneData dropZone)
@@ -185,8 +190,7 @@ namespace Core
                     _currentDraggingObject.UpdatePosition(targetZone.GetSnapPosition(0));
                 }
 
-                targetZoneData.OnDropped(_currentDraggingObject.Id);
-                
+                StartCoroutine(ScheduleCallback(targetZoneData, _currentDraggingObject.Id));
 
                 successfulDrop = true;
             }
@@ -235,6 +239,12 @@ namespace Core
             }
 
             return null;
+        }
+
+        private static IEnumerator ScheduleCallback(DropZoneData dropZone, int dragId)
+        {
+            yield return null; // next frame
+            dropZone.OnDropped(dragId);
         }
 
         #endregion
