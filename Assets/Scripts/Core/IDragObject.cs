@@ -1,0 +1,28 @@
+using UnityEngine;
+
+namespace Core
+{
+    public interface IDragObject
+    {
+        /**
+         * Unique Id của Item trong Game Scene
+         */
+        int Id { get; }
+        
+        bool IsActive { get; }
+        Vector3 Position { get; }
+
+        Vector3 GetOriginalPosition();
+        void UpdatePosition(Vector3 newPosition);
+        IDropZone GetCurrentZone();
+        void SetCurrentZone(IDropZone newZone);
+        bool ShouldReturnToOriginal();
+        void ReturnToOriginalPosition();
+        void ResetVisuals();
+        void OnEndDrag();
+        bool ContainsPosition(Vector2 position);
+        bool CanBeDragged();
+        void OnStartDrag();
+        void ApplyDragVisuals(Color dragColor, Vector3 dragScale);
+    }
+}

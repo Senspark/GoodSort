@@ -21,11 +21,11 @@ namespace Core
         [SerializeField] private Vector3 dragScale = new(1.1f, 1.1f, 1f);
 
         // Registered objects
-        private List<DragObject> _dragObjects;
+        private List<IDragObject> _dragObjects;
         private List<DropZoneData> _dropZones;
 
         // Current drag state
-        private DragObject _currentDraggingObject;
+        private IDragObject _currentDraggingObject;
         private Vector3 _dragOffset;
         private Camera _mainCamera;
 
@@ -37,7 +37,7 @@ namespace Core
                 Debug.LogError("Main Camera not found!");
             }
             
-            _dragObjects = new List<DragObject>();
+            _dragObjects = new List<IDragObject>();
             _dropZones = new List<DropZoneData>();
         }
 
@@ -50,7 +50,7 @@ namespace Core
         #region PUBLIC_METHODS
 
         // Public registration methods
-        public void RegisterDragObject(DragObject dragObject)
+        public void RegisterDragObject(IDragObject dragObject)
         {
             if (!_dragObjects.Contains(dragObject))
             {
@@ -58,7 +58,7 @@ namespace Core
             }
         }
 
-        public void UnregisterDragObject(DragObject dragObject)
+        public void UnregisterDragObject(IDragObject dragObject)
         {
             _dragObjects.Remove(dragObject);
         }
@@ -69,7 +69,7 @@ namespace Core
             _dropZones.Add(dropZone);
         }
 
-        public void UnregisterDropZone(DropZone dropZone)
+        public void UnregisterDropZone(IDropZone dropZone)
         {
             var index = _dropZones.FindIndex(e => e.Zone == dropZone);
             if (index >= 0)
@@ -84,7 +84,7 @@ namespace Core
             return _currentDraggingObject != null;
         }
 
-        public DragObject GetCurrentDraggingObject()
+        public IDragObject GetCurrentDraggingObject()
         {
             return _currentDraggingObject;
         }
@@ -109,13 +109,13 @@ namespace Core
         private void HandleMouseInput()
         {
             // Mouse down - start drag
-            if (Input.GetMouseButtonDown(0) && !_currentDraggingObject)
+            if (Input.GetMouseButtonDown(0) && _currentDraggingObject == null)
             {
                 TryStartDrag();
             }
 
             // Mouse up - end drag
-            if (Input.GetMouseButtonUp(0) && _currentDraggingObject)
+            if (Input.GetMouseButtonUp(0) && _currentDraggingObject != null)
             {
                 EndDrag();
             }
@@ -126,19 +126,19 @@ namespace Core
             var mouseWorldPos = GetMouseWorldPosition();
             var objectUnderMouse = GetDragObjectAtPosition(mouseWorldPos);
 
-            if (objectUnderMouse && objectUnderMouse.CanBeDragged())
+            if (objectUnderMouse != null && objectUnderMouse.CanBeDragged())
             {
                 StartDrag(objectUnderMouse);
             }
         }
 
-        private void StartDrag(DragObject dragObject)
+        private void StartDrag(IDragObject dragObject)
         {
             _currentDraggingObject = dragObject;
 
             // Calculate offset
             var mousePos = GetMouseWorldPosition();
-            _dragOffset = dragObject.transform.position - mousePos;
+            _dragOffset = dragObject.Position - mousePos;
 
             dragObject.OnStartDrag();
 
@@ -150,7 +150,7 @@ namespace Core
 
         private void UpdateDragging()
         {
-            if (!_currentDraggingObject) return;
+            if (_currentDraggingObject == null) return;
 
             var mousePos = GetMouseWorldPosition();
             var newPosition = mousePos + _dragOffset;
@@ -161,22 +161,19 @@ namespace Core
 
         private void EndDrag()
         {
-            if (!_currentDraggingObject) return;
+            if (_currentDraggingObject == null) return;
 
             // Find drop zone at current position
-            var dropPosition = _currentDraggingObject.transform.position;
+            var dropPosition = _currentDraggingObject.Position;
             var targetZoneData = GetDropZoneAtPosition(dropPosition);
             var targetZone = targetZoneData.Zone;
 
             var successfulDrop = false;
 
-            if (targetZone && targetZone.CanAcceptObject(_currentDraggingObject))
+            if (targetZone != null && targetZone.CanAcceptObject(_currentDraggingObject))
             {
                 var previousZone = _currentDraggingObject.GetCurrentZone();
-                if (previousZone)
-                {
-                    previousZone.RemoveObject(_currentDraggingObject);
-                }
+                previousZone?.RemoveObject(_currentDraggingObject);
 
                 // Add to new zone
                 targetZone.AddObject(_currentDraggingObject);
@@ -213,11 +210,11 @@ namespace Core
             return mousePos;
         }
 
-        private DragObject GetDragObjectAtPosition(Vector2 position)
+        private IDragObject GetDragObjectAtPosition(Vector2 position)
         {
             foreach (var dragObj in _dragObjects)
             {
-                if (dragObj.isActiveAndEnabled && dragObj.ContainsPosition(position))
+                if (dragObj.IsActive && dragObj.ContainsPosition(position))
                 {
                     return dragObj;
                 }
@@ -245,7 +242,7 @@ namespace Core
 
     public class DropZoneData
     {
-        public DropZone Zone;
+        public IDropZone Zone;
         public Action<int> OnDropped;
     }
 }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Core;
 using Engine.ShelfPuzzle;
 using Game;
@@ -25,7 +26,6 @@ namespace Strategy.Level
 
         private const int MaxItemForShelfCommon = 3;
         private const int NullItemTypeId = 0;
-        private const float MaxZ = -1.0f;
 
         public LevelData SpawnLevel(ShelfPuzzleInputData[] input)
         {
@@ -37,7 +37,7 @@ namespace Strategy.Level
             }
 
             var shelvesItems = new IShelfItem[input.Length][][];
-            var drags = new List<DragObject>();
+            var drags = new List<IDragObject>();
             var itemId = 0;
             Func<int> getItemId = () => itemId++;
 
@@ -54,7 +54,7 @@ namespace Strategy.Level
             return new LevelData
             {
                 ShelveItems = shelvesItems,
-                Shelves = shelves,
+                Shelves = shelves.Select(e => (IShelf2)e).ToArray(),
                 Drags = drags,
             };
         }
@@ -120,7 +120,7 @@ namespace Strategy.Level
     public class LevelData
     {
         public IShelfItem[][][] ShelveItems;
-        public CommonShelfNormal[] Shelves;
-        public List<DragObject> Drags;
+        public IShelf2[] Shelves;
+        public List<IDragObject> Drags;
     }
 }

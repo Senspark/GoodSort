@@ -1,10 +1,9 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace Core
 {
-    public class DropZone : MonoBehaviour
+    public class DropZone : MonoBehaviour, IDropZone
     {
         [SerializeField] private SpriteRenderer spriteRenderer;
 
@@ -13,17 +12,16 @@ namespace Core
         private bool isActive = true;
 
         [SerializeField] private int maxObjects = 1;
-        [SerializeField] private string[] acceptedTypes;
         [SerializeField] private bool snapToCenter = true;
 
-        [Header("Custom Bounds (used when SpriteRenderer is null)")]
-        [SerializeField] private Vector2 customSize = new Vector2(1f, 1f);
+        [Header("Custom Bounds (used when SpriteRenderer is null)")] [SerializeField]
+        private Vector2 customSize = new Vector2(1f, 1f);
 
-        private List<DragObject> _containedObjects;
+        private List<IDragObject> _containedObjects;
 
         private void Start()
         {
-            _containedObjects = new List<DragObject>();
+            _containedObjects = new List<IDragObject>();
         }
 
         // Called by manager
@@ -35,33 +33,13 @@ namespace Core
             return bounds.Contains(position);
         }
 
-        public bool CanAcceptObject(DragObject dragObject)
+        public bool CanAcceptObject(IDragObject dragObject)
         {
             if (!isActive) return false;
-            if (_containedObjects.Count >= maxObjects) return false;
-
-            // Check type restrictions
-            if (acceptedTypes != null && acceptedTypes.Length > 0)
-            {
-                var objType = dragObject.GetObjectType();
-                var typeAccepted = false;
-
-                foreach (var acceptedType in acceptedTypes)
-                {
-                    if (objType == acceptedType)
-                    {
-                        typeAccepted = true;
-                        break;
-                    }
-                }
-
-                if (!typeAccepted) return false;
-            }
-
-            return true;
+            return _containedObjects.Count < maxObjects;
         }
 
-        public void AddObject(DragObject dragObject)
+        public void AddObject(IDragObject dragObject)
         {
             if (!_containedObjects.Contains(dragObject))
             {
@@ -69,7 +47,7 @@ namespace Core
             }
         }
 
-        public void RemoveObject(DragObject dragObject)
+        public void RemoveObject(IDragObject dragObject)
         {
             _containedObjects.Remove(dragObject);
         }
@@ -87,10 +65,6 @@ namespace Core
         }
 
         public bool ShouldSnapToCenter() => snapToCenter;
-        public int GetSortingOrder() => spriteRenderer ? spriteRenderer.sortingOrder : 0;
-        public List<DragObject> GetContainedObjects() => new(_containedObjects);
-        public int GetObjectCount() => _containedObjects.Count;
-        public bool IsActive() => isActive;
         public void SetActive(bool active) => isActive = active;
 
         // Helper method to get bounds

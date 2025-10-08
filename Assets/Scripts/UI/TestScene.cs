@@ -44,12 +44,12 @@ namespace UI
             _levelDataManager = new LevelDataManager(levelData);
             foreach (var shelve in levelData.Shelves)
             {
-                for (var slotId = 0; slotId < shelve.dropZone.Length; slotId++)
+                for (var slotId = 0; slotId < shelve.DropZones.Length; slotId++)
                 {
                     var sId = slotId;
                     dragDropGameManager.RegisterDropZone(new DropZoneData
                     {
-                        Zone = shelve.dropZone[slotId],
+                        Zone = shelve.DropZones[slotId],
                         OnDropped = itemId => OnDropped(itemId, shelve.Id, sId)
                     });
                 }

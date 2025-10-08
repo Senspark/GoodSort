@@ -6,18 +6,22 @@ namespace Core
     {
         [SerializeField] private SpriteRenderer spriteRenderer;
 
-        [Header("Settings")] [SerializeField] private bool isDraggable = true;
+        [Header("Settings")] // 
+        [SerializeField]
+        private bool isDraggable = true;
+
         [SerializeField] private bool returnToOriginal = true;
-        [SerializeField] private string objectType = "default";
-        
+
         public int Id { get; private set; }
+        public bool IsActive => isActiveAndEnabled;
+        public Vector3 Position => transform.position;
 
         // State
         private Vector3 _originalPosition;
         private Color _originalColor;
         private Vector3 _originalScale;
         private int _originalSortingOrder;
-        private DropZone _currentZone;
+        private IDropZone _currentZone;
         private bool _isBeingDragged = false;
 
         private void Start()
@@ -88,10 +92,9 @@ namespace Core
 
         // Getters/Setters
         public Vector3 GetOriginalPosition() => _originalPosition;
-        public DropZone GetCurrentZone() => _currentZone;
-        public void SetCurrentZone(DropZone zone) => _currentZone = zone;
+        public IDropZone GetCurrentZone() => _currentZone;
+        public void SetCurrentZone(IDropZone zone) => _currentZone = zone;
         public bool ShouldReturnToOriginal() => returnToOriginal;
-        public string GetObjectType() => objectType;
         public void SetDraggable(bool draggable) => isDraggable = draggable;
     }
 }

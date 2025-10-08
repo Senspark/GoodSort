@@ -1,4 +1,4 @@
-using System;
+using System.Linq;
 using Core;
 using manager;
 using Sirenix.OdinInspector;
@@ -14,6 +14,7 @@ namespace Game
 
         public int Id { get; private set; }
         public ISpacingData SpacingData => spacingData;
+        public IDropZone[] DropZones { get; private set; }
 
         private void Awake()
         {
@@ -22,6 +23,8 @@ namespace Game
                 CleanLogger.Error("Phải có đúng 3 Drop zone");
                 return;
             }
+
+            DropZones = dropZone.Select(e => (IDropZone)e).ToArray();
         }
 
         public void Init(int shelfId)
