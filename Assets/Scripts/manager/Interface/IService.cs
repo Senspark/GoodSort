@@ -1,9 +1,9 @@
-using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 
 namespace manager.Interface
 {
     public interface IService
     {
-        Task<bool> Initialize();
+        UniTask<bool> Initialize();
     }
 }

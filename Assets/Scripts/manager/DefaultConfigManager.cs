@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using manager.Interface;
 
 namespace manager
@@ -8,9 +8,9 @@ namespace manager
     {
         private readonly Dictionary<string, object> _data = new();
 
-        public Task<bool> Initialize()
+        public UniTask<bool> Initialize()
         {
-            return Task.FromResult(true);
+            return UniTask.FromResult(true);
         }
 
         public void SetDefaultValue<T>(string key, T value)

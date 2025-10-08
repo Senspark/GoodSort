@@ -14,7 +14,7 @@ namespace Core
         [SerializeField] private int maxObjects = 1;
         [SerializeField] private string[] acceptedTypes;
         [SerializeField] private bool snapToCenter = true;
-        [SerializeField] private Vector3 snapOffset = Vector3.zero;
+        // [SerializeField] private Vector3 snapOffset = Vector3.zero;
 
         [Header("Visual Settings")] [SerializeField]
         private Color normalColor = new(1, 1, 1, 0.3f);
@@ -102,9 +102,10 @@ namespace Core
         }
 
         // Getters
-        public Vector3 GetSnapPosition()
+        public Vector3 GetSnapPosition(int slot)
         {
-            return transform.position + snapOffset;
+            var offset = new Vector3(slot, 0, 0);
+            return transform.position + offset;
         }
 
         public bool ShouldSnapToCenter() => snapToCenter;
@@ -151,7 +152,7 @@ namespace Core
             if (snapToCenter)
             {
                 Gizmos.color = Color.yellow;
-                Gizmos.DrawWireSphere(GetSnapPosition(), 0.1f);
+                Gizmos.DrawWireSphere(GetSnapPosition(0), 0.1f);
             }
         }
     }

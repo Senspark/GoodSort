@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Core;
 using Engine.ShelfPuzzle;
 using Game;
 using manager;
@@ -22,7 +23,7 @@ namespace Strategy.Level
             {
                 if (i == 0)
                 {
-                    // ignore first move 
+                    // ignore first move
                     continue;
                 }
 
@@ -68,7 +69,7 @@ namespace Strategy.Level
         private static void PrintState(int step, ShelfPuzzleNode node, AppendLogger logger)
         {
             logger.Log($"Step {step}");
-            
+
             if (node.ActiveShelves != null)
             {
                 logger.Log("[");
@@ -84,7 +85,7 @@ namespace Strategy.Level
             logger.PrintLogs();
         }
 
-        private static IEnumerator MoveItemTo(DragDrop drag, DropZone drop)
+        private static IEnumerator MoveItemTo(DragObject drag, DropZone drop)
         {
             var posFrom = drag.transform.position;
             var posTo = drop.transform.position;

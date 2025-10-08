@@ -30,11 +30,11 @@ namespace Game.UI
             var initializeData = new ServiceInitializeData(levelConfig, goodsConfig);
 
             var initializer = new ServiceInitializer();
-            initializer.InitializeAllAsync(
+            _ = initializer.InitializeAllAsync(
                 initializeData,
                 (current, total) => { progress.fillAmount = (float)current / total; },
                 () => { StartCoroutine(OnAppLoaded()); }
-            ).Forget();
+            );
         }
 
         private IEnumerator OnAppLoaded()

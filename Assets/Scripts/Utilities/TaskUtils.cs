@@ -1,26 +1,27 @@
 using System;
-using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 
 namespace Utilities
 {
     public static class TaskUtils
     {
-        public static async Task<T> Then<T>(this Task<T> task, Action<T> action)
+        public static async UniTask<T> Then<T>(this UniTask<T> task, Action<T> action)
         {
             var result = await task;
             action(result);
             return result;
         }
 
-        public static async Task Then(this Task task, Action action)
+        public static async UniTask Then(this UniTask task, Action action)
         {
             await task;
             action();
         }
 
-        public static void Forget(this Task task)
+        // UniTask already has Forget() method built-in, but keeping this for compatibility
+        public static void Forget(this UniTask task)
         {
-            task.ContinueWith(t => t.Exception, TaskContinuationOptions.OnlyOnFaulted);
+            task.Forget();
         }
     }
 }

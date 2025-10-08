@@ -1,4 +1,4 @@
-using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using Defines;
 using manager.Interface;
 using UnityEngine;
@@ -7,9 +7,9 @@ namespace manager
 {
     public class DefaultLevelLoaderManager: ILevelLoaderManager
     {
-        public Task<bool> Initialize()
+        public UniTask<bool> Initialize()
         {
-            return Task.FromResult(true);
+            return UniTask.FromResult(true);
         }
         
         public GameObject Create(int level)
