@@ -79,7 +79,7 @@ namespace Core
         {
             var mouseWorldPos = GetMouseWorldPosition();
             Debug.Log(mouseWorldPos);
-            var objectUnderMouse = GetDragObjectsAtPosition(mouseWorldPos);
+            var objectUnderMouse = GetDragObjectAtPosition(mouseWorldPos);
 
             if (objectUnderMouse)
             {
@@ -136,11 +136,22 @@ namespace Core
                 // Add to new zone
                 targetZone.AddObject(_currentDraggingObject);
                 _currentDraggingObject.SetCurrentZone(targetZone);
+                
+                // replace parent
+                _currentDraggingObject.transform.SetParent(targetZone.transform, true);
 
                 // Snap position if needed
                 if (targetZone.ShouldSnapToCenter())
                 {
                     _currentDraggingObject.UpdatePosition(targetZone.GetSnapPosition(0));
+                }
+                else
+                {
+                    // Get Local position of drop position inside targetZone
+                    var localPosition = targetZone.transform.InverseTransformPoint(dropPosition);
+                    var slot = targetZone.GetSlotAtPosition(localPosition);
+                    var newPosition = targetZone.GetSnapPosition(slot);
+                    _currentDraggingObject.UpdatePosition(newPosition);
                 }
 
                 successfulDrop = true;
@@ -189,19 +200,19 @@ namespace Core
             return mousePos;
         }
 
-        private DragObject GetDragObjectAtPosition(Vector2 position)
-        {
-            foreach (var dragObj in _dragObjects)
-            {
-                if (dragObj.ContainsPosition(position))
-                {
-                    return dragObj;
-                }
-            }
-            return null;
-        }
+        // private DragObject GetDragObjectAtPosition(Vector2 position)
+        // {
+        //     foreach (var dragObj in _dragObjects)
+        //     {
+        //         if (dragObj.ContainsPosition(position))
+        //         {
+        //             return dragObj;
+        //         }
+        //     }
+        //     return null;
+        // }
         
-        private DragObject GetDragObjectsAtPosition(Vector2 position)
+        private DragObject GetDragObjectAtPosition(Vector2 position)
         {
             foreach (var dragObj in _dragObjects)
             {
@@ -213,18 +224,37 @@ namespace Core
             return null;
         }
 
+        // private DropZone GetDropZoneAtPosition(Vector2 position)
+        // {
+        //     // Check zones in reverse order (top to bottom)
+        //     for (var i = _dropZones.Count - 1; i >= 0; i--)
+        //     {
+        //         if (_dropZones[i].ContainsPosition(position))
+        //         {
+        //             return _dropZones[i];
+        //         }
+        //     }
+        //
+        //     return null;
+        // }
+
         private DropZone GetDropZoneAtPosition(Vector2 position)
         {
             // Check zones in reverse order (top to bottom)
             for (var i = _dropZones.Count - 1; i >= 0; i--)
             {
-                if (_dropZones[i].ContainsPosition(position))
+                if (_dropZones[i].ContainsPosition(position) && _dropZones[i].IsActive())
                 {
                     return _dropZones[i];
                 }
             }
-
+            
             return null;
+        }
+        
+        private int GetSlotInDropZone(Vector2 position, DropZone dropZone)
+        {
+            return dropZone.GetSlotAtPosition(position);
         }
 
         // Public registration methods

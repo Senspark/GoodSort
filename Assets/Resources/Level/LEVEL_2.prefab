@@ -104,7 +104,7 @@ MonoBehaviour:
   isActive: 1
   maxObjects: 3
   acceptedTypes: []
-  snapToCenter: 1
+  snapToCenter: 0
   normalColor: {r: 1, g: 1, b: 1, a: 0.3}
   hoverValidColor: {r: 0, g: 1, b: 0, a: 0.5}
   hoverInvalidColor: {r: 1, g: 0, b: 0, a: 0.5}
@@ -213,7 +213,7 @@ MonoBehaviour:
   isActive: 1
   maxObjects: 3
   acceptedTypes: []
-  snapToCenter: 1
+  snapToCenter: 0
   normalColor: {r: 1, g: 1, b: 1, a: 0.3}
   hoverValidColor: {r: 0, g: 1, b: 0, a: 0.5}
   hoverInvalidColor: {r: 1, g: 0, b: 0, a: 0.5}
@@ -322,7 +322,7 @@ MonoBehaviour:
   isActive: 0
   maxObjects: 3
   acceptedTypes: []
-  snapToCenter: 1
+  snapToCenter: 0
   normalColor: {r: 1, g: 1, b: 1, a: 0.3}
   hoverValidColor: {r: 0, g: 1, b: 0, a: 0.5}
   hoverInvalidColor: {r: 1, g: 0, b: 0, a: 0.5}
@@ -538,7 +538,7 @@ MonoBehaviour:
   isActive: 0
   maxObjects: 3
   acceptedTypes: []
-  snapToCenter: 1
+  snapToCenter: 0
   normalColor: {r: 1, g: 1, b: 1, a: 0.3}
   hoverValidColor: {r: 0, g: 1, b: 0, a: 0.5}
   hoverInvalidColor: {r: 1, g: 0, b: 0, a: 0.5}
@@ -647,7 +647,7 @@ MonoBehaviour:
   isActive: 1
   maxObjects: 3
   acceptedTypes: []
-  snapToCenter: 1
+  snapToCenter: 0
   normalColor: {r: 1, g: 1, b: 1, a: 0.3}
   hoverValidColor: {r: 0, g: 1, b: 0, a: 0.5}
   hoverInvalidColor: {r: 1, g: 0, b: 0, a: 0.5}
@@ -756,7 +756,7 @@ MonoBehaviour:
   isActive: 1
   maxObjects: 3
   acceptedTypes: []
-  snapToCenter: 1
+  snapToCenter: 0
   normalColor: {r: 1, g: 1, b: 1, a: 0.3}
   hoverValidColor: {r: 0, g: 1, b: 0, a: 0.5}
   hoverInvalidColor: {r: 1, g: 0, b: 0, a: 0.5}
@@ -865,7 +865,7 @@ MonoBehaviour:
   isActive: 1
   maxObjects: 3
   acceptedTypes: []
-  snapToCenter: 1
+  snapToCenter: 0
   normalColor: {r: 1, g: 1, b: 1, a: 0.3}
   hoverValidColor: {r: 0, g: 1, b: 0, a: 0.5}
   hoverInvalidColor: {r: 1, g: 0, b: 0, a: 0.5}
@@ -1188,7 +1188,7 @@ MonoBehaviour:
   isActive: 1
   maxObjects: 3
   acceptedTypes: []
-  snapToCenter: 1
+  snapToCenter: 0
   normalColor: {r: 1, g: 1, b: 1, a: 0.3}
   hoverValidColor: {r: 0, g: 1, b: 0, a: 0.5}
   hoverInvalidColor: {r: 1, g: 0, b: 0, a: 0.5}
@@ -1297,7 +1297,7 @@ MonoBehaviour:
   isActive: 1
   maxObjects: 3
   acceptedTypes: []
-  snapToCenter: 1
+  snapToCenter: 0
   normalColor: {r: 1, g: 1, b: 1, a: 0.3}
   hoverValidColor: {r: 0, g: 1, b: 0, a: 0.5}
   hoverInvalidColor: {r: 1, g: 0, b: 0, a: 0.5}
@@ -1406,7 +1406,7 @@ MonoBehaviour:
   isActive: 1
   maxObjects: 3
   acceptedTypes: []
-  snapToCenter: 1
+  snapToCenter: 0
   normalColor: {r: 1, g: 1, b: 1, a: 0.3}
   hoverValidColor: {r: 0, g: 1, b: 0, a: 0.5}
   hoverInvalidColor: {r: 1, g: 0, b: 0, a: 0.5}
@@ -1515,7 +1515,7 @@ MonoBehaviour:
   isActive: 0
   maxObjects: 3
   acceptedTypes: []
-  snapToCenter: 1
+  snapToCenter: 0
   normalColor: {r: 1, g: 1, b: 1, a: 0.3}
   hoverValidColor: {r: 0, g: 1, b: 0, a: 0.5}
   hoverInvalidColor: {r: 1, g: 0, b: 0, a: 0.5}
@@ -1731,7 +1731,7 @@ MonoBehaviour:
   isActive: 0
   maxObjects: 3
   acceptedTypes: []
-  snapToCenter: 1
+  snapToCenter: 0
   normalColor: {r: 1, g: 1, b: 1, a: 0.3}
   hoverValidColor: {r: 0, g: 1, b: 0, a: 0.5}
   hoverInvalidColor: {r: 1, g: 0, b: 0, a: 0.5}
@@ -2158,7 +2158,7 @@ MonoBehaviour:
   isActive: 0
   maxObjects: 3
   acceptedTypes: []
-  snapToCenter: 1
+  snapToCenter: 0
   normalColor: {r: 1, g: 1, b: 1, a: 0.3}
   hoverValidColor: {r: 0, g: 1, b: 0, a: 0.5}
   hoverInvalidColor: {r: 1, g: 0, b: 0, a: 0.5}
@@ -2267,7 +2267,7 @@ MonoBehaviour:
   isActive: 1
   maxObjects: 3
   acceptedTypes: []
-  snapToCenter: 1
+  snapToCenter: 0
   normalColor: {r: 1, g: 1, b: 1, a: 0.3}
   hoverValidColor: {r: 0, g: 1, b: 0, a: 0.5}
   hoverInvalidColor: {r: 1, g: 0, b: 0, a: 0.5}
@@ -2376,7 +2376,7 @@ MonoBehaviour:
   isActive: 0
   maxObjects: 3
   acceptedTypes: []
-  snapToCenter: 1
+  snapToCenter: 0
   normalColor: {r: 1, g: 1, b: 1, a: 0.3}
   hoverValidColor: {r: 0, g: 1, b: 0, a: 0.5}
   hoverInvalidColor: {r: 1, g: 0, b: 0, a: 0.5}
@@ -2485,7 +2485,7 @@ MonoBehaviour:
   isActive: 0
   maxObjects: 3
   acceptedTypes: []
-  snapToCenter: 1
+  snapToCenter: 0
   normalColor: {r: 1, g: 1, b: 1, a: 0.3}
   hoverValidColor: {r: 0, g: 1, b: 0, a: 0.5}
   hoverInvalidColor: {r: 1, g: 0, b: 0, a: 0.5}
@@ -2808,7 +2808,7 @@ MonoBehaviour:
   isActive: 0
   maxObjects: 3
   acceptedTypes: []
-  snapToCenter: 1
+  snapToCenter: 0
   normalColor: {r: 1, g: 1, b: 1, a: 0.3}
   hoverValidColor: {r: 0, g: 1, b: 0, a: 0.5}
   hoverInvalidColor: {r: 1, g: 0, b: 0, a: 0.5}
@@ -3024,7 +3024,7 @@ MonoBehaviour:
   isActive: 0
   maxObjects: 3
   acceptedTypes: []
-  snapToCenter: 1
+  snapToCenter: 0
   normalColor: {r: 1, g: 1, b: 1, a: 0.3}
   hoverValidColor: {r: 0, g: 1, b: 0, a: 0.5}
   hoverInvalidColor: {r: 1, g: 0, b: 0, a: 0.5}
