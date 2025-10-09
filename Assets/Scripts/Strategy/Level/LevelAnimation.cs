@@ -48,11 +48,10 @@ namespace Strategy.Level
             _currentStep = null;
         }
 
-        public void SwitchToState_MergeLayer(int shelfId, int layerId)
+        private void SwitchToState_MergeLayer(LevelAnimationStepMergeLayer.InputData data)
         {
             _currentStep?.Exit();
-            _currentStep = new LevelAnimationStepMergeLayer(_stateControl,
-                new LevelAnimationStepMergeLayer.InputData(shelfId, layerId), _levelDataManager, _dragDropManager);
+            _currentStep = new LevelAnimationStepMergeLayer(_stateControl, data, _levelDataManager, _dragDropManager);
             _currentStep.Enter();
         }
 
@@ -66,17 +65,22 @@ namespace Strategy.Level
 
     public class LevelAnimationSwitchStateControl
     {
-        public readonly Action<int, int> ToMergeLayer;
+        public readonly Action<LevelAnimationStepMergeLayer.InputData> ToMergeLayer;
         public readonly Action ToDragDrop;
 
         public LevelAnimationSwitchStateControl(
-            Action<int, int> toMergeLayer,
+            Action<LevelAnimationStepMergeLayer.InputData> toMergeLayer,
             Action toDragDrop
         )
         {
             ToMergeLayer = toMergeLayer;
             ToDragDrop = toDragDrop;
         }
+    }
+
+    public class ToMergeLayerData
+    {
+        
     }
 
     public interface ILevelAnimationStep

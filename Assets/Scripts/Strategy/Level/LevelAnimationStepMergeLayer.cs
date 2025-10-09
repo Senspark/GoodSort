@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Core;
 using Sirenix.Utilities;
@@ -9,9 +10,8 @@ namespace Strategy.Level
     {
         private readonly LevelAnimationSwitchStateControl _control;
         private readonly LevelDataManager _levelDataManager;
-        private readonly IDragDropManager _dragDropManager;
         private readonly InputData _inputData;
-        private Data _processingData;
+        private List<Data> _processingData = new();
 
         public LevelAnimationStepMergeLayer(
             LevelAnimationSwitchStateControl control,
@@ -23,69 +23,74 @@ namespace Strategy.Level
             _control = control;
             _inputData = inputData;
             _levelDataManager = levelDataManager;
-            _dragDropManager = dragDropManager;
         }
-        
+
         public void Enter()
         {
-            TryMergeLayer(_inputData.ShelfId, _inputData.LayerId);
+            var canBeMerged1 = TryMergeLayer(_inputData.ShelfId, _inputData.LayerId);
+            var canBeMerged2 = TryMovePreviousLayer(_inputData.PreviousShelfId, _inputData.PreviousLayerId);
+            if (!canBeMerged1 && !canBeMerged2)
+            {
+                _control.ToDragDrop();
+            }
         }
 
         public void Update(float dt)
         {
-            // Step 1: Chờ các items Bounce xong
-            if (_processingData == null) return;
-            if (_processingData.AnimationDone < _processingData.Items.Length) return;
+            if (_processingData.Count == 0) return;
 
-            // Step 2: Chờ các items bị destroy
-            if (!_processingData.ItemDestroyed)
+            var done = 0;
+            foreach (var pData in _processingData)
             {
-                _processingData.Items.ForEach(e => e.DestroyItem());
-                _processingData.ItemDestroyed = true;
-                return;
+                // Step 1: Chờ các items Bounce xong
+                if (pData.AnimationDone < pData.Items.Length) return;
+
+                // Step 2: Chờ các items bị destroy
+                if (!pData.ItemDestroyed)
+                {
+                    pData.Items.ForEach(e => e.DestroyItem());
+                    pData.ItemDestroyed = true;
+                }
+                else
+                {
+                    // Step 2: Hiển thị các layer bên dưới
+                    ShowNextLayer(pData.ShelfId, pData.LayerId);
+                    done++;
+                }
             }
 
-            // Step 2: Hiển thị các layer bên dưới & Callback Done
-            ShowNextLayer(_inputData.ShelfId, _inputData.LayerId);
-            _control.ToDragDrop();
+            // Callback Done
+            if (done >= _processingData.Count)
+            {
+                _control.ToDragDrop();
+            }
         }
 
         public void Exit()
         {
         }
 
-        private void TryMergeLayer(int shelfId, int layerId)
+        private bool TryMergeLayer(int shelfId, int layerId)
         {
             var items = _levelDataManager.GetLayer(shelfId, layerId);
             var first = items?[0];
-            if (first == null)
-            {
-                _control.ToDragDrop();
-                return;
-            }
+            if (first == null) return false;
             var allTheSame = items.All(e => e != null && e.Meta.TypeId == first.Meta.TypeId);
-            if (!allTheSame)
-            {
-                _control.ToDragDrop();
-                return;
-            }
+            if (!allTheSame) return false;
 
-            _processingData = new Data
-            {
-                Items = items.ToArray(),
-                AnimationDone = 0,
-            };
+            var processingData = new Data(shelfId, layerId, items.ToArray());
 
             // Remove top layer
-            Action onAnimationCompleted = () =>
-            {
-                _processingData.AnimationDone++;
-            };
+            Action onAnimationCompleted = () => { processingData.AnimationDone++; };
 
             foreach (var item in items)
             {
                 item.Bounce(onAnimationCompleted);
             }
+
+            _processingData.Add(processingData);
+
+            return true;
         }
 
         private void ShowNextLayer(int shelfId, int layerId)
@@ -109,13 +114,35 @@ namespace Strategy.Level
             }
         }
 
+        /* Kiểm tra thử Shelve trước đó: nếu top-layer hết phần tử rồi thì dời second-layer lên */
+        private bool TryMovePreviousLayer(int shelfId, int layerId)
+        {
+            if (!_levelDataManager.IsLayerEmpty(shelfId, layerId))
+            {
+                return false;
+            }
+
+            var processingData = new Data(shelfId, layerId, Array.Empty<IShelfItem>())
+            {
+                ItemDestroyed = true,
+            };
+            _processingData.Add(processingData);
+            return true;
+        }
+
         public class InputData
         {
+            public readonly int PreviousShelfId;
+            public readonly int PreviousLayerId;
+
             public readonly int ShelfId;
             public readonly int LayerId;
 
-            public InputData(int shelfId, int layerId)
+            public InputData(int previousShelfId, int previousLayerId, int shelfId, int layerId)
             {
+                PreviousShelfId = previousShelfId;
+                PreviousLayerId = previousLayerId;
+
                 ShelfId = shelfId;
                 LayerId = layerId;
             }
@@ -123,9 +150,19 @@ namespace Strategy.Level
 
         private class Data
         {
-            public IShelfItem[] Items;
+            public readonly int ShelfId;
+            public readonly int LayerId;
+            public readonly IShelfItem[] Items;
+
             public int AnimationDone;
             public bool ItemDestroyed;
+
+            public Data(int shelfId, int layerId, IShelfItem[] items)
+            {
+                ShelfId = shelfId;
+                LayerId = layerId;
+                Items = items;
+            }
         }
     }
 }

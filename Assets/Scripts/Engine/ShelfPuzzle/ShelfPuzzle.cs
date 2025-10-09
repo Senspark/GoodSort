@@ -136,7 +136,7 @@ namespace Engine.ShelfPuzzle
                     if (fromIdx == toIdx) continue;
 
                     // Skip TakeOnly shelves as destinations
-                    if (node.ShelfTypes[toIdx] == ShelfType.TakeOnly) continue;
+                    if (node.ShelfTypes[toIdx] == ShelfType.Single) continue;
 
                     var toShelf = node.ActiveShelves[toIdx];
                     if (toShelf.Length == 0) continue;
@@ -270,7 +270,7 @@ namespace Engine.ShelfPuzzle
                     {
                         // Trim empty layers
                         // For TakeOnly shelves, also update item count (since 1-slot layers are consumed)
-                        if (node.ShelfTypes[i] == ShelfType.TakeOnly && layer.Length == 1)
+                        if (node.ShelfTypes[i] == ShelfType.Single && layer.Length == 1)
                         {
                             // Item was already taken, no count update needed (handled in source removal)
                         }

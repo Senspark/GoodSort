@@ -27,7 +27,7 @@ namespace Core
         {
             // Store original values
             _originalPosition = transform.position;
-            _originalColor = spriteRenderer.color;
+            _originalColor = Color.white;
             _originalScale = transform.localScale;
             _originalSortingOrder = spriteRenderer.sortingOrder;
         }

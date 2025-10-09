@@ -9,7 +9,7 @@ namespace Engine.ShelfPuzzle
     public enum ShelfType
     {
         Common, // Can give and receive items (3-slot layers)
-        TakeOnly // Can only give items (1-slot layers)
+        Single // Can only give items (1-slot layers)
     }
 
     public class ShelfPuzzleInputData

@@ -41,7 +41,6 @@ namespace Strategy.Level
             PreProcessData(ref shelves, ref input);
 
             var shelvesItems = new IShelfItem[input.Length][][];
-            var drags = new List<IDragObject>();
             var itemId = 0;
             Func<int> getItemId = () => itemId++;
 
@@ -50,20 +49,13 @@ namespace Strategy.Level
                 var shelfData = input[shelfId];
                 var shelf = shelves[shelfId];
                 shelf.Init(shelfId);
-                var (items, itemsDrags) = SpawnShelf(shelfId, shelf, shelfData, getItemId, onItemDestroy);
-                shelvesItems[shelfId] = items;
-                drags.AddRange(itemsDrags);
+                shelvesItems[shelfId] = SpawnShelf(shelfId, shelf, shelfData, getItemId, onItemDestroy);
             }
 
-            return new LevelData
-            {
-                ShelveItems = shelvesItems,
-                Shelves = shelves,
-                Drags = drags,
-            };
+            return new LevelData(shelvesItems, shelves);
         }
 
-        private (IShelfItem[][], List<DragObject2>) SpawnShelf(
+        private IShelfItem[][] SpawnShelf(
             int shelfId,
             IShelf2 shelf,
             ShelfPuzzleInputData input,
@@ -72,7 +64,6 @@ namespace Strategy.Level
         )
         {
             var data = new IShelfItem[input.Data.Length][];
-            var drags = new List<DragObject2>();
             var spawnContainer = ((ShelfBase)shelf).transform;
             var spacingData = shelf.SpacingData;
 
@@ -89,17 +80,13 @@ namespace Strategy.Level
                     {
                         var meta = new ShelfItemMeta(shelfId, layerId, slotId, itemType, getItemIdFunc());
                         newItem = SpawnItem(meta, spawnContainer, spacingData, onItemDestroy);
-                        if (newItem)
-                        {
-                            drags.Add(newItem.dragObject);
-                        }
                     }
 
                     data[layerId][slotId] = newItem;
                 }
             }
 
-            return (data, drags);
+            return data;
         }
 
         private ShelfItemBasic SpawnItem(
@@ -140,9 +127,9 @@ namespace Strategy.Level
         {
             // Validate: Count shelf types in both arrays
             var uiCommonCount = ui.Count(shelf => shelf.Type == ShelfType.Common);
-            var uiTakeOnlyCount = ui.Count(shelf => shelf.Type == ShelfType.TakeOnly);
+            var uiTakeOnlyCount = ui.Count(shelf => shelf.Type == ShelfType.Single);
             var inputCommonCount = input.Count(data => data.Type == ShelfType.Common);
-            var inputTakeOnlyCount = input.Count(data => data.Type == ShelfType.TakeOnly);
+            var inputTakeOnlyCount = input.Count(data => data.Type == ShelfType.Single);
 
             if (uiCommonCount != inputCommonCount)
             {
@@ -171,8 +158,16 @@ namespace Strategy.Level
 
     public class LevelData
     {
-        public IShelfItem[][][] ShelveItems;
-        public IShelf2[] Shelves;
-        public List<IDragObject> Drags;
+        public readonly IShelfItem[][][] ShelveItems;
+        public readonly IShelf2[] Shelves;
+
+        public LevelData(
+            IShelfItem[][][] shelveItems,
+            IShelf2[] shelves
+        )
+        {
+            ShelveItems = shelveItems;
+            Shelves = shelves;
+        }
     }
 }

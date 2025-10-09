@@ -19,8 +19,6 @@ namespace UI
         [CanBeNull] private LevelDataManager _levelDataManager;
         [CanBeNull] private LevelAnimation _levelAnimation;
 
-        private ShelfPuzzleInputData[] _inputData;
-
         private void Start()
         {
             dragDropManager.Init(CanAcceptDropInto);
@@ -32,7 +30,7 @@ namespace UI
         {
             CleanUp();
             var levelCreator = new LevelCreator(container, shelfItemPrefab);
-            _inputData = new ShelfPuzzleInputData[]
+            var inputData = new ShelfPuzzleInputData[]
             {
                 new()
                 {
@@ -50,18 +48,29 @@ namespace UI
                     Data = new[]
                     {
                         new[] { 0, 2, 1 },
+                        new[] { 0, 4, 0 },
                     }
                 },
                 new()
                 {
-                    Type = ShelfType.TakeOnly,
+                    Type = ShelfType.Single,
                     Data = new[]
                     {
-                        new[] { 3, 3 }
+                        new[] { 3 },
+                        new[] { 4 },
+                    }
+                },
+                new()
+                {
+                    Type = ShelfType.Single,
+                    Data = new[]
+                    {
+                        new[] { 4 },
+                        new[] { 3 },
                     }
                 }
             };
-            var levelData = levelCreator.SpawnLevel(_inputData, OnItemDestroy);
+            var levelData = levelCreator.SpawnLevel(inputData, OnItemDestroy);
             _levelDataManager = new LevelDataManager(levelData);
             _levelAnimation = new LevelAnimation(_levelDataManager, dragDropManager);
             _levelAnimation.Enter();
@@ -84,7 +93,14 @@ namespace UI
         private bool CanAcceptDropInto(IDropZone dropZone)
         {
             if (_levelDataManager == null) return false;
+            var shelf = _levelDataManager.GetShelf(dropZone.ShelfId);
+            if (shelf == null) return false;
+            if (shelf.Type != ShelfType.Common) return false; // Chỉ cho phép drop vào Common
+
             var layer = _levelDataManager.GetTopLayer(dropZone.ShelfId);
+            if (layer == null) return false;
+            if (layer.Length == 0) return true; // Nếu layer rỗng thì có thể drop vào
+
             if (dropZone.SlotId < 0 || dropZone.SlotId >= layer.Length) return false;
             return layer[dropZone.SlotId] == null;
         }
@@ -98,12 +114,14 @@ namespace UI
         [Button]
         private void AutoSolve()
         {
+            if (_levelDataManager == null) return;
             var logger = new AppendLogger();
 
             UniTask.Void(async () =>
             {
                 await UniTask.SwitchToThreadPool();
-                var solution = new PuzzleSolver(logger).SolvePuzzleWithStateChanges(_inputData);
+                var exportedData = _levelDataManager.Export();
+                var solution = new PuzzleSolver(logger).SolvePuzzleWithStateChanges(exportedData);
 
                 await UniTask.SwitchToMainThread();
                 logger.PrintLogs();

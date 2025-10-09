@@ -1,6 +1,9 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Core;
+using Engine.ShelfPuzzle;
+using JetBrains.Annotations;
 using Sirenix.Utilities;
 
 namespace Strategy.Level
@@ -37,6 +40,24 @@ namespace Strategy.Level
 
         public void Dispose()
         {
+        }
+
+        public ShelfPuzzleInputData[] Export()
+        {
+            var export = new ShelfPuzzleInputData[_shelves.Length];
+            for (var shelfId = 0; shelfId < _shelves.Length; shelfId++)
+            {
+                export[shelfId] = new ShelfPuzzleInputData
+                {
+                    Type = _shelvesObjects[shelfId].Type,
+                    Data = _shelves[shelfId]
+                        .Select(e =>
+                            e.Select(p => p != null ? p.Meta.TypeId : 0).ToArray()
+                        ).ToArray()
+                };
+            }
+
+            return export;
         }
 
         public void RemoveItem(int itemId)
@@ -110,6 +131,7 @@ namespace Strategy.Level
             return FindNotEmptyLayer(shelf);
         }
 
+        [CanBeNull]
         public IShelfItem[] GetTopLayer(int shelfId)
         {
             if (shelfId < 0 || shelfId >= _shelves.Length) return null;
@@ -125,15 +147,30 @@ namespace Strategy.Level
                 }
             }
 
-            return null;
+            return Array.Empty<IShelfItem>();
         }
 
+        [CanBeNull]
         public IShelfItem[] GetLayer(int shelfId, int layerId)
         {
             if (shelfId < 0 || shelfId >= _shelves.Length) return null;
             var shelf = _shelves[shelfId];
             if (layerId < 0 || layerId >= shelf.Length) return null;
             return shelf[layerId];
+        }
+
+        public bool IsLayerEmpty(int shelfId, int layerId)
+        {
+            if (shelfId < 0 || shelfId >= _shelves.Length) return true;
+            var shelf = _shelves[shelfId];
+            if (layerId < 0 || layerId >= shelf.Length) return true;
+            var layer = shelf[layerId];
+            foreach (var slot in layer)
+            {
+                if (slot != null) return false;
+            }
+
+            return true;
         }
 
         public void SetSlotData(int shelfId, int layerId, int slotId, IShelfItem item)

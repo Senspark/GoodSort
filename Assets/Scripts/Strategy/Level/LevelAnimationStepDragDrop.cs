@@ -38,7 +38,7 @@ namespace Strategy.Level
                 _dragDropManager.RegisterDragObject(drag);
             }
         }
-        
+
         public void Enter()
         {
             _dragDropManager.Unpause();
@@ -65,11 +65,16 @@ namespace Strategy.Level
                 var shelf = (CommonShelfNormal)_levelDataManager.GetShelf(shelfId);
                 item.transform.parent = shelf.transform;
 
-                _levelDataManager.SetSlotData(item.Meta.ShelfId, item.Meta.LayerId, item.Meta.SlotId, null);
+                var prevShelfId = item.Meta.ShelfId;
+                var prevLayerId = item.Meta.LayerId;
+                var prevSlotId = item.Meta.SlotId;
+                _levelDataManager.SetSlotData(prevShelfId, prevLayerId, prevSlotId, null);
                 item.SetShelf(item.Meta.Change(shelfId, layerId, slotId), shelf.SpacingData, ShelfLayerDisplay.Top);
                 item.ResetVisual();
                 _levelDataManager.SetSlotData(shelfId, layerId, slotId, item);
-                _control.ToMergeLayer(shelfId, layerId);
+
+                _control.ToMergeLayer(
+                    new LevelAnimationStepMergeLayer.InputData(prevShelfId, prevLayerId, shelfId, layerId));
             }
             else
             {

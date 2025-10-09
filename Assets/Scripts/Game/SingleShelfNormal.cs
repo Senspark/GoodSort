@@ -15,7 +15,7 @@ namespace Game
         [Required, SerializeField] private SingleShelfNormalSpacingData spacingData;
 
         public override int Id { get; protected set; }
-        public override ShelfType Type => ShelfType.TakeOnly;
+        public override ShelfType Type => ShelfType.Single;
         public override ISpacingData SpacingData => spacingData;
         public override IDropZone[] DropZones { get; protected set; }
 
