@@ -47,7 +47,7 @@ namespace UI
                     Type = ShelfType.Common,
                     Data = new[]
                     {
-                        new[] { 0, 2, 1 },
+                        new[] { 0, 2, 0 },
                         new[] { 0, 4, 0 },
                     }
                 },
@@ -57,7 +57,15 @@ namespace UI
                     LockCount = 2,
                     Data = new[]
                     {
-                        new[] { 5, 5, 0 },
+                        new[] { 5, 5, 1 },
+                    }
+                },
+                new()
+                {
+                    Type = ShelfType.Common,
+                    Data = new[]
+                    {
+                        new[] { 0, 0, 0 },
                     }
                 },
                 new()

@@ -122,6 +122,9 @@ namespace Engine.ShelfPuzzle
             // For each shelf that can provide items
             for (int fromIdx = 0; fromIdx < node.ActiveShelves.Length; fromIdx++)
             {
+                // Skip locked shelves for taking
+                if (node.LockCounts[fromIdx] > 0) continue;
+
                 var fromShelf = node.ActiveShelves[fromIdx];
                 if (fromShelf.Length == 0) continue;
 
@@ -135,7 +138,10 @@ namespace Engine.ShelfPuzzle
                 {
                     if (fromIdx == toIdx) continue;
 
-                    // Skip TakeOnly shelves as destinations
+                    // Skip locked shelves for placing
+                    if (node.LockCounts[toIdx] > 0) continue;
+
+                    // Skip Single shelves as destinations
                     if (node.ShelfTypes[toIdx] == ShelfType.Single) continue;
 
                     var toShelf = node.ActiveShelves[toIdx];
@@ -239,6 +245,8 @@ namespace Engine.ShelfPuzzle
 
         private void TrimCompletedLayers(ShelfPuzzleNode node)
         {
+            bool anyLayerCompleted = false;
+
             for (int i = 0; i < node.ActiveShelves.Length; i++)
             {
                 var shelf = node.ActiveShelves[i];
@@ -250,6 +258,7 @@ namespace Engine.ShelfPuzzle
                     {
                         // Add score and update remaining items
                         node.CompletedScore += CalculateLayerScore(layer);
+                        anyLayerCompleted = true;
 
                         // Update remaining item counts
                         var item = layer.FirstOrDefault(x => x != 0);
@@ -269,7 +278,7 @@ namespace Engine.ShelfPuzzle
                     else if (IsLayerEmpty(layer))
                     {
                         // Trim empty layers
-                        // For TakeOnly shelves, also update item count (since 1-slot layers are consumed)
+                        // For Single shelves, also update item count (since 1-slot layers are consumed)
                         if (node.ShelfTypes[i] == ShelfType.Single && layer.Length == 1)
                         {
                             // Item was already taken, no count update needed (handled in source removal)
@@ -296,8 +305,20 @@ namespace Engine.ShelfPuzzle
                     }
                     else
                     {
-                        // TakeOnly shelf with no layers left becomes empty array
+                        // Single shelf with no layers left becomes empty array
                         node.ActiveShelves[i] = new int[][] { };
+                    }
+                }
+            }
+
+            // Decrement all lock counts when any layer completes (merge occurs)
+            if (anyLayerCompleted)
+            {
+                for (int i = 0; i < node.LockCounts.Length; i++)
+                {
+                    if (node.LockCounts[i] > 0)
+                    {
+                        node.LockCounts[i]--;
                     }
                 }
             }
@@ -327,6 +348,7 @@ namespace Engine.ShelfPuzzle
         {
             var activeShelves = new List<int[][]>();
             var shelfTypes = new List<ShelfType>();
+            var lockCounts = new List<int>();
             int completedScore = 0;
             var itemCounts = new Dictionary<int, int>();
 
@@ -354,6 +376,7 @@ namespace Engine.ShelfPuzzle
                                 {
                                     itemCounts[item] = 0;
                                 }
+
                                 itemCounts[item]++;
                             }
                         }
@@ -374,15 +397,17 @@ namespace Engine.ShelfPuzzle
                     }
                     else
                     {
-                        // TakeOnly shelf with no items is completely removed
+                        // Single shelf with no items is completely removed
                         activeShelves.Add(new int[][] { });
                     }
                 }
 
                 shelfTypes.Add(shelfType);
+                lockCounts.Add(shelfInput.LockCount);
             }
 
-            return new ShelfPuzzleNode(activeShelves.ToArray(), shelfTypes.ToArray(), completedScore, itemCounts, 0);
+            return new ShelfPuzzleNode(activeShelves.ToArray(), shelfTypes.ToArray(), lockCounts.ToArray(),
+                completedScore, itemCounts, 0);
         }
 
         private int CalculateTargetScore(ShelfPuzzleNode processed)

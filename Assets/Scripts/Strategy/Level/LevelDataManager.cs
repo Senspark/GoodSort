@@ -46,9 +46,11 @@ namespace Strategy.Level
             var export = new ShelfPuzzleInputData[_shelves.Length];
             for (var shelfId = 0; shelfId < _shelves.Length; shelfId++)
             {
+                var shelf = _shelvesObjects[shelfId];
                 export[shelfId] = new ShelfPuzzleInputData
                 {
-                    Type = _shelvesObjects[shelfId].Type,
+                    Type = shelf.Type,
+                    LockCount = shelf.LockCount,
                     Data = _shelves[shelfId]
                         .Select(e =>
                             e.Select(p => p != null ? p.Meta.TypeId : 0).ToArray()

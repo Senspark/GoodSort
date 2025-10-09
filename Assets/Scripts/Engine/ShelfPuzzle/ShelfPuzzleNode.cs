@@ -15,6 +15,7 @@ namespace Engine.ShelfPuzzle
     public class ShelfPuzzleInputData
     {
         public ShelfType Type;
+
         /* Số lần khoá cho đến khi == 0 thì sẽ mở khoá */
         public int LockCount;
         public int[][] Data = Array.Empty<int[]>();
@@ -24,21 +25,24 @@ namespace Engine.ShelfPuzzle
     {
         public int[][][] ActiveShelves { get; set; } // Only incomplete layers
         public ShelfType[] ShelfTypes { get; set; } // Type of each shelf
+        public int[] LockCounts { get; set; } // Lock count per shelf
         public int CompletedScore { get; set; } // Sum of completed layer scores
         public Dictionary<int, int> RemainingItemCounts { get; set; } // Track items still in play
         public int MoveCount { get; set; }
-        public Move LastMove { get; set; }
+        public Move? LastMove { get; set; }
 
         public ShelfPuzzleNode(
             int[][][] activeShelves,
             ShelfType[] shelfTypes,
+            int[] lockCounts,
             int completedScore,
             Dictionary<int, int> remainingItemCounts,
             int moveCount = 0,
-            Move lastMove = null)
+            Move? lastMove = null)
         {
             ActiveShelves = activeShelves;
             ShelfTypes = shelfTypes;
+            LockCounts = lockCounts;
             CompletedScore = completedScore;
             RemainingItemCounts = remainingItemCounts;
             MoveCount = moveCount;
@@ -47,9 +51,9 @@ namespace Engine.ShelfPuzzle
 
         public string GetId()
         {
-            // Must include completedScore in ID for proper state comparison
-            // Format: "completedScore:shelf1|shelf2|..."
-            // Example: "200:aa_,bb_|c__"
+            // Must include completedScore and lockCounts in ID for proper state comparison
+            // Format: "completedScore:lockCounts:shelf1|shelf2|..."
+            // Example: "200:0,0,2:aa_,bb_|c__"
             var shelvesStr = string.Join("|",
                 ActiveShelves.Select(shelf =>
                     string.Join(",", shelf.Select(layer =>
@@ -57,7 +61,8 @@ namespace Engine.ShelfPuzzle
                     ))
                 )
             );
-            return $"{CompletedScore}:{shelvesStr}";
+            var lockCountsStr = string.Join(",", LockCounts);
+            return $"{CompletedScore}:{lockCountsStr}:{shelvesStr}";
         }
 
         public bool IsGoal()
@@ -72,6 +77,7 @@ namespace Engine.ShelfPuzzle
             return new ShelfPuzzleNode(
                 DeepCloneShelves(ActiveShelves),
                 (ShelfType[])ShelfTypes.Clone(),
+                (int[])LockCounts.Clone(),
                 CompletedScore,
                 new Dictionary<int, int>(RemainingItemCounts),
                 MoveCount,
@@ -131,6 +137,9 @@ namespace Engine.ShelfPuzzle
 
         public bool CanTakeFrom(int shelfIndex)
         {
+            // Check if shelf is locked
+            if (LockCounts[shelfIndex] > 0) return false;
+
             // Find the topmost layer that has items AND is not locked
             var shelf = ActiveShelves[shelfIndex];
             for (int i = 0; i < shelf.Length; i++)
@@ -147,6 +156,9 @@ namespace Engine.ShelfPuzzle
 
         public bool CanPlaceTo(int shelfIndex)
         {
+            // Check if shelf is locked
+            if (LockCounts[shelfIndex] > 0) return false;
+
             // Find the topmost layer that has empty slots AND is not locked
             var shelf = ActiveShelves[shelfIndex];
             for (int i = 0; i < shelf.Length; i++)
