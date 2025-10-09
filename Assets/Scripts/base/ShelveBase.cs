@@ -1,45 +1,42 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Constant;
-using Core;
-using Engine.ShelfPuzzle;
+using manager;
 using UnityEngine;
 using Game;
 using manager.Interface;
 using Senspark;
 
-public abstract class ShelveBase : MonoBehaviour, IShelf
+public class ShelveBase : MonoBehaviour
 {
-    private ShelfPuzzleInputData _input;
     protected Queue<List<int>> _layerQueue = new();
     private bool _isTargetTouched = false;
-    public int Id { get; private set; }
+    protected int id;
+    public int Id { get => id; set => id = value; }
 
     public bool IsTargetTouched() => _isTargetTouched;
-    protected List<ShelfItem> VisibleItems;
-    protected IEventManager EventManager;
 
     protected virtual void Awake()
     {
-        EventManager = ServiceLocator.Instance.Resolve<IEventManager>(); 
-        EventManager.AddListener(EventKey.PlaceGood, OnPlaceGood);
+        id = transform.GetSiblingIndex();
+        ServiceLocator.Instance.Resolve<IEventManager>().AddListener(EventKey.PlaceGood, OnPlaceGood);
     }
 
-    protected virtual void Start()
-    {
-    }
+    protected virtual void Start() {}
 
     protected virtual void OnDestroy()
     {
-        EventManager.RemoveListener(EventKey.PlaceGood, OnPlaceGood);
+        ServiceLocator.Instance.Resolve<IEventManager>().RemoveListener(EventKey.PlaceGood, OnPlaceGood);
     }
-
-    public abstract void LoadNextLayers();
-
-    public virtual void Init()
+    
+    public void SetLayerQueue(Queue<List<int>> layerQueue)
     {
+        _layerQueue = layerQueue;
     }
+    
+    public virtual void LoadNextLayers(){}
+
+    public virtual void Init() {}
 
     public virtual int GetSlot(Vector3 pos)
     {
@@ -54,64 +51,48 @@ public abstract class ShelveBase : MonoBehaviour, IShelf
     {
         return false;
     }
-
-    public virtual bool IsAllSlotOccupied()
+    
+    public bool IsAllSlotOccupied()
     {
         return false;
     }
-
+    
     public virtual bool IsEmpty()
     {
         return false;
     }
 
-    public virtual ShelfItem CreateGoods(int goodsId, int slotId, int layer)
+    public virtual Goods CreateGoods(int goodsId, int slotId, int layer)
     {
         return null;
     }
-
+    
     public virtual void PlaceGoods(int goodsId, int slotId)
     {
+        
     }
 
-    public virtual void Clear()
+    public void removeGoods(Goods goods)
     {
+        
     }
     
-    public void ImportData(int shelfId, ShelfPuzzleInputData input)
+    public virtual void Clear()
     {
-        Clear();
-        Id = shelfId;
-        _input = input;
-        _layerQueue = new Queue<List<int>>();
-        foreach (var layer in input.Data)
-        {
-            _layerQueue.Enqueue(layer.ToList());
-        }
-        LoadNextLayers();
-    }
-
-    public int[][] ExportData()
-    {
-        return _input != null ? _input.Data : Array.Empty<int[]>();
-    }
-
-    public ShelfItem FindItem(int id)
-    {
-        return VisibleItems.FirstOrDefault(e => e?.Goods.Id == id);
+        
     }
 
     protected void OnTriggerStay2D(Collider2D other)
     {
-        if (other.gameObject.name == "HoldingGoods")
+        if(other.gameObject.name == "HoldingGoods")
         {
             _isTargetTouched = true;
         }
     }
-
+    
     protected void OnTriggerExit2D(Collider2D other)
     {
-        if (other.gameObject.name == "HoldingGoods")
+        if(other.gameObject.name == "HoldingGoods")
         {
             _isTargetTouched = false;
         }

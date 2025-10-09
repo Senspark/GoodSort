@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Core;
 using UnityEngine;
 using Utilities;
 
@@ -25,6 +24,7 @@ namespace Game
             base.Start();
             StartCoroutine(OnTrySupplyGoods());
         }
+
         
         private IEnumerator OnTrySupplyGoods()
         {
@@ -35,7 +35,7 @@ namespace Game
             }
         }
 
-        public override ShelfItem CreateGoods(int goodsId, int slotId, int layer)
+        public override Goods CreateGoods(int goodsId, int slotId, int layer)
         {
             var goodsNode = Instantiate(goodsPrefab, layers[layer].transform);
             var goods = goodsNode.GetComponent<Goods>();
@@ -50,8 +50,7 @@ namespace Game
             //     goodsDrop.CurrentZone = slot[slotId];
             // }
             
-            var item = new ShelfItem(goods, null);
-            return item;
+            return goods;
         }
         
         public override int GetSlot(Vector3 goodsPos)
@@ -73,7 +72,7 @@ namespace Game
         public override void PlaceGoods(int goodsId, int slotId)
         {
             var goods = CreateGoods(goodsId, 0, 0);
-            goods.Goods.Bounce();
+            goods.Bounce();
         }
         
         protected override void OnPlaceGood()
@@ -119,17 +118,12 @@ namespace Game
             }
         }
 
-        public DropZone2 FindAnyEmptyZone()
-        {
-            return null;
-        }
-
         private void LoadLayerData(int layerIndex, List<int> goodsData)
         {
-            VisibleItems ??= new List<ShelfItem>();
-            foreach (var g in goodsData)
+            // random range int
+            foreach (var t in goodsData)
             {
-                VisibleItems.Add(CreateGoods(g, 0, layerIndex));
+                CreateGoods(t, 0, layerIndex);
             }
         }
         

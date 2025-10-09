@@ -1,25 +1,29 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Engine.ShelfPuzzle;
-using manager;
+using Defines;
+using manager.Interface;
 using Strategy.Level;
 using UnityEngine;
 using Utilities;
+using Random = UnityEngine.Random;
 
 namespace Game
 {
     public interface ILevelView
     {
         public void Load(LevelConfigBuilder level);
-        public ShelfPuzzleInputData[] ExportData();
     }
 
     public class LevelView : MonoBehaviour, ILevelView
     {
-        public List<ShelveBase> Shelves { get; private set; }
-        private ShelfPuzzleInputData[] _input;
-        private const int MaxItem = 3;
+        private List<ShelveBase> _shelves;
+
+        public List<ShelveBase> Shelves
+        {
+            get => _shelves;
+            set => _shelves = value;
+        }
 
         /// <summary>
         /// 
@@ -30,152 +34,67 @@ namespace Game
             var levelObject = level.LevelObject;
             var goodsIDArray = level.GoodsArray.Select(x => x.Id).ToList();
 
-            Shelves = levelObject.GetComponentsInChildren<ShelveBase>().ToList();
-            Sort(Shelves);
-            // var subset = DistributeGoods(goodsIDArray, level.LevelStrategy);
-            //_input = PopulateSubsetToShelve(Shelves, subset);
+            _shelves = levelObject.GetComponentsInChildren<ShelveBase>().ToList();
+            var subset = DistributeGoods(goodsIDArray, level.LevelStrategy);
+            PopulateSubsetToShelve(subset);
         }
 
-        public ShelfPuzzleInputData[] ExportData()
+        private void PopulateSubsetToShelve(List<List<int>> subset)
         {
-            return _input;
-        }
+           
+            
+            var shelvesCount = _shelves.Count;
 
-        public void ImportData(ShelfPuzzleInputData[] levelData)
-        {
-            if (Shelves.Count != levelData.Length)
-            {
-                CleanLogger.Error("Level không phù hợp với Data");
-                return;
-            }
-
-            _input = levelData;
-            for (var id = 0; id < levelData.Length; id++)
-            {
-                var shelf = Shelves[id];
-                var shelfData = levelData[id];
-                
-                shelf.ImportData(id, shelfData);
-            }
-        }
-
-        private static ShelfPuzzleInputData[] PopulateSubsetToShelve(List<ShelveBase> shelves, List<List<int>> subset)
-        {
-            var shelvesCount = shelves.Count;
-
-            for (var i = 0; i < shelvesCount; i++)
-            {
-                //Log subset 
-                Debug.Log($"Subset {i}: [{string.Join(",", subset[i])}]");
-            }
-
-            var shelveQueue = new Dictionary<int, List<List<int>>>();
-            for (var i = 0; i < shelvesCount; i++)
-            {
-                shelveQueue[i] = new List<List<int>>();
-            }
+            var shelveQueue = new Dictionary<int, Queue<List<int>>>();
+            for (int i = 0; i < shelvesCount; i++)
+                shelveQueue[i] = new Queue<List<int>>();
 
             // Phân phối subsets cho các shelve
-            for (var i = 0; i < subset.Count; i++)
+            for (int i = 0; i < subset.Count; i++)
             {
                 var shelveId = i % shelvesCount;
-                shelveQueue[shelveId].Add(subset[i]);
+                shelveQueue[shelveId].Enqueue(subset[i]);
             }
 
             // Gán queue cho từng shelve
-            var exportedData = new ShelfPuzzleInputData[shelvesCount];
-            for (var id = 0; id < shelvesCount; id++)
+            for (int j = 0; j < shelvesCount; j++)
             {
-                var shelve = shelves[id];
+                var shelve = _shelves[j];
                 if (!shelve) continue;
 
-                switch (shelve)
+                if (shelve is CommonShelve common)
                 {
-                    case CommonShelve common:
-                        AddItemForCommonShelf(shelveQueue, id, exportedData, common);
-                        break;
-                    case SingleShelve single:
-                        AddItemForSingleShelf(shelveQueue, id, exportedData, single);
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException($"Shelf chưa quy định: {shelve}");
+                    // CommonShelve giữ nguyên
+                    SetShelveQueue(common, shelveQueue[j]);
                 }
-            }
-
-            return exportedData;
-        }
-
-        private static void AddItemForSingleShelf(
-            Dictionary<int, List<List<int>>> shelveQueue, int id,
-            ShelfPuzzleInputData[] exportedData,
-            SingleShelve single
-        )
-        {
-            // SingleShelve: bẻ từng số thành [x]
-            var flat = new List<int[]>();
-            foreach (var layer in shelveQueue[id])
-            {
-                foreach (var item in layer)
+                else if (shelve is SingleShelve single)
                 {
-                    flat.Add(new[] { item });
-                }
-            }
-
-            var input = exportedData[id] = new ShelfPuzzleInputData
-            {
-                Type = ShelfType.TakeOnly,
-                Data = flat.ToArray()
-            };
-
-            single.ImportData(id, input);
-        }
-
-        private static void AddItemForCommonShelf(
-            Dictionary<int, List<List<int>>> shelveQueue, int id,
-            ShelfPuzzleInputData[] exportedData,
-            CommonShelve common
-        )
-        {
-            var list = new List<int[]>();
-            foreach (var layer in shelveQueue[id])
-            {
-                // Nếu chưa đủ 3 item thì thêm vào
-                var newLayer = new int[MaxItem];
-                for (var i = 0; i < MaxItem; i++)
-                {
-                    if (i + 1 <= layer.Count)
+                    // SingleShelve: bẻ từng số thành [x]
+                    var flatQueue = new Queue<List<int>>();
+                    foreach (var group in shelveQueue[j])
                     {
-                        newLayer[i] = layer[i];
+                        foreach (var x in group)
+                            flatQueue.Enqueue(new List<int> { x });
                     }
-                    else
-                    {
-                        newLayer[i] = 0;
-                    }
+
+                    SetShelveQueue(single, flatQueue);
                 }
-
-                list.Add(newLayer);
             }
-
-            var array = list.ToArray();
-            ArrayUtils.Shuffle(array);
-
-            var input = exportedData[id] = new ShelfPuzzleInputData
-            {
-                Type = ShelfType.Common,
-                Data = array
-            };
-            common.ImportData(id, input);
         }
 
-        private static List<List<int>> DistributeGoods(List<int> source, LevelStrategy levelStrategy)
+        private void SetShelveQueue(ShelveBase shelve, Queue<List<int>> layerQueue)
+        {
+            shelve.Clear();
+            shelve.SetLayerQueue(layerQueue);
+            shelve.LoadNextLayers();
+        }
+
+        private List<List<int>> DistributeGoods(List<int> source, LevelStrategy levelStrategy)
         {
             var totalLayer = levelStrategy.GetTotalLayer();
             var density = levelStrategy.Density;
-
-            Debug.Log($"Total layer: {totalLayer}, Density: {density}");
-
-            if (totalLayer < levelStrategy.Group || totalLayer > 3 * levelStrategy.Group)
-            {
+            
+            if (totalLayer < levelStrategy.Group || totalLayer > 3 * levelStrategy.Group) {
                 throw new ArgumentException("Invalid input");
             }
 
@@ -188,7 +107,7 @@ namespace Game
             // 1. Nếu có single shelve thì tạo nó trước
             for (var i = 0; i < levelStrategy.SpecialBox; i++)
             {
-                var first5 = source.OrderBy(_ => rand.Next()).Take(5).ToList();
+                var first5 = source.OrderBy(_ => rand.Next()).Take(5).ToList(); 
                 subsets.Add(first5);
                 foreach (var x in first5) pool[x]--;
             }
@@ -238,9 +157,7 @@ namespace Game
 
             // 4. Tạo các subset rỗng để lấp đủ totalLayer
             while (subsets.Count < totalLayer)
-            {
                 subsets.Add(new List<int>());
-            }
             // subsets.Add(new List<int>());
             // subsets.Add(new List<int>());
 
@@ -258,36 +175,10 @@ namespace Game
                 else
                     throw new Exception($"Không thể đặt {x} vào tập con nào");
             }
-
-            // Log ra thử coi có đúng ko  
-            foreach (var (subset, idx) in subsets.Select((s, i) => (s, i)))
-            {
-                Debug.Log($"Subset {idx}: [{string.Join(",", subset)}]");
-            }
-
-            // Shuffle subsets
+            
             ArrayUtils.Shuffle(subsets);
 
             return subsets;
-        }
-
-        /**
-         * Sort by: Y position from Low to High, X Position From Left To Right
-         */
-        private static void Sort(List<ShelveBase> shelves)
-        {
-            shelves.Sort((a, b) =>
-            {
-                var yCompare = a.transform.position.y.CompareTo(b.transform.position.y); // Low to High
-                if (yCompare != 0) return yCompare;
-                return a.transform.position.x.CompareTo(b.transform.position.x); // Left to Right
-            });
-
-            // Re-order sibling transforms to match sorted order
-            for (var i = 0; i < shelves.Count; i++)
-            {
-                shelves[i].transform.SetSiblingIndex(i);
-            }
         }
     }
 }

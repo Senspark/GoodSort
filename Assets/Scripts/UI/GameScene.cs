@@ -1,18 +1,13 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Core;
 using Cysharp.Threading.Tasks;
 using Defines;
-using Engine.ShelfPuzzle;
 using Game;
 using manager;
 using manager.Interface;
-using Newtonsoft.Json;
 using Senspark;
 using Sirenix.OdinInspector;
-using Strategy.Level;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -31,6 +26,7 @@ namespace UI
         private ILevelLoaderManager _levelLoaderManager;
         private ILevelStoreManager _levelStoreManager;
         private IConfigManager _configManager;
+        private DragDropGameManager _dragDropGameManager;
 
         public GameObject holdingGoods;
         private Goods _pickedGoods;
@@ -41,8 +37,6 @@ namespace UI
 
         public int CurrentLevel { get; private set; }
         public GameStateType State { get; private set; } = GameStateType.UnInitialize;
-
-        public static List<ShelfPuzzleNode> Solution;
 
         private void Awake()
         {
@@ -79,7 +73,7 @@ namespace UI
         private void Start()
         {
             if (State != GameStateType.Initialized) return;
-
+            
             SetupLevelNavigation();
             if (CurrentLevel > 0)
             {
@@ -151,6 +145,28 @@ namespace UI
             leveView.Load(builder);
             leveView.transform.SetParent(transform, false);
             _levelView = leveView;
+            _dragDropGameManager = _levelView.GetComponent<DragDropGameManager>();
+            RegisterDragObject();
+            RegisterDropZone();
+        }
+
+        private void RegisterDragObject()
+        {
+            if (!_dragDropGameManager) return;
+            foreach (var c in _levelView.GetComponentsInChildren<DragObject>())
+            {
+                _dragDropGameManager.RegisterDragObject(c);
+            }
+        }
+
+        private void RegisterDropZone()
+        {
+            if (!_dragDropGameManager) return;
+            foreach (var c in _levelView.GetComponentsInChildren<DropZone>())
+            {
+                _dragDropGameManager.RegisterDropZone(c);
+            }
+            
         }
 
         private void CleanUp()
@@ -162,73 +178,6 @@ namespace UI
 
             Destroy(_levelView.gameObject);
             _levelView = null;
-        }
-
-        [Button]
-        private void ImportLevelJson(string levelDataJson)
-        {
-            try
-            {
-                var levelData = JsonConvert.DeserializeObject<ShelfPuzzleInputData[]>(levelDataJson);
-                _levelView.ImportData(levelData);
-            }
-            catch (Exception e)
-            {
-                CleanLogger.Error(e);
-            }
-        }
-
-        [Button]
-        private void AutoSolve()
-        {
-            // var data = _levelView.ExportData();
-            // var logger = new AppendLogger();
-            // logger.Log($"Input: {JsonConvert.SerializeObject(data)}");
-            // logger.PrintLogs();
-            //
-            // var autoPlay = GetComponent<AutoPlayComponent>();
-            // if (!autoPlay)
-            // {
-            //     autoPlay = gameObject.AddComponent<AutoPlayComponent>();
-            //     autoPlay.levelView = _levelView;
-            // }
-            //
-            // Task.Run(() =>
-            // {
-            //     var solution = new PuzzleSolver(logger).SolvePuzzleWithStateChanges(data);
-            //     logger.PrintLogs();
-            //     AutoPlayComponent.Solution = solution;
-            // });
-
-            // UniTask.Void(async () =>
-            // {
-            //     await UniTask.SwitchToThreadPool();
-            //     var solution = new PuzzleSolver(logger).SolvePuzzleWithStateChanges(data);
-            //
-            //     await UniTask.SwitchToMainThread();
-            //     logger.PrintLogs();
-            //     AutoPlay.Play(_levelView, solution);
-            // });
-        }
-
-        [Button]
-        private void ManualSolve(string solveStepJson)
-        {
-            // try
-            // {
-            //     var levelData = JsonConvert.DeserializeObject<Move[]>(solveStepJson);
-            //     var solution = new List<ShelfPuzzleNode>();
-            //     foreach (var puzzleNode in levelData)
-            //     {
-            //         solution.Add(new ShelfPuzzleNode(null, null, 0, null, 0, puzzleNode));
-            //     }
-            //
-            //     AutoPlay.Play(_levelView, solution);
-            // }
-            // catch (Exception e)
-            // {
-            //     CleanLogger.Error(e);
-            // }
         }
 
         // public void OnPickGoods(Goods goods, Vector2 position)
