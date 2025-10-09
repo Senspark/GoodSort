@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Game
 {
-    // [CreateAssetMenu(menuName = "Game/Common/ShelfNormal")]
+    // [CreateAssetMenu(menuName = "Game/Shelf/CommonNormal")]
     public class CommonShelfNormalSpacingData : ScriptableObject, ISpacingData
     {
         [SerializeField] private Vector2[] topLayerSlotsPositions = new[]

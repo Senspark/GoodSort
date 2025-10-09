@@ -40,7 +40,8 @@ namespace UI
                     Data = new[]
                     {
                         new[] { 1, 1, 0 },
-                        new[] { 2, 2, 0 }
+                        new[] { 2, 2, 0 },
+                        new[] { 0, 3, 0 },
                     }
                 },
                 new()
@@ -49,6 +50,14 @@ namespace UI
                     Data = new[]
                     {
                         new[] { 0, 2, 1 },
+                    }
+                },
+                new()
+                {
+                    Type = ShelfType.TakeOnly,
+                    Data = new[]
+                    {
+                        new[] { 3, 3 }
                     }
                 }
             };

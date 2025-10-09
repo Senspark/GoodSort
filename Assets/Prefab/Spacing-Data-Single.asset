@@ -9,14 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 99418f6f98da49798708c5f4acdace67, type: 3}
-  m_Name: Common-Shelf-Normal-Spacing-Data
+  m_Script: {fileID: 11500000, guid: 8032133ec8c64022b39dbf8f0631c9c7, type: 3}
+  m_Name: Spacing-Data-Single
   m_EditorClassIdentifier: 
-  topLayerSlotsPositions:
-  - {x: -1, y: -1}
-  - {x: 0, y: -1}
-  - {x: 1, y: -1}
-  secondLayerSlotsPositions:
-  - {x: -0.8, y: -0.8}
-  - {x: 0, y: -0.8}
-  - {x: 0.8, y: -0.8}
+  topLayerSlotsPositions: {x: 0, y: -0.5}

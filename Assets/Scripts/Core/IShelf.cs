@@ -20,12 +20,4 @@ namespace Core
 
         void ImportData(int id, ShelfPuzzleInputData input);
     }
-
-    public interface IShelf2
-    {
-        /* Shelf ID */
-        int Id { get; }
-        ISpacingData SpacingData { get; }
-        IDropZone[]  DropZones { get; }
-    }
 }

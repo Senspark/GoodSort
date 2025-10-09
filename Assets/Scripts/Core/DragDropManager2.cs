@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using JetBrains.Annotations;
 using UnityEngine;
 
 namespace Core
@@ -194,21 +195,33 @@ namespace Core
         private void EndDrag()
         {
             if (_currentDraggingObject == null) return;
+            var dragObject = _currentDraggingObject;
 
             // Find drop zone at current position
-            var dropPosition = _currentDraggingObject.Position;
+            var dropPosition = dragObject.Position;
             var targetZoneData = GetDropZoneAtPosition(dropPosition);
 
-            DropInto(_currentDraggingObject, targetZoneData);
+            var successfulDrop = false;
 
+            if (targetZoneData != null)
+            {
+                successfulDrop = DropInto(dragObject, targetZoneData);
+            }
+
+            // Handle unsuccessful drop
+            if (!successfulDrop && dragObject.ShouldReturnToOriginal())
+            {
+                dragObject.ReturnToOriginalPosition();
+            }
+
+            dragObject.ResetVisuals();
+            dragObject.OnEndDrag();
             _currentDraggingObject = null;
         }
 
-        private void DropInto(IDragObject dragObject, DropZoneData targetZoneData)
+        private bool DropInto(IDragObject dragObject, DropZoneData targetZoneData)
         {
             var targetZone = targetZoneData.Zone;
-
-            var successfulDrop = false;
 
             if (targetZone != null && _canAcceptDropIntoFunc(targetZone))
             {
@@ -220,17 +233,10 @@ namespace Core
 
                 StartCoroutine(ScheduleCallback(targetZoneData, dragObject.Id));
 
-                successfulDrop = true;
+                return true;
             }
 
-            // Handle unsuccessful drop
-            if (!successfulDrop && dragObject.ShouldReturnToOriginal())
-            {
-                dragObject.ReturnToOriginalPosition();
-            }
-
-            dragObject.ResetVisuals();
-            dragObject.OnEndDrag();
+            return false;
         }
 
         // Helper methods
@@ -254,6 +260,7 @@ namespace Core
             return null;
         }
 
+        [CanBeNull]
         private DropZoneData GetDropZoneAtPosition(Vector2 position)
         {
             // Check zones in reverse order (top to bottom)

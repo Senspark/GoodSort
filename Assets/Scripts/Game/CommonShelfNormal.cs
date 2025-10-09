@@ -1,20 +1,22 @@
 using System.Linq;
 using Core;
+using Engine.ShelfPuzzle;
 using manager;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace Game
 {
-    public class CommonShelfNormal : MonoBehaviour, IShelf2
+    public class CommonShelfNormal : ShelfBase
     {
         [Required, SerializeField] public DropZone2[] dropZone;
         [Required, SerializeField] private SpriteRenderer sprRenderer;
         [Required, SerializeField] private CommonShelfNormalSpacingData spacingData;
 
-        public int Id { get; private set; }
-        public ISpacingData SpacingData => spacingData;
-        public IDropZone[] DropZones { get; private set; }
+        public override int Id { get; protected set; }
+        public override ShelfType Type => ShelfType.Common;
+        public override ISpacingData SpacingData => spacingData;
+        public override IDropZone[] DropZones { get; protected set; }
 
         private void Awake()
         {
@@ -24,7 +26,7 @@ namespace Game
             }
         }
 
-        public void Init(int shelfId)
+        public override void Init(int shelfId)
         {
             Id = shelfId;
             name = $"{name}-{shelfId}";

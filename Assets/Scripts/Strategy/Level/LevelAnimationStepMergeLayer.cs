@@ -102,7 +102,7 @@ namespace Strategy.Level
             // đưa layer dưới lên seconds
             var nextSecondLayer = _levelDataManager.GetLayer(shelfId, layerId + 2);
             if (nextSecondLayer == null) return;
-            foreach (var item in nextTopLayer)
+            foreach (var item in nextSecondLayer)
             {
                 item?.SetDisplay(ShelfLayerDisplay.Second);
                 item?.ResetVisual();

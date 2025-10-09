@@ -24,7 +24,6 @@ namespace Strategy.Level
             _prefab = prefab;
         }
 
-        private const int MaxItemForShelfCommon = 3;
         private const int NullItemTypeId = 0;
 
         public LevelData SpawnLevel(
@@ -32,12 +31,14 @@ namespace Strategy.Level
             Action<ShelfItemMeta> onItemDestroy
         )
         {
-            var shelves = _container.GetComponentsInChildren<CommonShelfNormal>();
+            var shelves = _container.GetComponentsInChildren<IShelf2>();
             if (shelves.Length != input.Length)
             {
                 CleanLogger.Error($"Số lượng Shelves không khớp {shelves.Length} != ${input.Length}");
                 return null;
             }
+
+            PreProcessData(ref shelves, ref input);
 
             var shelvesItems = new IShelfItem[input.Length][][];
             var drags = new List<IDragObject>();
@@ -57,14 +58,14 @@ namespace Strategy.Level
             return new LevelData
             {
                 ShelveItems = shelvesItems,
-                Shelves = shelves.Select(e => (IShelf2)e).ToArray(),
+                Shelves = shelves,
                 Drags = drags,
             };
         }
 
         private (IShelfItem[][], List<DragObject2>) SpawnShelf(
             int shelfId,
-            CommonShelfNormal shelf,
+            IShelf2 shelf,
             ShelfPuzzleInputData input,
             Func<int> getItemIdFunc,
             Action<ShelfItemMeta> onItemDestroy
@@ -72,13 +73,14 @@ namespace Strategy.Level
         {
             var data = new IShelfItem[input.Data.Length][];
             var drags = new List<DragObject2>();
-            var spawnContainer = shelf.transform;
+            var spawnContainer = ((ShelfBase)shelf).transform;
             var spacingData = shelf.SpacingData;
 
             for (var layerId = 0; layerId < input.Data.Length; layerId++)
             {
-                data[layerId] = new IShelfItem[MaxItemForShelfCommon];
-                for (var slotId = 0; slotId < MaxItemForShelfCommon; slotId++)
+                var slotsAmount = input.Data[layerId].Length;
+                data[layerId] = new IShelfItem[slotsAmount];
+                for (var slotId = 0; slotId < slotsAmount; slotId++)
                 {
                     var itemType = input.Data[layerId][slotId];
                     ShelfItemBasic newItem = null;
@@ -129,6 +131,41 @@ namespace Strategy.Level
                 1 => ShelfLayerDisplay.Second,
                 _ => ShelfLayerDisplay.Hidden
             };
+        }
+
+        /* Sắp xếp lại theo thứ tự:
+         Common Shelve -> Single Shelve
+         */
+        private static void PreProcessData(ref IShelf2[] ui, ref ShelfPuzzleInputData[] input)
+        {
+            // Validate: Count shelf types in both arrays
+            var uiCommonCount = ui.Count(shelf => shelf.Type == ShelfType.Common);
+            var uiTakeOnlyCount = ui.Count(shelf => shelf.Type == ShelfType.TakeOnly);
+            var inputCommonCount = input.Count(data => data.Type == ShelfType.Common);
+            var inputTakeOnlyCount = input.Count(data => data.Type == ShelfType.TakeOnly);
+
+            if (uiCommonCount != inputCommonCount)
+            {
+                CleanLogger.Error($"ShelfType.Common count mismatch: UI={uiCommonCount}, Input={inputCommonCount}");
+                throw new InvalidOperationException(
+                    $"ShelfType.Common count mismatch: UI={uiCommonCount}, Input={inputCommonCount}");
+            }
+
+            if (uiTakeOnlyCount != inputTakeOnlyCount)
+            {
+                CleanLogger.Error(
+                    $"ShelfType.TakeOnly count mismatch: UI={uiTakeOnlyCount}, Input={inputTakeOnlyCount}");
+                throw new InvalidOperationException(
+                    $"ShelfType.TakeOnly count mismatch: UI={uiTakeOnlyCount}, Input={inputTakeOnlyCount}");
+            }
+
+            // Sort: Common first, TakeOnly second (stable sort preserves original order within each type)
+            var sortedUi = ui.OrderBy(shelf => shelf.Type == ShelfType.Common ? 0 : 1).ToArray();
+            var sortedInput = input.OrderBy(data => data.Type == ShelfType.Common ? 0 : 1).ToArray();
+
+            // Copy sorted results back to original arrays
+            Array.Copy(sortedUi, ui, ui.Length);
+            Array.Copy(sortedInput, input, input.Length);
         }
     }
 
