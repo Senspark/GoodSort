@@ -8,7 +8,7 @@ namespace Game
 {
     public class CommonShelfNormal : MonoBehaviour, IShelf2
     {
-        [Required, SerializeField] public DropZone[] dropZone;
+        [Required, SerializeField] public DropZone2[] dropZone;
         [Required, SerializeField] private SpriteRenderer sprRenderer;
         [Required, SerializeField] private CommonShelfNormalSpacingData spacingData;
 

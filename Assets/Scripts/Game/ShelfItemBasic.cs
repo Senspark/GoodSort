@@ -10,7 +10,7 @@ namespace Game
     public class ShelfItemBasic : MonoBehaviour, IShelfItem
     {
         [Required, SerializeField] private SpriteRenderer spriteRenderer;
-        [Required, SerializeField] public DragObject dragObject;
+        [Required, SerializeField] public DragObject2 dragObject;
 
         public ShelfItemMeta Meta { get; private set; }
         public IDragObject DragObject => dragObject;

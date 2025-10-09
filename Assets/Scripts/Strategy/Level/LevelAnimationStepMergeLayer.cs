@@ -9,7 +9,7 @@ namespace Strategy.Level
     {
         private readonly LevelAnimationSwitchStateControl _control;
         private readonly LevelDataManager _levelDataManager;
-        private readonly IDragDropGameManager _dragDropManager;
+        private readonly IDragDropManager _dragDropManager;
         private readonly InputData _inputData;
         private Data _processingData;
 
@@ -17,7 +17,7 @@ namespace Strategy.Level
             LevelAnimationSwitchStateControl control,
             InputData inputData,
             LevelDataManager levelDataManager,
-            IDragDropGameManager dragDropManager
+            IDragDropManager dragDropManager
         )
         {
             _control = control;

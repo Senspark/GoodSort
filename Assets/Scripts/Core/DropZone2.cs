@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Core
 {
-    public class DropZone : MonoBehaviour, IDropZone
+    public class DropZone2 : MonoBehaviour, IDropZone
     {
         [SerializeField] private SpriteRenderer spriteRenderer;
 

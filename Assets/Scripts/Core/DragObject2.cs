@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Core
 {
-    public class DragObject : MonoBehaviour, IDragObject
+    public class DragObject2 : MonoBehaviour, IDragObject
     {
         [SerializeField] private SpriteRenderer spriteRenderer;
 

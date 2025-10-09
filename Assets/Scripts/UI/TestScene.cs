@@ -12,7 +12,7 @@ namespace UI
 {
     public class TestScene : MonoBehaviour
     {
-        [SerializeField] private DragDropGameManager dragDropManager;
+        [SerializeField] private DragDropManager2 dragDropManager;
         [SerializeField] public GameObject container;
         [SerializeField] public ShelfItemBasic shelfItemPrefab;
 

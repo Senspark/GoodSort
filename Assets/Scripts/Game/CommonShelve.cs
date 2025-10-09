@@ -15,8 +15,8 @@ namespace Game
         [SerializeField] private GameObject layerFrontContainer;
         [SerializeField] private GameObject layerBackContainer;
 
-        [SerializeField] private DropZone layerFrontZone;
-        [SerializeField] private DropZone layerBackZone;
+        [SerializeField] private DropZone2 layerFrontZone;
+        [SerializeField] private DropZone2 layerBackZone;
 
         [SerializeField] private GameObject goodsPrefab;
 
@@ -71,13 +71,13 @@ namespace Game
 
             var goodsNode = Instantiate(goodsPrefab, targetLayer.transform);
             var goods = goodsNode.GetComponent<Goods>();
-            var dragObject = goodsNode.GetComponent<DragObject>();
+            var dragObject = goodsNode.GetComponent<DragObject2>();
 
             goods.Id = goodsId;
             goods.Layer = layer;
             goods.Slot = slotId;
 
-            dragObject.SetCurrentZone(targetZone);
+            // dragObject.SetCurrentZone(targetZone);
             var slotPos = Vector3.zero;
 
             switch (layer)
@@ -178,7 +178,7 @@ namespace Game
             }
         }
 
-        public DropZone FindAnyEmptyZone()
+        public DropZone2 FindAnyEmptyZone()
         {
             // Check if any slot in front layer is not occupied
             for (int slotId = -1; slotId <= 1; slotId++)
@@ -227,9 +227,9 @@ namespace Game
                     goods.Layer = 0;
                     goods.transform.SetParent(layerFrontContainer.transform);
                     var newSlot = goods.Slot;
-                    var goodsDrag = goods.GetComponent<DragObject>();
+                    var goodsDrag = goods.GetComponent<DragObject2>();
                     _layerFrontGoodsMap[newSlot] = goods;
-                    goodsDrag.SetCurrentZone(layerFrontZone);
+                    // goodsDrag.SetCurrentZone(layerFrontZone);
                     goodsDrag.SetDraggable(true);
                     goodsDrag.UpdatePosition(layerFrontZone.GetSnapPosition(newSlot));
                     goods.Bounce();
@@ -246,13 +246,13 @@ namespace Game
 
     public class ShelfItem
     {
-        public ShelfItem(Goods goods, DragObject drag)
+        public ShelfItem(Goods goods, DragObject2 drag)
         {
             Goods = goods;
             Drag = drag;
         }
 
         public readonly Goods Goods;
-        public readonly DragObject Drag;
+        public readonly DragObject2 Drag;
     }
 }

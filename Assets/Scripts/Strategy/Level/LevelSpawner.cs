@@ -62,7 +62,7 @@ namespace Strategy.Level
             };
         }
 
-        private (IShelfItem[][], List<DragObject>) SpawnShelf(
+        private (IShelfItem[][], List<DragObject2>) SpawnShelf(
             int shelfId,
             CommonShelfNormal shelf,
             ShelfPuzzleInputData input,
@@ -71,7 +71,7 @@ namespace Strategy.Level
         )
         {
             var data = new IShelfItem[input.Data.Length][];
-            var drags = new List<DragObject>();
+            var drags = new List<DragObject2>();
             var spawnContainer = shelf.transform;
             var spacingData = shelf.SpacingData;
 

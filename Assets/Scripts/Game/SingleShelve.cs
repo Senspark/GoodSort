@@ -119,7 +119,7 @@ namespace Game
             }
         }
 
-        public DropZone FindAnyEmptyZone()
+        public DropZone2 FindAnyEmptyZone()
         {
             return null;
         }

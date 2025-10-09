@@ -16,13 +16,13 @@ namespace Strategy.Level
     public class LevelAnimation
     {
         private readonly LevelDataManager _levelDataManager;
-        private readonly IDragDropGameManager _dragDropManager;
+        private readonly IDragDropManager _dragDropManager;
 
         private readonly LevelAnimationStepDragDrop _stateDragDrop;
         private readonly LevelAnimationSwitchStateControl _stateControl;
         [CanBeNull] private ILevelAnimationStep _currentStep;
 
-        public LevelAnimation(LevelDataManager levelDataManager, IDragDropGameManager dragDropManager)
+        public LevelAnimation(LevelDataManager levelDataManager, IDragDropManager dragDropManager)
         {
             _levelDataManager = levelDataManager;
             _dragDropManager = dragDropManager;

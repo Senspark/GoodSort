@@ -12,12 +12,12 @@ namespace Strategy.Level
     public class AutoPlay2 : MonoBehaviour
     {
         private LevelDataManager _levelDataManager;
-        private IDragDropGameManager _dragDropManager;
+        private IDragDropManager _dragDropManager;
 
 
         public void Play(
             LevelDataManager levelDataManager,
-            IDragDropGameManager dragDropManager,
+            IDragDropManager dragDropManager,
             List<ShelfPuzzleNode> solution
         )
         {
@@ -61,12 +61,12 @@ namespace Strategy.Level
 
                 var drop = to.DropZones[emptySlot];
 
-                yield return StartCoroutine(MoveItemTo(_dragDropManager, (DragObject)item.DragObject, (DropZone)drop));
+                yield return StartCoroutine(MoveItemTo(_dragDropManager, (DragObject2)item.DragObject, (DropZone2)drop));
                 yield return new WaitForSeconds(1f);
             }
         }
         
-        private static IEnumerator MoveItemTo(IDragDropGameManager dragDropManager, DragObject drag, DropZone drop)
+        private static IEnumerator MoveItemTo(IDragDropManager dragDropManager, DragObject2 drag, DropZone2 drop)
         {
             var posFrom = drag.transform.position;
             var posTo = drop.transform.position;

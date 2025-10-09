@@ -2,7 +2,7 @@ using System;
 
 namespace Core
 {
-    public interface IDragDropGameManager
+    public interface IDragDropManager
     {
         void RegisterDragObject(IDragObject dragObject);
         void UnregisterDragObject(int dragId);

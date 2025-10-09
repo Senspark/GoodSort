@@ -9,7 +9,7 @@ namespace Core
     /// <summary>
     /// Central manager controls all drag & drop operations
     /// </summary>
-    public class DragDropGameManager : MonoBehaviour, IDragDropGameManager
+    public class DragDropManager2 : MonoBehaviour, IDragDropManager
     {
         [SerializeField] private float dragZOffset = -1f;
 
