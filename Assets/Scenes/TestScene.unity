@@ -351,8 +351,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09be3b82ebb74221bfce308264bfc3ee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dragDropGameManager: {fileID: 1583737592}
-  spacingData: {fileID: 11400000, guid: 6be9a1577518148fa83c20dbe3d8460f, type: 2}
+  dragDropManager: {fileID: 1583737592}
   container: {fileID: 1523046926}
   shelfItemPrefab: {fileID: -3984508902149505473, guid: 126b1ec0e429d4fea8fce05b2e0b83de, type: 3}
 --- !u!1001 &1880894051

@@ -48,7 +48,7 @@ namespace Strategy.Level
             _currentStep = null;
         }
 
-        private void SwitchToState_MergeLayer(int shelfId, int layerId)
+        public void SwitchToState_MergeLayer(int shelfId, int layerId)
         {
             _currentStep?.Exit();
             _currentStep = new LevelAnimationStepMergeLayer(_stateControl,

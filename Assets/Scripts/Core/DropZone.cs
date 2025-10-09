@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Core
@@ -14,14 +13,17 @@ namespace Core
         [SerializeField] private int maxObjects = 1;
         [SerializeField] private bool snapToCenter = true;
 
-        [Header("Custom Bounds (used when SpriteRenderer is null)")] [SerializeField]
-        private Vector2 customSize = new Vector2(1f, 1f);
+        [Header("Custom Bounds (used when SpriteRenderer is null)")] // 
+        [SerializeField]
+        private Vector2 customSize = new(1f, 1f);
+        
+        public int ShelfId { get; private set; }
+        public int SlotId { get; private set; }
 
-        private List<IDragObject> _containedObjects;
-
-        private void Start()
+        public void Init(int shelfId, int slotId)
         {
-            _containedObjects = new List<IDragObject>();
+            ShelfId = shelfId;
+            SlotId = slotId;
         }
 
         // Called by manager
@@ -33,30 +35,6 @@ namespace Core
             return bounds.Contains(position);
         }
 
-        public bool CanAcceptObject(IDragObject dragObject)
-        {
-            if (!isActive) return false;
-            return _containedObjects.Count < maxObjects;
-        }
-
-        public void AddObject(IDragObject dragObject)
-        {
-            if (!_containedObjects.Contains(dragObject))
-            {
-                _containedObjects.Add(dragObject);
-            }
-        }
-
-        public void RemoveObject(IDragObject dragObject)
-        {
-            _containedObjects.Remove(dragObject);
-        }
-
-        public void ClearAllObjects()
-        {
-            _containedObjects.Clear();
-        }
-
         // Getters
         public Vector3 GetSnapPosition(int slot)
         {
@@ -64,6 +42,7 @@ namespace Core
             return transform.position + offset;
         }
 
+        
         public bool ShouldSnapToCenter() => snapToCenter;
         public void SetActive(bool active) => isActive = active;
 

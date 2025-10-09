@@ -181,24 +181,24 @@ namespace UI
         [Button]
         private void AutoSolve()
         {
-            var data = _levelView.ExportData();
-            var logger = new AppendLogger();
-            logger.Log($"Input: {JsonConvert.SerializeObject(data)}");
-            logger.PrintLogs();
-
-            var autoPlay = GetComponent<AutoPlayComponent>();
-            if (!autoPlay)
-            {
-                autoPlay = gameObject.AddComponent<AutoPlayComponent>();
-                autoPlay.levelView = _levelView;
-            }
-
-            Task.Run(() =>
-            {
-                var solution = new PuzzleSolver(logger).SolvePuzzleWithStateChanges(data);
-                logger.PrintLogs();
-                AutoPlayComponent.Solution = solution;
-            });
+            // var data = _levelView.ExportData();
+            // var logger = new AppendLogger();
+            // logger.Log($"Input: {JsonConvert.SerializeObject(data)}");
+            // logger.PrintLogs();
+            //
+            // var autoPlay = GetComponent<AutoPlayComponent>();
+            // if (!autoPlay)
+            // {
+            //     autoPlay = gameObject.AddComponent<AutoPlayComponent>();
+            //     autoPlay.levelView = _levelView;
+            // }
+            //
+            // Task.Run(() =>
+            // {
+            //     var solution = new PuzzleSolver(logger).SolvePuzzleWithStateChanges(data);
+            //     logger.PrintLogs();
+            //     AutoPlayComponent.Solution = solution;
+            // });
 
             // UniTask.Void(async () =>
             // {
@@ -214,21 +214,21 @@ namespace UI
         [Button]
         private void ManualSolve(string solveStepJson)
         {
-            try
-            {
-                var levelData = JsonConvert.DeserializeObject<Move[]>(solveStepJson);
-                var solution = new List<ShelfPuzzleNode>();
-                foreach (var puzzleNode in levelData)
-                {
-                    solution.Add(new ShelfPuzzleNode(null, null, 0, null, 0, puzzleNode));
-                }
-
-                AutoPlay.Play(_levelView, solution);
-            }
-            catch (Exception e)
-            {
-                CleanLogger.Error(e);
-            }
+            // try
+            // {
+            //     var levelData = JsonConvert.DeserializeObject<Move[]>(solveStepJson);
+            //     var solution = new List<ShelfPuzzleNode>();
+            //     foreach (var puzzleNode in levelData)
+            //     {
+            //         solution.Add(new ShelfPuzzleNode(null, null, 0, null, 0, puzzleNode));
+            //     }
+            //
+            //     AutoPlay.Play(_levelView, solution);
+            // }
+            // catch (Exception e)
+            // {
+            //     CleanLogger.Error(e);
+            // }
         }
 
         // public void OnPickGoods(Goods goods, Vector2 position)

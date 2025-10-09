@@ -23,6 +23,8 @@ namespace Core
         [SerializeField] private Color dragColor = new(1f, 1f, 1f, 0.8f);
         [SerializeField] private Vector3 dragScale = new(1.1f, 1.1f, 1f);
 
+        private Func<IDropZone, bool> _canAcceptDropIntoFunc;
+
         // Registered objects
         private List<IDragObject> _dragObjects;
         private List<DropZoneData> _dropZones;
@@ -54,6 +56,11 @@ namespace Core
 
         #region PUBLIC_METHODS
 
+        public void Init(Func<IDropZone, bool> canAcceptDropIntoFunc)
+        {
+            _canAcceptDropIntoFunc = canAcceptDropIntoFunc;
+        }
+
         // Public registration methods
         public void RegisterDragObject(IDragObject dragObject)
         {
@@ -68,10 +75,6 @@ namespace Core
             var drag = _dragObjects.FirstOrDefault(d => d.Id == dragId);
             if (drag == null) return;
             _dragObjects.Remove(drag);
-            foreach (var zone in _dropZones)
-            {
-                zone.Zone.RemoveObject(drag);
-            }
         }
 
         public void RegisterDropZone(DropZoneData dropZone)
@@ -106,11 +109,6 @@ namespace Core
             {
                 obj.ReturnToOriginalPosition();
             }
-
-            foreach (var zone in _dropZones)
-            {
-                zone.Zone.ClearAllObjects();
-            }
         }
 
         public void RemoveAll()
@@ -128,6 +126,12 @@ namespace Core
         public void Unpause()
         {
             _pause = false;
+        }
+
+        public void ManualDropInto(IDragObject dragObject, IDropZone dropZone)
+        {
+            var targetZoneData = _dropZones.Find(e => e.Zone == dropZone);
+            DropInto(dragObject, targetZoneData);
         }
 
         #endregion
@@ -194,39 +198,39 @@ namespace Core
             // Find drop zone at current position
             var dropPosition = _currentDraggingObject.Position;
             var targetZoneData = GetDropZoneAtPosition(dropPosition);
+
+            DropInto(_currentDraggingObject, targetZoneData);
+
+            _currentDraggingObject = null;
+        }
+
+        private void DropInto(IDragObject dragObject, DropZoneData targetZoneData)
+        {
             var targetZone = targetZoneData.Zone;
 
             var successfulDrop = false;
 
-            if (targetZone != null && targetZone.CanAcceptObject(_currentDraggingObject))
+            if (targetZone != null && _canAcceptDropIntoFunc(targetZone))
             {
-                var previousZone = _currentDraggingObject.GetCurrentZone();
-                previousZone?.RemoveObject(_currentDraggingObject);
-
-                // Add to new zone
-                targetZone.AddObject(_currentDraggingObject);
-                _currentDraggingObject.SetCurrentZone(targetZone);
-
                 // Snap position if needed
                 if (targetZone.ShouldSnapToCenter())
                 {
-                    _currentDraggingObject.UpdatePosition(targetZone.GetSnapPosition(0));
+                    dragObject.UpdatePosition(targetZone.GetSnapPosition(0));
                 }
 
-                StartCoroutine(ScheduleCallback(targetZoneData, _currentDraggingObject.Id));
+                StartCoroutine(ScheduleCallback(targetZoneData, dragObject.Id));
 
                 successfulDrop = true;
             }
 
             // Handle unsuccessful drop
-            if (!successfulDrop && _currentDraggingObject.ShouldReturnToOriginal())
+            if (!successfulDrop && dragObject.ShouldReturnToOriginal())
             {
-                _currentDraggingObject.ReturnToOriginalPosition();
+                dragObject.ReturnToOriginalPosition();
             }
 
-            _currentDraggingObject.ResetVisuals();
-            _currentDraggingObject.OnEndDrag();
-            _currentDraggingObject = null;
+            dragObject.ResetVisuals();
+            dragObject.OnEndDrag();
         }
 
         // Helper methods

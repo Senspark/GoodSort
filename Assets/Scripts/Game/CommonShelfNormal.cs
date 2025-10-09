@@ -21,16 +21,21 @@ namespace Game
             if (dropZone.Length != 3)
             {
                 CleanLogger.Error("Phải có đúng 3 Drop zone");
-                return;
             }
-
-            DropZones = dropZone.Select(e => (IDropZone)e).ToArray();
         }
 
         public void Init(int shelfId)
         {
             Id = shelfId;
             name = $"{name}-{shelfId}";
+            
+            DropZones = new IDropZone[dropZone.Length];
+            for (var slotId = 0; slotId < dropZone.Length; slotId++)
+            {
+                var zone = dropZone[slotId];
+                zone.Init(Id, slotId);
+                DropZones[slotId] = zone;
+            }
         }
     }
 }

@@ -14,8 +14,6 @@ namespace Core
 
         Vector3 GetOriginalPosition();
         void UpdatePosition(Vector3 newPosition);
-        IDropZone GetCurrentZone();
-        void SetCurrentZone(IDropZone newZone);
         bool ShouldReturnToOriginal();
         void ReturnToOriginalPosition();
         void ResetVisuals();

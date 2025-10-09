@@ -1,7 +1,9 @@
 using Core;
+using Cysharp.Threading.Tasks;
 using Engine.ShelfPuzzle;
 using Game;
 using JetBrains.Annotations;
+using manager;
 using Sirenix.OdinInspector;
 using Strategy.Level;
 using UnityEngine;
@@ -17,8 +19,11 @@ namespace UI
         [CanBeNull] private LevelDataManager _levelDataManager;
         [CanBeNull] private LevelAnimation _levelAnimation;
 
+        private ShelfPuzzleInputData[] _inputData;
+
         private void Start()
         {
+            dragDropManager.Init(CanAcceptDropInto);
             CreateLevel();
         }
 
@@ -27,7 +32,7 @@ namespace UI
         {
             CleanUp();
             var levelCreator = new LevelCreator(container, shelfItemPrefab);
-            var inputData = new ShelfPuzzleInputData[]
+            _inputData = new ShelfPuzzleInputData[]
             {
                 new()
                 {
@@ -47,7 +52,7 @@ namespace UI
                     }
                 }
             };
-            var levelData = levelCreator.SpawnLevel(inputData, OnItemDestroy);
+            var levelData = levelCreator.SpawnLevel(_inputData, OnItemDestroy);
             _levelDataManager = new LevelDataManager(levelData);
             _levelAnimation = new LevelAnimation(_levelDataManager, dragDropManager);
             _levelAnimation.Enter();
@@ -67,10 +72,41 @@ namespace UI
             _levelAnimation?.Dispose();
         }
 
+        private bool CanAcceptDropInto(IDropZone dropZone)
+        {
+            if (_levelDataManager == null) return false;
+            var layer = _levelDataManager.GetTopLayer(dropZone.ShelfId);
+            if (dropZone.SlotId < 0 || dropZone.SlotId >= layer.Length) return false;
+            return layer[dropZone.SlotId] == null;
+        }
+
         private void OnItemDestroy(ShelfItemMeta itemMeta)
         {
             dragDropManager.UnregisterDragObject(itemMeta.Id);
             _levelDataManager?.RemoveItem(itemMeta.Id);
+        }
+
+        [Button]
+        private void AutoSolve()
+        {
+            var logger = new AppendLogger();
+
+            UniTask.Void(async () =>
+            {
+                await UniTask.SwitchToThreadPool();
+                var solution = new PuzzleSolver(logger).SolvePuzzleWithStateChanges(_inputData);
+
+                await UniTask.SwitchToMainThread();
+                logger.PrintLogs();
+
+                var autoplay = gameObject.GetComponent<AutoPlay2>();
+                if (!autoplay)
+                {
+                    autoplay = gameObject.AddComponent<AutoPlay2>();
+                }
+
+                autoplay.Play(_levelDataManager, dragDropManager, solution);
+            });
         }
     }
 }

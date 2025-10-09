@@ -1,3 +1,5 @@
+using System;
+
 namespace Core
 {
     public interface IDragDropGameManager
@@ -10,5 +12,7 @@ namespace Core
         void RemoveAll();
         void Pause();
         void Unpause();
+        void ManualDropInto(IDragObject dragObject, IDropZone dropZone);
+        void Init(Func<IDropZone, bool> canAcceptDropIntoFunc);
     }
 }

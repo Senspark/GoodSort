@@ -4,12 +4,10 @@ namespace Core
 {
     public interface IDropZone
     {
-        void ClearAllObjects();
-        bool CanAcceptObject(IDragObject obj);
-        void AddObject(IDragObject obj);
+        int ShelfId { get; }
+        int SlotId { get; }
         bool ShouldSnapToCenter();
         Vector3 GetSnapPosition(int slot);
         bool ContainsPosition(Vector2 position);
-        void RemoveObject(IDragObject dragObject);
     }
 }

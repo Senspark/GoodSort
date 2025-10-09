@@ -21,7 +21,6 @@ namespace Core
         private Color _originalColor;
         private Vector3 _originalScale;
         private int _originalSortingOrder;
-        private IDropZone _currentZone;
         private bool _isBeingDragged = false;
 
         private void Start()
@@ -92,8 +91,6 @@ namespace Core
 
         // Getters/Setters
         public Vector3 GetOriginalPosition() => _originalPosition;
-        public IDropZone GetCurrentZone() => _currentZone;
-        public void SetCurrentZone(IDropZone zone) => _currentZone = zone;
         public bool ShouldReturnToOriginal() => returnToOriginal;
         public void SetDraggable(bool draggable) => isDraggable = draggable;
     }
