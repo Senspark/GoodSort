@@ -48,7 +48,7 @@ namespace Strategy.Level
             {
                 var shelfData = input[shelfId];
                 var shelf = shelves[shelfId];
-                shelf.Init(shelfId);
+                shelf.Init(shelfId, shelfData.LockCount);
                 shelvesItems[shelfId] = SpawnShelf(shelfId, shelf, shelfData, getItemId, onItemDestroy);
             }
 

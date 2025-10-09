@@ -8,14 +8,16 @@ namespace Engine.ShelfPuzzle
 {
     public enum ShelfType
     {
-        Common, // Can give and receive items (3-slot layers)
-        Single // Can only give items (1-slot layers)
+        Common, // Có 3 Slot chứa trong cùng 1 Layer
+        Single, // Chỉ có thể lấy Item ra
     }
 
     public class ShelfPuzzleInputData
     {
-        public ShelfType Type { get; set; }
-        public int[][] Data { get; set; } = Array.Empty<int[]>();
+        public ShelfType Type;
+        /* Số lần khoá cho đến khi == 0 thì sẽ mở khoá */
+        public int LockCount;
+        public int[][] Data = Array.Empty<int[]>();
     }
 
     public class ShelfPuzzleNode : IAStarNode

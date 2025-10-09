@@ -62,7 +62,7 @@ namespace Strategy.Level
             if (slotData == null)
             {
                 var item = (ShelfItemBasic)_levelDataManager.FindItem(itemId);
-                var shelf = (CommonShelfNormal)_levelDataManager.GetShelf(shelfId);
+                var shelf = (ShelfBase)_levelDataManager.GetShelf(shelfId);
                 item.transform.parent = shelf.transform;
 
                 var prevShelfId = item.Meta.ShelfId;

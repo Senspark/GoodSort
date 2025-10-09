@@ -15,6 +15,7 @@ namespace Game
         [Required, SerializeField] private SingleShelfNormalSpacingData spacingData;
 
         public override int Id { get; protected set; }
+        public override int LockCount { get; protected set; }
         public override ShelfType Type => ShelfType.Single;
         public override ISpacingData SpacingData => spacingData;
         public override IDropZone[] DropZones { get; protected set; }
@@ -23,10 +24,15 @@ namespace Game
         {
             DropZones = Array.Empty<IDropZone>();
         }
-        
-        public override void Init(int shelfId)
+
+        public override void Init(int shelfId, int lockCount)
         {
             Id = shelfId;
+            LockCount = 0;
+        }
+
+        public override void DecreaseLockCount()
+        {
         }
     }
 }

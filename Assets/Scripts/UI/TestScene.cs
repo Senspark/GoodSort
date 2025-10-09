@@ -53,6 +53,15 @@ namespace UI
                 },
                 new()
                 {
+                    Type = ShelfType.Common,
+                    LockCount = 2,
+                    Data = new[]
+                    {
+                        new[] { 5, 5, 0 },
+                    }
+                },
+                new()
+                {
                     Type = ShelfType.Single,
                     Data = new[]
                     {
@@ -67,6 +76,7 @@ namespace UI
                     {
                         new[] { 4 },
                         new[] { 3 },
+                        new[] { 5 },
                     }
                 }
             };

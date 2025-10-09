@@ -1,4 +1,3 @@
-using System.Linq;
 using Core;
 using Engine.ShelfPuzzle;
 using manager;
@@ -11,9 +10,11 @@ namespace Game
     {
         [Required, SerializeField] public DropZone2[] dropZone;
         [Required, SerializeField] private SpriteRenderer sprRenderer;
+        [Required, SerializeField] private GameObject lockView;
         [Required, SerializeField] private CommonShelfNormalSpacingData spacingData;
 
         public override int Id { get; protected set; }
+        public override int LockCount { get; protected set; }
         public override ShelfType Type => ShelfType.Common;
         public override ISpacingData SpacingData => spacingData;
         public override IDropZone[] DropZones { get; protected set; }
@@ -26,9 +27,10 @@ namespace Game
             }
         }
 
-        public override void Init(int shelfId)
+        public override void Init(int shelfId, int lockCount)
         {
             Id = shelfId;
+            LockCount = lockCount;
             name = $"{name}-{shelfId}";
             
             DropZones = new IDropZone[dropZone.Length];
@@ -38,6 +40,14 @@ namespace Game
                 zone.Init(Id, slotId);
                 DropZones[slotId] = zone;
             }
+
+            lockView.gameObject.SetActive(LockCount > 0);
+        }
+        
+        public override void DecreaseLockCount()
+        {
+            LockCount = Mathf.Max(0, LockCount - 1);
+            lockView.gameObject.SetActive(LockCount > 0);
         }
     }
 }

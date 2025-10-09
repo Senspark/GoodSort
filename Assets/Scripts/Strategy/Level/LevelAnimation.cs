@@ -4,12 +4,6 @@ using JetBrains.Annotations;
 
 namespace Strategy.Level
 {
-    public enum LevelAnimationStepType
-    {
-        DragDrop, // Cho phép user control
-        MergeLayer, // lock control để diễn hình ảnh
-    }
-
     /* Điều khiển chuyển động/hiệu ứng/hoạt ảnh trong Game Scene
      Chia làm nhiều Step, mỗi Step chỉ làm 1 nhiệm vụ
      */
@@ -28,9 +22,11 @@ namespace Strategy.Level
             _dragDropManager = dragDropManager;
             _stateControl = new LevelAnimationSwitchStateControl(
                 SwitchToState_MergeLayer,
+                SwitchToState_UnlockShelves,
                 SwitchToState_DragDrop
             );
-            _currentStep = _stateDragDrop = new LevelAnimationStepDragDrop(_stateControl, levelDataManager, dragDropManager);
+            _currentStep = _stateDragDrop =
+                new LevelAnimationStepDragDrop(_stateControl, levelDataManager, dragDropManager);
         }
 
         public void Enter()
@@ -54,6 +50,13 @@ namespace Strategy.Level
             _currentStep = new LevelAnimationStepMergeLayer(_stateControl, data, _levelDataManager, _dragDropManager);
             _currentStep.Enter();
         }
+        
+        private void SwitchToState_UnlockShelves(LevelAnimationUnlockShelves.InputData data)
+        {
+            _currentStep?.Exit();
+            _currentStep = new LevelAnimationUnlockShelves(_stateControl, data, _levelDataManager);
+            _currentStep.Enter();
+        }
 
         private void SwitchToState_DragDrop()
         {
@@ -67,20 +70,18 @@ namespace Strategy.Level
     {
         public readonly Action<LevelAnimationStepMergeLayer.InputData> ToMergeLayer;
         public readonly Action ToDragDrop;
+        public readonly Action<LevelAnimationUnlockShelves.InputData> ToUnlockShelves;
 
         public LevelAnimationSwitchStateControl(
             Action<LevelAnimationStepMergeLayer.InputData> toMergeLayer,
+            Action<LevelAnimationUnlockShelves.InputData> toUnlockShelves,
             Action toDragDrop
         )
         {
             ToMergeLayer = toMergeLayer;
+            ToUnlockShelves = toUnlockShelves;
             ToDragDrop = toDragDrop;
         }
-    }
-
-    public class ToMergeLayerData
-    {
-        
     }
 
     public interface ILevelAnimationStep

@@ -11,7 +11,7 @@ namespace Strategy.Level
         private readonly LevelAnimationSwitchStateControl _control;
         private readonly LevelDataManager _levelDataManager;
         private readonly InputData _inputData;
-        private List<Data> _processingData = new();
+        private readonly List<Data> _processingData = new();
 
         public LevelAnimationStepMergeLayer(
             LevelAnimationSwitchStateControl control,
@@ -62,7 +62,7 @@ namespace Strategy.Level
             // Callback Done
             if (done >= _processingData.Count)
             {
-                _control.ToDragDrop();
+                _control.ToUnlockShelves(new LevelAnimationUnlockShelves.InputData(1));
             }
         }
 
