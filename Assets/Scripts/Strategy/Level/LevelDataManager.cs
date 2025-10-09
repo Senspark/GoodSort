@@ -4,11 +4,10 @@ using System.Linq;
 using Core;
 using Engine.ShelfPuzzle;
 using JetBrains.Annotations;
-using Sirenix.Utilities;
 
 namespace Strategy.Level
 {
-    public class LevelDataManager
+    public class LevelDataManager : ILevelDataManager
     {
         /**
          * [shelf] [layer] [slot]
@@ -89,17 +88,13 @@ namespace Strategy.Level
             return layer[slotId];
         }
 
+        [CanBeNull]
         public IShelfItem FindItemInShelf(int shelfId, int itemTypeId)
         {
             if (_shelves == null) return null;
             if (shelfId < 0 || shelfId >= _shelves.Length) return null;
             var shelf = _shelves[shelfId];
             var layerId = FindNotEmptyLayer(shelf);
-            if (layerId < 0)
-            {
-                return null;
-            }
-
             var layer = shelf[layerId];
             return FindItemTypeInLayer(layer, itemTypeId);
         }
@@ -187,6 +182,7 @@ namespace Strategy.Level
             layer[slotId] = item;
         }
 
+        /* Trả về Id của Layer đang empty, nếu tất cả layer đều empty thì trả về 0 - top layer */
         private static int FindNotEmptyLayer(IShelfItem[][] shelf)
         {
             for (var layerId = 0; layerId < shelf.Length; layerId++)
@@ -198,9 +194,10 @@ namespace Strategy.Level
                 }
             }
 
-            return -1;
+            return 0;
         }
 
+        [CanBeNull]
         private static IShelfItem FindItemTypeInLayer(IShelfItem[] layer, int itemTypeId)
         {
             return layer.FirstOrDefault(slot => slot != null && slot.Meta.TypeId == itemTypeId);

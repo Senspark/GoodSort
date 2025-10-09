@@ -42,7 +42,7 @@ namespace Strategy.Level
                 // Move Item id: {move.Item} từ Shelf {move.From} đến Shelf {move.To}
                 var from = _levelDataManager.GetShelf(move.From);
                 var to = _levelDataManager.GetShelf(move.To);
-                var item = _levelDataManager.FindItemInShelf(move.From, move.Item);
+                var item = _levelDataManager.FindItemInShelf(from.Id, move.Item);
 
                 PrintState(i, node, logger);
 
@@ -52,14 +52,29 @@ namespace Strategy.Level
                     yield break;
                 }
 
-                var emptySlot = Array.FindIndex(_levelDataManager.GetTopLayer(move.To), e => e == null);
-                if (emptySlot < 0)
+                var layer = _levelDataManager.GetTopLayer(to.Id);
+                if (layer == null)
                 {
-                    Debug.LogError($"To #{to.Id} không có Drop Zone nào trống");
+                    Debug.LogError($"To #{to.Id} null");
                     yield break;
                 }
 
-                var drop = to.DropZones[emptySlot];
+                IDropZone drop;
+                if (layer.Length == 0)
+                {
+                    drop = to.DropZones[0];
+                }
+                else
+                {
+                    var emptySlot = Array.FindIndex(layer, e => e == null);
+                    if (emptySlot < 0)
+                    {
+                        Debug.LogError($"To #{to.Id} không có Drop Zone nào trống");
+                        yield break;
+                    }
+
+                    drop = to.DropZones[emptySlot];
+                }
 
                 yield return StartCoroutine(MoveItemTo(_dragDropManager, (DragObject2)item.DragObject, (DropZone2)drop));
                 yield return new WaitForSeconds(1f);
