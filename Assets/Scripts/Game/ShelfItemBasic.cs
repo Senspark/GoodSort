@@ -18,17 +18,20 @@ namespace Game
         private const float MaxZ = -1.0f;
         private ISpacingData _spacingData;
         private ShelfLayerDisplay _display;
+        private Action<ShelfItemMeta> _onDestroy;
 
         public void Init(
             ShelfItemMeta meta,
             ISpacingData spacingData,
             ShelfLayerDisplay display,
+            Action<ShelfItemMeta> onDestroy,
             Sprite sprite
         )
         {
             Meta = meta;
             _spacingData = spacingData;
             _display = display;
+            _onDestroy = onDestroy;
             spriteRenderer.sprite = sprite;
             name = $"S{meta.ShelfId}-L{meta.LayerId}-T{meta.TypeId}-{meta.Id}";
             dragObject.Init(meta.Id);
@@ -83,17 +86,21 @@ namespace Game
 
         public void DestroyItem()
         {
-            Bounce(() => Destroy(gameObject));
+            _onDestroy.Invoke(Meta);
+            Destroy(gameObject);
         }
 
-        private void Bounce([CanBeNull] Action onCompleted, float delay = 0f)
+        public void Bounce(Action onCompleted, float delay = 0f)
         {
             // Reset scale
             transform.localScale = Vector3.one;
 
             // Sequence tween
             var seq = DOTween.Sequence();
-            seq.AppendInterval(delay);
+            if (delay > 0)
+            {
+                seq.AppendInterval(delay);
+            }
             seq.Append(transform.DOScale(new Vector3(0.9f, 1.1f, 1f), 0.1f));
             seq.Append(transform.DOScale(new Vector3(1.1f, 0.9f, 1f), 0.1f));
             seq.Append(transform.DOScale(Vector3.one, 0.1f));

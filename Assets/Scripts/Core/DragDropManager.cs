@@ -9,13 +9,15 @@ namespace Core
     /// <summary>
     /// Central manager controls all drag & drop operations
     /// </summary>
-    public class DragDropGameManager : MonoBehaviour
+    public class DragDropGameManager : MonoBehaviour, IDragDropGameManager
     {
         [SerializeField] private float dragZOffset = -1f;
+
         /* Object chứa các Drag & Drop */
         [SerializeField] private Transform container;
 
-        [Header("Visual Settings")] [SerializeField]
+        [Header("Visual Settings")] //
+        [SerializeField]
         private bool enableVisualFeedback = true;
 
         [SerializeField] private Color dragColor = new(1f, 1f, 1f, 0.8f);
@@ -29,6 +31,7 @@ namespace Core
         private IDragObject _currentDraggingObject;
         private Vector3 _dragOffset;
         private Camera _mainCamera;
+        private bool _pause = false;
 
         private void Awake()
         {
@@ -37,17 +40,18 @@ namespace Core
             {
                 Debug.LogError("Main Camera not found!");
             }
-            
+
             _dragObjects = new List<IDragObject>();
             _dropZones = new List<DropZoneData>();
         }
 
         private void Update()
         {
+            if (_pause) return;
             HandleMouseInput();
             UpdateDragging();
         }
-        
+
         #region PUBLIC_METHODS
 
         // Public registration methods
@@ -59,12 +63,14 @@ namespace Core
             }
         }
 
-        public void UnregisterDragObject(IDragObject dragObject)
+        public void UnregisterDragObject(int dragId)
         {
-            _dragObjects.Remove(dragObject);
+            var drag = _dragObjects.FirstOrDefault(d => d.Id == dragId);
+            if (drag == null) return;
+            _dragObjects.Remove(drag);
             foreach (var zone in _dropZones)
             {
-                zone.Zone.RemoveObject(dragObject);
+                zone.Zone.RemoveObject(drag);
             }
         }
 
@@ -105,6 +111,23 @@ namespace Core
             {
                 zone.Zone.ClearAllObjects();
             }
+        }
+
+        public void RemoveAll()
+        {
+            _currentDraggingObject = null;
+            _dragObjects.Clear();
+            _dropZones.Clear();
+        }
+
+        public void Pause()
+        {
+            _pause = true;
+        }
+
+        public void Unpause()
+        {
+            _pause = false;
         }
 
         #endregion

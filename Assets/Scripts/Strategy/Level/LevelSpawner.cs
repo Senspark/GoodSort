@@ -27,7 +27,10 @@ namespace Strategy.Level
         private const int MaxItemForShelfCommon = 3;
         private const int NullItemTypeId = 0;
 
-        public LevelData SpawnLevel(ShelfPuzzleInputData[] input)
+        public LevelData SpawnLevel(
+            ShelfPuzzleInputData[] input,
+            Action<ShelfItemMeta> onItemDestroy
+        )
         {
             var shelves = _container.GetComponentsInChildren<CommonShelfNormal>();
             if (shelves.Length != input.Length)
@@ -46,7 +49,7 @@ namespace Strategy.Level
                 var shelfData = input[shelfId];
                 var shelf = shelves[shelfId];
                 shelf.Init(shelfId);
-                var (items, itemsDrags) = SpawnShelf(shelfId, shelf, shelfData, getItemId);
+                var (items, itemsDrags) = SpawnShelf(shelfId, shelf, shelfData, getItemId, onItemDestroy);
                 shelvesItems[shelfId] = items;
                 drags.AddRange(itemsDrags);
             }
@@ -63,7 +66,8 @@ namespace Strategy.Level
             int shelfId,
             CommonShelfNormal shelf,
             ShelfPuzzleInputData input,
-            Func<int> getItemIdFunc
+            Func<int> getItemIdFunc,
+            Action<ShelfItemMeta> onItemDestroy
         )
         {
             var data = new IShelfItem[input.Data.Length][];
@@ -82,7 +86,7 @@ namespace Strategy.Level
                     if (itemType > NullItemTypeId)
                     {
                         var meta = new ShelfItemMeta(shelfId, layerId, slotId, itemType, getItemIdFunc());
-                        newItem = SpawnItem(meta, spawnContainer, spacingData);
+                        newItem = SpawnItem(meta, spawnContainer, spacingData, onItemDestroy);
                         if (newItem)
                         {
                             drags.Add(newItem.dragObject);
@@ -99,7 +103,8 @@ namespace Strategy.Level
         private ShelfItemBasic SpawnItem(
             ShelfItemMeta meta,
             Transform parent,
-            ISpacingData spacingData
+            ISpacingData spacingData,
+            Action<ShelfItemMeta> onItemDestroy
         )
         {
             var spr = Resources.Load<Sprite>($"sprite/Items/Item{meta.TypeId}");
@@ -110,7 +115,7 @@ namespace Strategy.Level
             }
 
             var obj = Object.Instantiate(_prefab, parent);
-            obj.Init(meta, spacingData, FromLayerId(meta.LayerId), spr);
+            obj.Init(meta, spacingData, FromLayerId(meta.LayerId), onItemDestroy, spr);
             obj.ResetVisual();
 
             return obj;

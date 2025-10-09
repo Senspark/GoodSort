@@ -1,3 +1,5 @@
+using System;
+using JetBrains.Annotations;
 using UnityEngine;
 
 namespace Core
@@ -12,6 +14,7 @@ namespace Core
         void SetDisplay(ShelfLayerDisplay display);
         void ResetVisual();
         void DestroyItem();
+        public void Bounce([CanBeNull] Action onCompleted, float delay = 0f);
     }
 
     public enum ShelfLayerDisplay

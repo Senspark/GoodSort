@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Core;
+using Sirenix.Utilities;
 
 namespace Strategy.Level
 {
@@ -11,13 +12,13 @@ namespace Strategy.Level
          */
         private readonly IShelfItem[][][] _shelves;
 
-        private readonly LevelData _levelData;
+        private readonly IShelf2[] _shelvesObjects;
         private readonly Dictionary<int, IShelfItem> _items;
 
         public LevelDataManager(LevelData levelData)
         {
-            _levelData = levelData;
             _shelves = levelData.ShelveItems;
+            _shelvesObjects = levelData.Shelves;
             _items = new Dictionary<int, IShelfItem>();
             foreach (var layers in _shelves)
             {
@@ -32,6 +33,25 @@ namespace Strategy.Level
                     }
                 }
             }
+        }
+
+        public void Dispose()
+        {
+        }
+
+        public void RemoveItem(int itemId)
+        {
+            if (!_items.Remove(itemId, out var item))
+            {
+                return;
+            }
+
+            SetSlotData(item.Meta.ShelfId, item.Meta.LayerId, item.Meta.SlotId, null);
+        }
+
+        public List<IShelfItem> GetItems()
+        {
+            return _items.Values.ToList();
         }
 
         public IShelfItem GetItem(int shelfId, int layerId, int slotId)
@@ -70,7 +90,17 @@ namespace Strategy.Level
 
         public IShelf2 GetShelf(int shelfId)
         {
-            return _levelData.Shelves.FirstOrDefault(e => e.Id == shelfId);
+            return _shelvesObjects.FirstOrDefault(e => e.Id == shelfId);
+        }
+
+        public IShelf2[] GetShelves()
+        {
+            return _shelvesObjects.ToArray();
+        }
+
+        public List<IDragObject> GetDrags()
+        {
+            return _items.Values.Select(e => e.DragObject).ToList();
         }
 
         public int GetTopLayerOfShelf(int shelfId)
@@ -106,7 +136,7 @@ namespace Strategy.Level
             return shelf[layerId];
         }
 
-        public void SetItem(int shelfId, int layerId, int slotId, IShelfItem item)
+        public void SetSlotData(int shelfId, int layerId, int slotId, IShelfItem item)
         {
             if (_shelves == null) return;
 
