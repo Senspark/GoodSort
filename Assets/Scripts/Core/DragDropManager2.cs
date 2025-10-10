@@ -159,7 +159,7 @@ namespace Core
             var mouseWorldPos = GetMouseWorldPosition();
             var objectUnderMouse = GetDragObjectAtPosition(mouseWorldPos);
 
-            if (objectUnderMouse != null && objectUnderMouse.CanBeDragged())
+            if (objectUnderMouse != null)
             {
                 StartDrag(objectUnderMouse);
             }
@@ -251,7 +251,7 @@ namespace Core
         {
             foreach (var dragObj in _dragObjects)
             {
-                if (dragObj.IsActive && dragObj.ContainsPosition(position))
+                if (dragObj.CanBeDragged() && dragObj.ContainsPosition(position))
                 {
                     return dragObj;
                 }

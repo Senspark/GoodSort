@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace Core
@@ -13,7 +14,6 @@ namespace Core
         [SerializeField] private bool returnToOriginal = true;
 
         public int Id { get; private set; }
-        public bool IsActive => isActiveAndEnabled;
         public Vector3 Position => transform.position;
 
         // State
@@ -22,6 +22,7 @@ namespace Core
         private Vector3 _originalScale;
         private int _originalSortingOrder;
         private bool _isBeingDragged = false;
+        private Func<bool> _canBeDragged;
 
         private void Start()
         {
@@ -32,9 +33,10 @@ namespace Core
             _originalSortingOrder = spriteRenderer.sortingOrder;
         }
 
-        public void Init(int id)
+        public void Init(int id, Func<bool> canBeDragged)
         {
             Id = id;
+            _canBeDragged = canBeDragged;
         }
 
         // Called by manager
@@ -47,7 +49,7 @@ namespace Core
 
         public bool CanBeDragged()
         {
-            return isDraggable && !_isBeingDragged;
+            return isDraggable && !_isBeingDragged && isActiveAndEnabled && _canBeDragged();
         }
 
         public void OnStartDrag()

@@ -42,7 +42,7 @@ namespace Game
             _onDestroy = onDestroy;
             spriteRenderer.sprite = sprite;
             name = $"S{meta.ShelfId}-L{meta.LayerId}-T{meta.TypeId}-{meta.Id}";
-            dragObject.Init(meta.Id);
+            dragObject.Init(meta.Id, () => _display == ShelfLayerDisplay.Top);
 #if UNITY_EDITOR
             debugText.text = meta.TypeId.ToString();
 #endif
