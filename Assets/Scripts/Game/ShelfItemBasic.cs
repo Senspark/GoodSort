@@ -1,8 +1,8 @@
 using System;
 using Core;
 using DG.Tweening;
-using JetBrains.Annotations;
 using Sirenix.OdinInspector;
+using TMPro;
 using UnityEngine;
 
 namespace Game
@@ -11,6 +11,7 @@ namespace Game
     {
         [Required, SerializeField] private SpriteRenderer spriteRenderer;
         [Required, SerializeField] public DragObject2 dragObject;
+        [Required, SerializeField] public TextMeshPro debugText;
 
         public ShelfItemMeta Meta { get; private set; }
         public IDragObject DragObject => dragObject;
@@ -19,6 +20,13 @@ namespace Game
         private ISpacingData _spacingData;
         private ShelfLayerDisplay _display;
         private Action<ShelfItemMeta> _onDestroy;
+
+        private void Awake()
+        {
+#if !UNITY_EDITOR
+            Destroy(debugText.gameObject);
+#endif
+        }
 
         public void Init(
             ShelfItemMeta meta,
@@ -35,6 +43,9 @@ namespace Game
             spriteRenderer.sprite = sprite;
             name = $"S{meta.ShelfId}-L{meta.LayerId}-T{meta.TypeId}-{meta.Id}";
             dragObject.Init(meta.Id);
+#if UNITY_EDITOR
+            debugText.text = meta.TypeId.ToString();
+#endif
         }
 
         public void SetPosition(Vector3 position)

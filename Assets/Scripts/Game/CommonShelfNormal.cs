@@ -2,6 +2,7 @@ using Core;
 using Engine.ShelfPuzzle;
 using manager;
 using Sirenix.OdinInspector;
+using TMPro;
 using UnityEngine;
 
 namespace Game
@@ -12,6 +13,7 @@ namespace Game
         [Required, SerializeField] private SpriteRenderer sprRenderer;
         [Required, SerializeField] private GameObject lockView;
         [Required, SerializeField] private CommonShelfNormalSpacingData spacingData;
+        [Required, SerializeField] private TextMeshPro debugText;
 
         public override int Id { get; protected set; }
         public override int LockCount { get; protected set; }
@@ -25,6 +27,9 @@ namespace Game
             {
                 CleanLogger.Error("Phải có đúng 3 Drop zone");
             }
+#if !UNITY_EDITOR
+            Destroy(debugText.gameObject);
+#endif
         }
 
         public override void Init(int shelfId, int lockCount)
@@ -42,6 +47,9 @@ namespace Game
             }
 
             lockView.gameObject.SetActive(LockCount > 0);
+#if UNITY_EDITOR
+            debugText.text = shelfId.ToString();
+#endif
         }
         
         public override void DecreaseLockCount()
