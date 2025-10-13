@@ -1,20 +1,24 @@
+using System.Collections.Generic;
 using Core;
 using Cysharp.Threading.Tasks;
 using Engine.ShelfPuzzle;
 using Game;
 using JetBrains.Annotations;
 using manager;
+using Newtonsoft.Json;
 using Sirenix.OdinInspector;
 using Strategy.Level;
 using UnityEngine;
 
 namespace UI
 {
-    public class TestScene : MonoBehaviour
+    public class TestScene2 : MonoBehaviour
     {
         [SerializeField] private DragDropManager2 dragDropManager;
         [SerializeField] public GameObject container;
         [SerializeField] public ShelfItemBasic shelfItemPrefab;
+        [SerializeField] public TextAsset levelJsonFile;
+        [SerializeField] public TextAsset levelSolutionJsonFile;
 
         [CanBeNull] private LevelDataManager _levelDataManager;
         [CanBeNull] private LevelAnimation _levelAnimation;
@@ -30,64 +34,7 @@ namespace UI
         {
             CleanUp();
             var levelCreator = new LevelCreator(container, shelfItemPrefab);
-            var inputData = new ShelfPuzzleInputData[]
-            {
-                new()
-                {
-                    Type = ShelfType.Common,
-                    Data = new[]
-                    {
-                        new[] { 1, 1, 0 },
-                        new[] { 2, 2, 0 },
-                        new[] { 0, 3, 0 },
-                    }
-                },
-                new()
-                {
-                    Type = ShelfType.Common,
-                    Data = new[]
-                    {
-                        new[] { 0, 2, 0 },
-                        new[] { 0, 4, 0 },
-                    }
-                },
-                new()
-                {
-                    Type = ShelfType.Common,
-                    LockCount = 2,
-                    Data = new[]
-                    {
-                        new[] { 5, 5, 1 },
-                    }
-                },
-                new()
-                {
-                    Type = ShelfType.Common,
-                    Data = new[]
-                    {
-                        new[] { 0, 0, 0 },
-                    }
-                },
-                new()
-                {
-                    Type = ShelfType.Single,
-                    Data = new[]
-                    {
-                        new[] { 3 },
-                        new[] { 4 },
-                    }
-                },
-                new()
-                {
-                    Type = ShelfType.Single,
-                    Data = new[]
-                    {
-                        new[] { 4 },
-                        new[] { 3 },
-                        new[] { 5 },
-                    }
-                }
-            };
+            var inputData = JsonConvert.DeserializeObject<ShelfPuzzleInputData[]>(levelJsonFile.text);
             var levelData = levelCreator.SpawnLevel(inputData, OnItemDestroy);
             _levelDataManager = new LevelDataManager(levelData);
             _levelAnimation = new LevelAnimation(_levelDataManager, dragDropManager);
@@ -133,25 +80,15 @@ namespace UI
         private void AutoSolve()
         {
             if (_levelDataManager == null) return;
-            var logger = new AppendLogger();
+            var moves = JsonConvert.DeserializeObject<Move[]>(levelSolutionJsonFile.text);
 
-            UniTask.Void(async () =>
+            var autoplay = gameObject.GetComponent<AutoPlay2>();
+            if (!autoplay)
             {
-                await UniTask.SwitchToThreadPool();
-                var exportedData = _levelDataManager.Export();
-                var solution = new PuzzleSolver(logger).SolvePuzzleWithStateChanges(exportedData);
+                autoplay = gameObject.AddComponent<AutoPlay2>();
+            }
 
-                await UniTask.SwitchToMainThread();
-                logger.PrintLogs();
-
-                var autoplay = gameObject.GetComponent<AutoPlay2>();
-                if (!autoplay)
-                {
-                    autoplay = gameObject.AddComponent<AutoPlay2>();
-                }
-
-                autoplay.Play(_levelDataManager, dragDropManager, solution);
-            });
+            autoplay.Play(_levelDataManager, dragDropManager, moves);
         }
     }
 }
