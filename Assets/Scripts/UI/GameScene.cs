@@ -3,11 +3,14 @@ using System.Linq;
 using Core;
 using Cysharp.Threading.Tasks;
 using Defines;
+using Engine.ShelfPuzzle;
 using Game;
+using JetBrains.Annotations;
 using manager;
 using manager.Interface;
 using Senspark;
 using Sirenix.OdinInspector;
+using Strategy.Level;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -15,27 +18,16 @@ namespace UI
 {
     public class GameScene : MonoBehaviour
     {
-        [Header("Level Navigation")] //
-        [SerializeField]
-        private Button nextLevelButton;
+        [SerializeField] private DragDropManager2 dragDropManager;
+        [SerializeField] public GameObject container;
+        [SerializeField] public ShelfItemBasic shelfItemPrefab;
 
-        [SerializeField] private Button backLevelButton;
-        [SerializeField] private Text currentLevelText;
+        [CanBeNull] private LevelDataManager _levelDataManager;
+        [CanBeNull] private LevelAnimation _levelAnimation;
 
-        private IEventManager _eventManager;
         private ILevelLoaderManager _levelLoaderManager;
-        private ILevelStoreManager _levelStoreManager;
         private IConfigManager _configManager;
-        private DragDropGameManager _dragDropGameManager;
 
-        public GameObject holdingGoods;
-        private Goods _pickedGoods;
-        private LevelView _levelView;
-
-        private const int MIN_LEVEL = 1;
-        private const int MAX_LEVEL = 10;
-
-        public int CurrentLevel { get; private set; }
         public GameStateType State { get; private set; } = GameStateType.UnInitialize;
 
         private void Awake()
@@ -51,7 +43,6 @@ namespace UI
                     .ContinueWith(() =>
                     {
                         GetServices();
-                        CurrentLevel = 1;
                         Start();
                     })
                     .Forget();
@@ -62,9 +53,7 @@ namespace UI
             void GetServices()
             {
                 var services = ServiceLocator.Instance;
-                _eventManager = services.Resolve<IEventManager>();
                 _levelLoaderManager = services.Resolve<ILevelLoaderManager>();
-                _levelStoreManager = services.Resolve<ILevelStoreManager>();
                 _configManager = services.Resolve<IConfigManager>();
                 State = GameStateType.Initialized;
             }
@@ -73,14 +62,144 @@ namespace UI
         private void Start()
         {
             if (State != GameStateType.Initialized) return;
-            
-            SetupLevelNavigation();
-            if (CurrentLevel > 0)
-            {
-                LoadLevel(CurrentLevel);
-            }
-
             State = GameStateType.Loaded;
+            dragDropManager.Init(CanAcceptDropInto);
+            CreateLevel();
+        }
+
+        private void Update()
+        {
+            var dt = Time.deltaTime;
+            _levelAnimation?.Update(dt);
+        }
+
+        public void CreateLevel()
+        {
+            CleanUp();
+            var levelCreator = new LevelCreator(container, shelfItemPrefab);
+            var inputData = new ShelfPuzzleInputData[]
+            {
+                // Shelf 0: [[2], [7,9,9], [11,11,17], [19,33,33]]
+                new()
+                {
+                    Type = ShelfType.Common,
+                    Data = new[]
+                    {
+                        new[] { 2, 0, 0 },
+                        new[] { 7, 9, 9 },
+                        new[] { 11, 11, 17 },
+                        new[] { 19, 33, 33 },
+                    }
+                },
+
+                // Shelf 1: [[8], [8,8,12], [14,16,16], [21,23,23]]
+                new()
+                {
+                    Type = ShelfType.Common,
+                    Data = new[]
+                    {
+                        new[] { 8, 0, 0 },
+                        new[] { 8, 8, 12 },
+                        new[] { 14, 16, 16 },
+                        new[] { 21, 23, 23 },
+                    }
+                },
+
+                // Shelf 2: [[3,3], [4,10,10], [17,31], [24,25,26]]
+                new()
+                {
+                    Type = ShelfType.Common,
+                    Data = new[]
+                    {
+                        new[] { 0, 3, 3 },
+                        new[] { 4, 10, 10 },
+                        new[] { 0, 17, 31 },
+                        new[] { 24, 25, 26 },
+                    }
+                },
+
+                // Shelf 3: [[2,2], [1,9,11], [18,19,19], [16,29,29]]
+                new()
+                {
+                    Type = ShelfType.Common,
+                    Data = new[]
+                    {
+                        new[] { 0, 2, 2 },
+                        new[] { 1, 9, 11 },
+                        new[] { 18, 19, 19 },
+                        new[] { 16, 29, 29 },
+                    }
+                },
+
+                // Shelf 4: [[1,1,5], [7,7], [21,21,22], [25,25,26]]
+                new()
+                {
+                    Type = ShelfType.Common,
+                    Data = new[]
+                    {
+                        new[] { 1, 1, 5 },
+                        new[] { 0, 7, 7 },
+                        new[] { 21, 21, 22 },
+                        new[] { 25, 25, 26 },
+                    }
+                },
+
+                // Shelf 5: [[28,28,30], [13,32], [14,17,20], [15,15,31]]
+                new()
+                {
+                    Type = ShelfType.Common,
+                    Data = new[]
+                    {
+                        new[] { 28, 28, 30 },
+                        new[] { 0, 13, 32 },
+                        new[] { 14, 17, 20 },
+                        new[] { 15, 15, 31 },
+                    }
+                },
+
+                // Shelf 6: [[6,30,30], [3,4,14], [18,18,24], [15,27,24]]
+                new()
+                {
+                    Type = ShelfType.Common,
+                    Data = new[]
+                    {
+                        new[] { 6, 30, 30 },
+                        new[] { 3, 4, 14 },
+                        new[] { 18, 18, 24 },
+                        new[] { 15, 27, 24 },
+                    }
+                },
+
+                // Shelf 7: [[4,6,6], [12,13,13], [20,23,26], [31,32,32]]
+                new()
+                {
+                    Type = ShelfType.Common,
+                    Data = new[]
+                    {
+                        new[] { 4, 6, 6 },
+                        new[] { 12, 13, 13 },
+                        new[] { 20, 23, 26 },
+                        new[] { 31, 32, 32 },
+                    }
+                },
+
+                // Shelf 8: [[5,5,28], [10,12,29], [20,22,22], [27,27,33]]
+                new()
+                {
+                    Type = ShelfType.Common,
+                    Data = new[]
+                    {
+                        new[] { 5, 5, 28 },
+                        new[] { 10, 12, 29 },
+                        new[] { 20, 22, 22 },
+                        new[] { 27, 27, 33 },
+                    }
+                },
+            };
+            var levelData = levelCreator.SpawnLevel(inputData, OnItemDestroy);
+            _levelDataManager = new LevelDataManager(levelData);
+            _levelAnimation = new LevelAnimation(_levelDataManager, dragDropManager);
+            _levelAnimation.Enter();
         }
 
         [Button]
@@ -88,48 +207,12 @@ namespace UI
         {
             if (State <= GameStateType.Initialized)
             {
-                CurrentLevel = level;
             }
             else
             {
-                CurrentLevel = level;
                 LoadLevel(level);
             }
         }
-
-        // public void LoadLevel(int level)
-        // {
-        //     _currentLevel = level;
-        //     StartCoroutine(LoadLevelAsync(level));
-        // }
-
-        private void SetupLevelNavigation()
-        {
-            // nextLevelButton.onClick.AddListener(NextLevel);
-            // backLevelButton.onClick.AddListener(BackLevel);
-        }
-
-        // private void NextLevel()
-        // {
-        //     if (_currentLevel < MAX_LEVEL)
-        //     {
-        //         _currentLevel++;
-        //         // set current level to local storage
-        //         PlayerPrefs.SetInt("current_level", _currentLevel);
-        //         PlayerPrefs.Save();
-        //     }
-        // }
-        //
-        // private void BackLevel()
-        // {
-        //     if (_currentLevel > MIN_LEVEL)
-        //     {
-        //         _currentLevel--;
-        //         // set current level to local storage
-        //         PlayerPrefs.SetInt("current_level", _currentLevel);
-        //         PlayerPrefs.Save();
-        //     }
-        // }
 
         private void LoadLevel(int level)
         {
@@ -144,101 +227,68 @@ namespace UI
             var leveView = builder.LevelObject.GetComponent<LevelView>();
             leveView.Load(builder);
             leveView.transform.SetParent(transform, false);
-            _levelView = leveView;
-            _dragDropGameManager = _levelView.GetComponent<DragDropGameManager>();
-            RegisterDragObject();
-            RegisterDropZone();
-        }
-
-        private void RegisterDragObject()
-        {
-            if (!_dragDropGameManager) return;
-            foreach (var c in _levelView.GetComponentsInChildren<DragObject>())
-            {
-                _dragDropGameManager.RegisterDragObject(c);
-            }
-        }
-
-        private void RegisterDropZone()
-        {
-            if (!_dragDropGameManager) return;
-            foreach (var c in _levelView.GetComponentsInChildren<DropZone>())
-            {
-                _dragDropGameManager.RegisterDropZone(c);
-            }
-            
+            // _levelView = leveView;
         }
 
         private void CleanUp()
         {
-            if (!_levelView)
-            {
-                return;
-            }
-
-            Destroy(_levelView.gameObject);
-            _levelView = null;
+            // if (!_levelView)
+            // {
+            //     return;
+            // }
+            //
+            // Destroy(_levelView.gameObject);
+            // _levelView = null;
+            dragDropManager.RemoveAll();
+            _levelDataManager?.GetItems().ForEach(e => e?.DestroyItem());
+            _levelDataManager?.Dispose();
+            _levelAnimation?.Dispose();
         }
 
-        // public void OnPickGoods(Goods goods, Vector2 position)
-        // {
-        //     _pickedGoods = goods;
-        //     // _pickedGoods.Visible = false;
-        //
-        //     holdingGoods = new GameObject("HoldingGoods");
-        //     holdingGoods.transform.SetParent(transform, true);
-        //     holdingGoods.transform.position = new Vector3(position.x, position.y, 0);
-        //     var img = holdingGoods.AddComponent<SpriteRenderer>();
-        //     img.sprite = goods.spriteIcon.sprite;
-        //     img.sortingOrder = 100;
-        //     
-        //     var rd = holdingGoods.AddComponent<Rigidbody2D>();
-        //     rd.isKinematic = true;
-        //     
-        //     var col = holdingGoods.AddComponent<BoxCollider2D>();
-        //     col.isTrigger = true;
-        // }
-        //
-        // public void OnMoveGoods(Vector2 position)
-        // {
-        //     holdingGoods.transform.position = position;
-        // }
+        private bool CanAcceptDropInto(IDropZone dropzone)
+        {
+            if (_levelDataManager == null) return false;
+            var shelf = _levelDataManager.GetShelf(dropzone.ShelfId);
+            if (shelf == null) return false;
+            if (shelf.Type != ShelfType.Common) return false; // Chỉ cho phép drop vào Common
 
-        // public void OnDropGoods()
-        // {
-        //     var isSuccess = false;
-        //     if (!holdingGoods) return;
-        //     
-        //     foreach (var shelve in _levelView.Shelves)
-        //     {
-        //         if (!shelve.IsTargetTouched()) continue;
-        //         var slotId = shelve.GetSlot(holdingGoods.transform.position);
-        //
-        //         if (slotId < 0 || shelve.IsSlotOccupied(slotId))
-        //             continue;
-        //
-        //         var goodsId = _pickedGoods.Id;
-        //         shelve.PlaceGoods(goodsId, slotId);
-        //         isSuccess = true;
-        //         break;
-        //     }
-        //     
-        //     if(isSuccess)
-        //     {
-        //         ServiceLocator.Instance.Resolve<IEventManager>().Invoke(EventKey.PlaceGood);
-        //         if(_pickedGoods != null)
-        //         {
-        //             Destroy(_pickedGoods.gameObject);
-        //             _pickedGoods = null;
-        //         }
-        //     }
-        //     else
-        //     {
-        //         // _pickedGoods.Visible = true;
-        //     }
-        //
-        //     Destroy(holdingGoods.gameObject);
-        //     holdingGoods = null;
-        // }
+            var layer = _levelDataManager.GetTopLayer(dropzone.ShelfId);
+            if (layer == null) return false;
+            if (layer.Length == 0) return true; // Nếu layer rỗng thì có thể drop vào
+
+            if (dropzone.SlotId < 0 || dropzone.SlotId >= layer.Length) return false;
+            return layer[dropzone.SlotId] == null;
+        }
+
+        private void OnItemDestroy(ShelfItemMeta itemMeta)
+        {
+            dragDropManager.UnregisterDragObject(itemMeta.Id);
+            _levelDataManager?.RemoveItem(itemMeta.Id);
+        }
+        
+        [Button]
+        private void AutoSolve()
+        {
+            if (_levelDataManager == null) return;
+            var logger = new AppendLogger();
+
+            UniTask.Void(async () =>
+            {
+                await UniTask.SwitchToThreadPool();
+                var exportedData = _levelDataManager.Export();
+                var solution = new PuzzleSolver(logger).SolvePuzzleWithStateChanges(exportedData);
+
+                await UniTask.SwitchToMainThread();
+                logger.PrintLogs();
+
+                var autoplay = gameObject.GetComponent<AutoPlay2>();
+                if (!autoplay)
+                {
+                    autoplay = gameObject.AddComponent<AutoPlay2>();
+                }
+
+                autoplay.Play(_levelDataManager, dragDropManager, solution);
+            });
+        }
     }
 }

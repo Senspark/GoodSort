@@ -112,7 +112,7 @@ namespace Game
             return display switch
             {
                 ShelfLayerDisplay.Hidden => Color.clear,
-                ShelfLayerDisplay.Second => Color.gray2,
+                ShelfLayerDisplay.Second => Color.gray,
                 ShelfLayerDisplay.Top => Color.white,
                 _ => Color.red
             };

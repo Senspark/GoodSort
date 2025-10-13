@@ -22,10 +22,6 @@ namespace Utilities
         {
             Debug.Log("Load Config");
             configs = JsonUtility.FromJson<LevelConfig>(levelConfig.text);
-            Debug.Log(configs.LevelStrategies.Length);
-            Debug.Log(configs.LevelStrategies[0].Id);
-            Debug.Log(configs.LevelStrategies[0].NormalBox);
-            Debug.Log(configs.LevelStrategies[0].NormalLockedBox);
         }
 
         [Button]

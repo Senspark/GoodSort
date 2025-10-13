@@ -31,12 +31,12 @@ namespace Game
         /// <param name="level"></param>
         public void Load(LevelConfigBuilder level)
         {
-            var levelObject = level.LevelObject;
-            var goodsIDArray = level.GoodsArray.Select(x => x.Id).ToList();
-
-            _shelves = levelObject.GetComponentsInChildren<ShelveBase>().ToList();
-            var subset = DistributeGoods(goodsIDArray, level.LevelStrategy);
-            PopulateSubsetToShelve(subset);
+            // var levelObject = level.LevelObject;
+            // var goodsIDArray = level.GoodsArray.Select(x => x.Id).ToList();
+            //
+            // _shelves = levelObject.GetComponentsInChildren<ShelveBase>().ToList();
+            // var subset = DistributeGoods(goodsIDArray, level.LevelStrategy);
+            // PopulateSubsetToShelve(subset);
         }
 
         private void PopulateSubsetToShelve(List<List<int>> subset)
