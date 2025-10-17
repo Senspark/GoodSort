@@ -5,6 +5,7 @@ namespace Game
     public class LevelUI : MonoBehaviour
     {
         [SerializeField] private LevelTimeView levelTimeView;
+        [SerializeField] private LevelComboView levelComboView;
 
         private float _timeAccumulator = 0f;
 

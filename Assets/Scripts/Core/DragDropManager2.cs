@@ -270,16 +270,6 @@ namespace Core
         [CanBeNull]
         private DropZoneData GetDropZoneAtPosition(Vector2 position)
         {
-            // // Check zones in reverse order (top to bottom)
-            // for (var i = _dropZones.Count - 1; i >= 0; i--)
-            // {
-            //     if (_dropZones[i].Zone.ContainsPosition(position))
-            //     {
-            //         return _dropZones[i];
-            //     }
-            // }
-            //
-            // return null;
             var feasibleZones = new List<(DropZoneData zone, float distance)>();
             for (var i = _dropZones.Count - 1; i >= 0; i--)
             {
