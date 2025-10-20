@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Game;
 using UnityEngine;
 
 namespace Core
@@ -14,7 +15,7 @@ namespace Core
         [SerializeField] private int maxObjects = 1;
         [SerializeField] private string[] acceptedTypes;
         [SerializeField] private bool snapToCenter = true;
-        [SerializeField] private Vector3 snapOffset = Vector3.zero;
+        // [SerializeField] private Vector3 snapOffset = Vector3.zero;
 
         [Header("Visual Settings")] [SerializeField]
         private Color normalColor = new(1, 1, 1, 0.3f);
@@ -64,6 +65,12 @@ namespace Core
 
             return true;
         }
+        
+        public bool CanDrop(DragObject dragObject)
+        {
+            // Thả được tại slot i không, không được tìm slot kế bên
+            return true;
+        }
 
         public void AddObject(DragObject dragObject)
         {
@@ -82,7 +89,7 @@ namespace Core
         {
             _containedObjects.Clear();
         }
-
+        
         public void SetHighlight(bool highlighted, bool canAccept)
         {
             _isHighlighted = highlighted;
@@ -102,9 +109,27 @@ namespace Core
         }
 
         // Getters
-        public Vector3 GetSnapPosition()
+        public Vector3 GetSnapPosition(int slot)
         {
-            return transform.position + snapOffset;
+            var offset = new Vector3(slot, 0, 0);
+            return transform.position + offset;
+        }
+        
+        /// <summary>
+        /// Để cho người chơi thả vào không cần chính xác vị trí drop, item vẫn drop đến vị trí gần nhất.
+        /// Kể cả chỗ đó đã có item khác giữ vị trí rồi => drop vị trí kế bên
+        /// </summary>
+        /// <param name="position"></param>
+        /// <returns></returns>
+        public int GetSlotAtPosition(Vector2 position)
+        {
+            if (position.x < -0.5f)
+                return -1;
+
+            if (position.x > 0.5f)
+                return 1;
+
+            return 0;
         }
 
         public bool ShouldSnapToCenter() => snapToCenter;
@@ -151,7 +176,7 @@ namespace Core
             if (snapToCenter)
             {
                 Gizmos.color = Color.yellow;
-                Gizmos.DrawWireSphere(GetSnapPosition(), 0.1f);
+                Gizmos.DrawWireSphere(GetSnapPosition(0), 0.1f);
             }
         }
     }

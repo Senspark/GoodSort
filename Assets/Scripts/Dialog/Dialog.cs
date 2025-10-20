@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using System.Collections.Generic;
 using System;
 using DG.Tweening;
-using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using UnityEngine.Assertions;
 using UnityEngine.EventSystems;
 
@@ -28,12 +28,12 @@ namespace Dialog
         private Sequence _showSequence;
         private Sequence _hideSequence;
         private bool _isHiding = false;
-        private TaskCompletionSource<bool> _waitForDialogClosedTask;
+        private UniTaskCompletionSource<bool> _waitForDialogClosedTask;
 
         protected virtual void Awake()
         {
             SetupClickOutside();
-            _waitForDialogClosedTask = new TaskCompletionSource<bool>();
+            _waitForDialogClosedTask = new UniTaskCompletionSource<bool>();
         }
 
         protected bool IsHiding()
@@ -45,7 +45,7 @@ namespace Dialog
         {
             _showSequence.Kill();
             _hideSequence.Kill();
-            _waitForDialogClosedTask.SetResult(true);
+            // _waitForDialogClosedTask.SetResult(true);
             if (UseActionsOnDestroy)
             {
                 _willHideActions.ForEach(action => action());
@@ -97,7 +97,7 @@ namespace Dialog
             FadeToShow(delay);
         }
 
-        public async Task WaitForHide()
+        public async UniTask WaitForHide()
         {
             await _waitForDialogClosedTask.Task;
         }

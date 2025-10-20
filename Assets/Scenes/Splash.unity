@@ -150,8 +150,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   loadingbar: {fileID: 1075073787}
   progress: {fileID: 611495666}
-  levelConfigDefault: {fileID: 4900000, guid: 8e35967d63124d45b241b37843ebecc0, type: 3}
-  iconConfigDefault: {fileID: 4900000, guid: 79a7784cc3cb405ca525f278a5095739, type: 3}
+  levelConfigDefault: {fileID: 4900000, guid: 8b0b7e41d584493b95f08afbdef03cb1, type: 3}
+  iconConfigDefault: {fileID: 4900000, guid: ce8b5c6c84659498c9ea28e2a5b1596c, type: 3}
 --- !u!4 &184481886
 Transform:
   m_ObjectHideFlags: 0
@@ -583,7 +583,7 @@ MonoBehaviour:
   m_BlockingObjects: 0
   m_BlockingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 1847
 --- !u!114 &1312016488
 MonoBehaviour:
   m_ObjectHideFlags: 0

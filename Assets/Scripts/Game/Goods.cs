@@ -1,8 +1,5 @@
-using System.Collections;
 using UnityEngine;
 using DG.Tweening;
-using UI;
-using UnityEngine.Serialization;
 
 
 namespace Game
@@ -13,7 +10,6 @@ namespace Game
         private bool _dragging;
         private Vector3 _startPos;
       
-        // getter and setter for Id
         private int _id;
         public int Id
         {
@@ -29,7 +25,6 @@ namespace Game
         private int _layer;
         public int Layer
         {
-            get => _layer;
             set
             {
                 _layer = value;
@@ -82,24 +77,8 @@ namespace Game
         
         public void Remove()
         {
-            var dropZone = transform.GetComponent<DropZone>();
-            if (dropZone)
-            {
-                dropZone.Free();
-            }
-            var seq = DOTween.Sequence();
-            seq.Append(transform.DOScale(new Vector3(1.1f, 0.9f, 1f), 0.15f));
-            seq.Append(transform.DOScale(new Vector3(0.9f, 1.1f, 1f), 0.15f));
-            seq.AppendCallback(() =>
-            {
-                // if (Layer == 0)
-                // {
-                //     Vector3 worldPos = transform.position;
-                //     worldPos.y -= 20;
-                // }
-                Destroy(gameObject);
-            });
+            Debug.Log("KHOA TRAN - Remove goods" + Id + " from slot " + Slot);
+            Destroy(gameObject);
         }
-        
     }
 }

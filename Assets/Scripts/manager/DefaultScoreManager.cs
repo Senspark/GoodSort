@@ -1,5 +1,5 @@
 using System;
-using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using manager.Interface;
 using UnityEngine;
 
@@ -9,11 +9,11 @@ namespace manager
     {
         private const string SaveKey = nameof(DefaultScoreManager);
         private readonly IDataManager _dataManager;
-        
-        public Task<bool> Initialize() 
+
+        public UniTask<bool> Initialize()
         {
             LoadData();
-            return Task.FromResult(true);
+            return UniTask.FromResult(true);
         }
         
         // constructor

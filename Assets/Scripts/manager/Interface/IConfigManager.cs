@@ -6,7 +6,7 @@ namespace manager.Interface
 {
     public static class ConfigKey
     {
-        public const string LevelConfig = "levels_config";
+        public const string LevelConfig = "puzzle_level_config";
         public const string GoodsConfig = "goods_config";
     }
     
