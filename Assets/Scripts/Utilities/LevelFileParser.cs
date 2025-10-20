@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Engine.ShelfPuzzle;
+using manager;
+using Newtonsoft.Json;
 using UnityEngine;
 
 namespace Utilities
@@ -68,6 +70,19 @@ namespace Utilities
         /// </summary>
         private static ShelfPuzzleInputData ParseShelfRow(string row)
         {
+            // Extract Lock Count value from the row (new format has Lock Count column)
+            var lockCount = 0;
+            var parts = row.Split('|')
+                .Select(s => s.Trim())
+                .Where(s => !string.IsNullOrEmpty(s))
+                .ToArray();
+
+            // Check if second part is Lock Count (numeric value without brackets)
+            if (parts.Length >= 2 && int.TryParse(parts[1], out var parsedLockCount))
+            {
+                lockCount = parsedLockCount;
+            }
+
             // Extract all array patterns [x,y,z] from the row
             var arrayPattern = @"\[([^\]]+)\]";
             var matches = Regex.Matches(row, arrayPattern);
@@ -103,7 +118,7 @@ namespace Utilities
             return new ShelfPuzzleInputData
             {
                 Type = ShelfType.Common,
-                LockCount = 0,
+                LockCount = lockCount,
                 Data = layers.ToArray()
             };
         }
@@ -170,5 +185,57 @@ namespace Utilities
                 return null;
             }
         }
+
+        /// <summary>
+        /// Converts ShelfPuzzleInputData array to JSON format and logs it.
+        /// </summary>
+        /// <param name="shelfData">Array of shelf data to convert</param>
+        public static void ConvertToJsonAndLog(ShelfPuzzleInputData[] shelfData)
+        {
+            var levelConfig = new LevelConfigJson
+            {
+                LevelStrategies = new[]
+                {
+                    new LevelStrategyJson
+                    {
+                        Data = shelfData.Select(shelf => new BoxData
+                        {
+                            Box = shelf.Data
+                        }).ToArray()
+                    }
+                }
+            };
+
+            var json = JsonConvert.SerializeObject(levelConfig, Formatting.Indented);
+            CleanLogger.Log(json);
+        }
+
+        public static void JustLog(ShelfPuzzleInputData[] shelfData)
+        {
+            var json = JsonConvert.SerializeObject(shelfData, Formatting.Indented);
+            CleanLogger.Log(json);
+        }
+
+        #region JSON Helper Classes
+
+        [Serializable]
+        private class LevelConfigJson
+        {
+            public LevelStrategyJson[] LevelStrategies { get; set; }
+        }
+
+        [Serializable]
+        private class LevelStrategyJson
+        {
+            public BoxData[] Data { get; set; }
+        }
+
+        [Serializable]
+        private class BoxData
+        {
+            public int[][] Box { get; set; }
+        }
+
+        #endregion
     }
 }

@@ -31,7 +31,8 @@ namespace Strategy.Level
             Action<ShelfItemMeta> onItemDestroy
         )
         {
-            var shelves = _container.GetComponentsInChildren<IShelf2>();
+            var shelves = _container.GetComponentsInChildren<IShelf2>().Take(input.Length).ToArray();
+
             if (shelves.Length != input.Length)
             {
                 CleanLogger.Error($"Số lượng Shelves không khớp {shelves.Length} != {input.Length}");

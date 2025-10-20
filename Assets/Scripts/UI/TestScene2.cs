@@ -52,6 +52,8 @@ namespace UI
             _levelDataManager = new LevelDataManager(levelData);
             _levelAnimation = new LevelAnimation(_levelDataManager, dragDropManager);
             _levelAnimation.Enter();
+            
+            LevelFileParser.JustLog(inputData);
         }
 
         private void Update()
