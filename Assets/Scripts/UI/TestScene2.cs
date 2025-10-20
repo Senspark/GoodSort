@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using Sirenix.OdinInspector;
 using Strategy.Level;
 using UnityEngine;
+using Utilities;
 
 namespace UI
 {
@@ -19,6 +20,7 @@ namespace UI
         [SerializeField] public ShelfItemBasic shelfItemPrefab;
         [SerializeField] public TextAsset levelJsonFile;
         [SerializeField] public TextAsset levelSolutionJsonFile;
+        [SerializeField] public TextAsset newLevelTxtFile;
 
         [CanBeNull] private LevelDataManager _levelDataManager;
         [CanBeNull] private LevelAnimation _levelAnimation;
@@ -26,7 +28,6 @@ namespace UI
         private void Start()
         {
             dragDropManager.Init(CanAcceptDropInto);
-            CreateLevel();
         }
 
         [Button]
@@ -35,6 +36,18 @@ namespace UI
             CleanUp();
             var levelCreator = new LevelCreator(container, shelfItemPrefab);
             var inputData = JsonConvert.DeserializeObject<ShelfPuzzleInputData[]>(levelJsonFile.text);
+            var levelData = levelCreator.SpawnLevel(inputData, OnItemDestroy);
+            _levelDataManager = new LevelDataManager(levelData);
+            _levelAnimation = new LevelAnimation(_levelDataManager, dragDropManager);
+            _levelAnimation.Enter();
+        }
+
+        [Button]
+        public void CreateLevelNewFormat()
+        {
+            CleanUp();
+            var levelCreator = new LevelCreator(container, shelfItemPrefab);
+            var (inputData, _) = LevelFileParser.ParseLevelFile(newLevelTxtFile.text);
             var levelData = levelCreator.SpawnLevel(inputData, OnItemDestroy);
             _levelDataManager = new LevelDataManager(levelData);
             _levelAnimation = new LevelAnimation(_levelDataManager, dragDropManager);
@@ -81,6 +94,21 @@ namespace UI
         {
             if (_levelDataManager == null) return;
             var moves = JsonConvert.DeserializeObject<Move[]>(levelSolutionJsonFile.text);
+
+            var autoplay = gameObject.GetComponent<AutoPlay2>();
+            if (!autoplay)
+            {
+                autoplay = gameObject.AddComponent<AutoPlay2>();
+            }
+
+            autoplay.Play(_levelDataManager, dragDropManager, moves);
+        }
+
+        [Button]
+        private void AutoSolve2()
+        {
+            if (_levelDataManager == null) return;
+            var (_, moves) = LevelFileParser.ParseLevelFile(newLevelTxtFile.text);
 
             var autoplay = gameObject.GetComponent<AutoPlay2>();
             if (!autoplay)

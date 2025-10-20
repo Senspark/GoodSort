@@ -34,7 +34,7 @@ namespace Strategy.Level
             var shelves = _container.GetComponentsInChildren<IShelf2>();
             if (shelves.Length != input.Length)
             {
-                CleanLogger.Error($"Số lượng Shelves không khớp {shelves.Length} != ${input.Length}");
+                CleanLogger.Error($"Số lượng Shelves không khớp {shelves.Length} != {input.Length}");
                 return null;
             }
 
