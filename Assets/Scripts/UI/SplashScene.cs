@@ -25,7 +25,7 @@ namespace Game.UI
             Screen.sleepTimeout = SleepTimeout.NeverSleep;
             Application.targetFrameRate = 60;
 
-            var levelConfig = JsonConvert.DeserializeObject<LevelConfig>(levelConfigDefault.text);
+            var levelConfig = JsonConvert.DeserializeObject<PuzzleLevelConfig>(levelConfigDefault.text);
             var goodsConfig = JsonConvert.DeserializeObject<GoodsConfig[]>(iconConfigDefault.text);
             var initializeData = new ServiceInitializeData(levelConfig, goodsConfig);
 

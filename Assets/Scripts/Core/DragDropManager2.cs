@@ -25,6 +25,7 @@ namespace Core
         [SerializeField] private Vector3 dragScale = new(1.1f, 1.1f, 1f);
 
         private Func<IDropZone, bool> _canAcceptDropIntoFunc;
+        private Action<IDragObject> OnDragStarted;
 
         // Registered objects
         private List<IDragObject> _dragObjects;
@@ -103,6 +104,11 @@ namespace Core
         {
             return _currentDraggingObject;
         }
+        
+        public void SetOnDragStarted(Action<IDragObject> onDragStarted)
+        {
+            OnDragStarted = onDragStarted;
+        }
 
         public void ResetAllObjects()
         {
@@ -174,6 +180,7 @@ namespace Core
             _dragOffset = dragObject.Position - mousePos;
 
             dragObject.OnStartDrag();
+            OnDragStarted?.Invoke(dragObject);
 
             if (enableVisualFeedback)
             {
@@ -263,16 +270,22 @@ namespace Core
         [CanBeNull]
         private DropZoneData GetDropZoneAtPosition(Vector2 position)
         {
-            // Check zones in reverse order (top to bottom)
+            var feasibleZones = new List<(DropZoneData zone, float distance)>();
             for (var i = _dropZones.Count - 1; i >= 0; i--)
             {
-                if (_dropZones[i].Zone.ContainsPosition(position))
+                if(_dropZones[i].Zone.ContainsPosition(position))
                 {
-                    return _dropZones[i];
+                    if(_canAcceptDropIntoFunc != null && !_canAcceptDropIntoFunc(_dropZones[i].Zone)) continue;
+                    var distance = float.MaxValue;
+                    if(_dropZones[i].Zone is DropZone2 zone2)
+                    {
+                        distance = zone2.GetDetectionDistance(position);
+                    }
+                    feasibleZones.Add((_dropZones[i], distance));
                 }
             }
-
-            return null;
+            if(feasibleZones.Count == 0) return null;
+            return feasibleZones.OrderBy(e => e.distance).First().zone;
         }
 
         private static IEnumerator ScheduleCallback(DropZoneData dropZone, int dragId)

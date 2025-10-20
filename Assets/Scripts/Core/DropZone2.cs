@@ -5,6 +5,7 @@ namespace Core
     public class DropZone2 : MonoBehaviour, IDropZone
     {
         [SerializeField] private SpriteRenderer spriteRenderer;
+        [SerializeField] private float detectionRadius = 2.0f;
 
         [Header("Zone Settings")] //
         [SerializeField]
@@ -32,7 +33,10 @@ namespace Core
             if (!isActive) return false;
 
             var bounds = GetBounds();
-            return bounds.Contains(position);
+            if (bounds.Contains(position)) return true;
+
+            var distance = Vector2.Distance(transform.position, position);
+            return distance < detectionRadius;
         }
 
         // Getters
@@ -42,6 +46,11 @@ namespace Core
             return transform.position + offset;
         }
 
+        public float GetDetectionDistance(Vector2 position)
+        {
+            var distance = Vector2.Distance(transform.position, position);
+            return distance;
+        }
         
         public bool ShouldSnapToCenter() => snapToCenter;
         public void SetActive(bool active) => isActive = active;

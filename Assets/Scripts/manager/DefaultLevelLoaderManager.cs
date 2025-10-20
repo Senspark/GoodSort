@@ -12,11 +12,10 @@ namespace manager
             return UniTask.FromResult(true);
         }
         
-        public GameObject Create(int level)
+        public GameObject Load(int level)
         {
-            Debug.Log($"KHOA TRAN create game level {level}");
             var levelPrefab = Resources.Load<GameObject>("Level/LEVEL_" + level);
-            return levelPrefab != null ? Object.Instantiate(levelPrefab) : // Return instantiated object
+            return levelPrefab ? Object.Instantiate(levelPrefab) : // Return instantiated object
                 null;
         }
     }

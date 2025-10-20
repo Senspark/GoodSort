@@ -88,10 +88,10 @@ namespace manager
 
 public class ServiceInitializeData
 {
-    public readonly LevelConfig LevelConfig;
+    public readonly PuzzleLevelConfig LevelConfig;
     public readonly GoodsConfig[] GoodsConfig;
 
-    public ServiceInitializeData(LevelConfig levelConfig, GoodsConfig[] goodsConfig)
+    public ServiceInitializeData(PuzzleLevelConfig levelConfig, GoodsConfig[] goodsConfig)
     {
         LevelConfig = levelConfig;
         GoodsConfig = goodsConfig;

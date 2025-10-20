@@ -20,7 +20,7 @@ namespace UI
             .Resolve<ISceneLoader>()
             .LoadScene<GameScene>(nameof(GameScene)).Then(gameScene =>
             {
-                gameScene.SetLevel(int.Parse(tmpInputField.text));
+                // gameScene.SetLevel(int.Parse(tmpInputField.text));text
             });
     }
     }

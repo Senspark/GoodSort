@@ -9,7 +9,7 @@ namespace Game
         [SerializeField] private float speed = 2f;
         [SerializeField] private bool rightToLeft = true;
         [Header("Custom Boundary")] 
-        public Vector2 boundary = new Vector2(10f, 3f);
+        public Vector2 boundary = new(10f, 3f);
         [Header("Spacing")] 
         [SerializeField] private float spacing = 2f;
 
@@ -17,13 +17,11 @@ namespace Game
 
         void Start()
         {
-            // Lưu danh sách box con
             boxes = new Transform[transform.childCount];
             for (var i = 0; i < transform.childCount; i++)
             {
                 boxes[i] = transform.GetChild(i);
             }
-
             ArrangeInitialPositions();
         }
 
@@ -73,7 +71,7 @@ namespace Game
 
         void OnDrawGizmos()
         {
-            Gizmos.color = Color.green;
+            Gizmos.color = Color.blue;
             Gizmos.DrawWireCube(transform.position, new Vector3(boundary.x, boundary.y, 0));
         }
     }

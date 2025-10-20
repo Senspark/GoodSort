@@ -3,40 +3,33 @@ using System.Linq;
 using Core;
 using Cysharp.Threading.Tasks;
 using Defines;
+using Engine.ShelfPuzzle;
 using Game;
+using JetBrains.Annotations;
 using manager;
 using manager.Interface;
 using Senspark;
 using Sirenix.OdinInspector;
+using Strategy.Level;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace UI
 {
     public class GameScene : MonoBehaviour
     {
-        [Header("Level Navigation")] //
-        [SerializeField]
-        private Button nextLevelButton;
+        [SerializeField] private DragDropManager2 dragDropManager;
+        [SerializeField] private GameObject container;
+        [SerializeField] private ShelfItemBasic shelfItemPrefab;
+        [SerializeField] private LevelUI levelUI;
 
-        [SerializeField] private Button backLevelButton;
-        [SerializeField] private Text currentLevelText;
+        [CanBeNull] private LevelDataManager _levelDataManager;
+        [CanBeNull] private LevelAnimation _levelAnimation;
 
-        private IEventManager _eventManager;
-        private ILevelLoaderManager _levelLoaderManager;
-        private ILevelStoreManager _levelStoreManager;
+        private ILevelLoaderManager _levelLoaderManager; 
         private IConfigManager _configManager;
-        private DragDropGameManager _dragDropGameManager;
 
-        public GameObject holdingGoods;
-        private Goods _pickedGoods;
+        private GameStateType State { get; set; } = GameStateType.UnInitialize;
         private LevelView _levelView;
-
-        private const int MIN_LEVEL = 1;
-        private const int MAX_LEVEL = 10;
-
-        public int CurrentLevel { get; private set; }
-        public GameStateType State { get; private set; } = GameStateType.UnInitialize;
 
         private void Awake()
         {
@@ -51,7 +44,6 @@ namespace UI
                     .ContinueWith(() =>
                     {
                         GetServices();
-                        CurrentLevel = 1;
                         Start();
                     })
                     .Forget();
@@ -62,9 +54,7 @@ namespace UI
             void GetServices()
             {
                 var services = ServiceLocator.Instance;
-                _eventManager = services.Resolve<IEventManager>();
                 _levelLoaderManager = services.Resolve<ILevelLoaderManager>();
-                _levelStoreManager = services.Resolve<ILevelStoreManager>();
                 _configManager = services.Resolve<IConfigManager>();
                 State = GameStateType.Initialized;
             }
@@ -73,172 +63,109 @@ namespace UI
         private void Start()
         {
             if (State != GameStateType.Initialized) return;
-            
-            SetupLevelNavigation();
-            if (CurrentLevel > 0)
-            {
-                LoadLevel(CurrentLevel);
-            }
-
+            Time.timeScale = 1;
             State = GameStateType.Loaded;
+            dragDropManager.Init(CanAcceptDropInto);
+            dragDropManager.SetOnDragStarted(OnDragStarted);
+            CleanUp();
+            LoadLevel(3);
         }
 
-        [Button]
-        public void SetLevel(int level)
+        private void Update()
         {
-            if (State <= GameStateType.Initialized)
-            {
-                CurrentLevel = level;
-            }
-            else
-            {
-                CurrentLevel = level;
-                LoadLevel(level);
-            }
+            var dt = Time.deltaTime;
+            _levelAnimation?.Update(dt);
+            ProcessUpdate();
         }
 
-        // public void LoadLevel(int level)
-        // {
-        //     _currentLevel = level;
-        //     StartCoroutine(LoadLevelAsync(level));
-        // }
-
-        private void SetupLevelNavigation()
+        private void ProcessUpdate()
         {
-            // nextLevelButton.onClick.AddListener(NextLevel);
-            // backLevelButton.onClick.AddListener(BackLevel);
+            if (State == GameStateType.Paused) return;
+            if (State == GameStateType.Started)
+            {
+                if (_levelView)                                                             
+                    _levelView.Step(Time.deltaTime);
+            }
+            
         }
-
-        // private void NextLevel()
-        // {
-        //     if (_currentLevel < MAX_LEVEL)
-        //     {
-        //         _currentLevel++;
-        //         // set current level to local storage
-        //         PlayerPrefs.SetInt("current_level", _currentLevel);
-        //         PlayerPrefs.Save();
-        //     }
-        // }
-        //
-        // private void BackLevel()
-        // {
-        //     if (_currentLevel > MIN_LEVEL)
-        //     {
-        //         _currentLevel--;
-        //         // set current level to local storage
-        //         PlayerPrefs.SetInt("current_level", _currentLevel);
-        //         PlayerPrefs.Save();
-        //     }
-        // }
-
+        
         private void LoadLevel(int level)
         {
-            CleanUp();
-            var strategy = _configManager.GetValue<LevelConfig>(ConfigKey.LevelConfig).LevelStrategies[level - 1];
-            var goodsConfig = _configManager.GetValue<GoodsConfig[]>(ConfigKey.GoodsConfig);
-            var builder = new LevelConfigBuilder(_levelLoaderManager)
-                .SetLevelStrategy(strategy)
-                .SetGoodsArray(goodsConfig.ToList())
-                .Build();
-
+            var builder = new LevelConfigBuilder(_levelLoaderManager).SetLevel(level).Build();
             var leveView = builder.LevelObject.GetComponent<LevelView>();
-            leveView.Load(builder);
-            leveView.transform.SetParent(transform, false);
-            _levelView = leveView;
-            _dragDropGameManager = _levelView.GetComponent<DragDropGameManager>();
-            RegisterDragObject();
-            RegisterDropZone();
-        }
-
-        private void RegisterDragObject()
-        {
-            if (!_dragDropGameManager) return;
-            foreach (var c in _levelView.GetComponentsInChildren<DragObject>())
-            {
-                _dragDropGameManager.RegisterDragObject(c);
-            }
-        }
-
-        private void RegisterDropZone()
-        {
-            if (!_dragDropGameManager) return;
-            foreach (var c in _levelView.GetComponentsInChildren<DropZone>())
-            {
-                _dragDropGameManager.RegisterDropZone(c);
-            }
+            leveView.transform.SetParent(container.transform,false);
             
+            var levelConfig = _configManager.GetValue<PuzzleLevelConfig>(ConfigKey.LevelConfig);
+            var levelCreator = new LevelCreator(container, shelfItemPrefab);
+            var inputData = levelConfig.GetLevel(level).Shelves;
+            var levelData = levelCreator.SpawnLevel(inputData, OnItemDestroy);
+            _levelDataManager = new LevelDataManager(levelData);
+            _levelAnimation = new LevelAnimation(_levelDataManager, dragDropManager);
+            _levelAnimation.Enter();
+            
+            leveView.Initialize(levelUI, levelConfig.GetLevel(level));
+            _levelView = leveView;
         }
-
+        
         private void CleanUp()
         {
-            if (!_levelView)
-            {
-                return;
-            }
-
-            Destroy(_levelView.gameObject);
-            _levelView = null;
+            dragDropManager.RemoveAll();
+            _levelDataManager?.GetItems().ForEach(e => e?.DestroyItem());
+            _levelDataManager?.Dispose();
+            _levelAnimation?.Dispose();
         }
 
-        // public void OnPickGoods(Goods goods, Vector2 position)
-        // {
-        //     _pickedGoods = goods;
-        //     // _pickedGoods.Visible = false;
-        //
-        //     holdingGoods = new GameObject("HoldingGoods");
-        //     holdingGoods.transform.SetParent(transform, true);
-        //     holdingGoods.transform.position = new Vector3(position.x, position.y, 0);
-        //     var img = holdingGoods.AddComponent<SpriteRenderer>();
-        //     img.sprite = goods.spriteIcon.sprite;
-        //     img.sortingOrder = 100;
-        //     
-        //     var rd = holdingGoods.AddComponent<Rigidbody2D>();
-        //     rd.isKinematic = true;
-        //     
-        //     var col = holdingGoods.AddComponent<BoxCollider2D>();
-        //     col.isTrigger = true;
-        // }
-        //
-        // public void OnMoveGoods(Vector2 position)
-        // {
-        //     holdingGoods.transform.position = position;
-        // }
+        private bool CanAcceptDropInto(IDropZone dropzone)
+        {
+            if (_levelDataManager == null) return false;
+            var shelf = _levelDataManager.GetShelf(dropzone.ShelfId);
+            if (shelf == null) return false;
+            if (shelf.Type != ShelfType.Common) return false; // Chỉ cho phép drop vào Common
 
-        // public void OnDropGoods()
-        // {
-        //     var isSuccess = false;
-        //     if (!holdingGoods) return;
-        //     
-        //     foreach (var shelve in _levelView.Shelves)
-        //     {
-        //         if (!shelve.IsTargetTouched()) continue;
-        //         var slotId = shelve.GetSlot(holdingGoods.transform.position);
-        //
-        //         if (slotId < 0 || shelve.IsSlotOccupied(slotId))
-        //             continue;
-        //
-        //         var goodsId = _pickedGoods.Id;
-        //         shelve.PlaceGoods(goodsId, slotId);
-        //         isSuccess = true;
-        //         break;
-        //     }
-        //     
-        //     if(isSuccess)
-        //     {
-        //         ServiceLocator.Instance.Resolve<IEventManager>().Invoke(EventKey.PlaceGood);
-        //         if(_pickedGoods != null)
-        //         {
-        //             Destroy(_pickedGoods.gameObject);
-        //             _pickedGoods = null;
-        //         }
-        //     }
-        //     else
-        //     {
-        //         // _pickedGoods.Visible = true;
-        //     }
-        //
-        //     Destroy(holdingGoods.gameObject);
-        //     holdingGoods = null;
-        // }
+            var layer = _levelDataManager.GetTopLayer(dropzone.ShelfId);
+            if (layer == null) return false;
+            if (layer.Length == 0) return true; // Nếu layer rỗng thì có thể drop vào
+
+            if (dropzone.SlotId < 0 || dropzone.SlotId >= layer.Length) return false;
+            return layer[dropzone.SlotId] == null;
+        }
+
+        private void OnItemDestroy(ShelfItemMeta itemMeta)
+        {
+            dragDropManager.UnregisterDragObject(itemMeta.Id);
+            _levelDataManager?.RemoveItem(itemMeta.Id);
+        }
+        
+        private void OnDragStarted(IDragObject dragObject)
+        {
+            if (State > GameStateType.Started) return;
+            State = GameStateType.Started;
+            // Chuyển state Started khi bắt đầu drag lần đầu tiên
+        }
+        
+        [Button]
+        private void AutoSolve()
+        {
+            if (_levelDataManager == null) return;
+            var logger = new AppendLogger();
+
+            UniTask.Void(async () =>
+            {
+                await UniTask.SwitchToThreadPool();
+                var exportedData = _levelDataManager.Export();
+                var solution = new PuzzleSolver(logger).SolvePuzzleWithStateChanges(exportedData);
+
+                await UniTask.SwitchToMainThread();
+                logger.PrintLogs();
+
+                var autoplay = gameObject.GetComponent<AutoPlay2>();
+                if (!autoplay)
+                {
+                    autoplay = gameObject.AddComponent<AutoPlay2>();
+                }
+
+                autoplay.Play(_levelDataManager, dragDropManager, solution);
+            });
+        }
     }
 }

@@ -20,7 +20,7 @@ namespace manager
             {
                 var levelConfigFile = await Resources.LoadAsync<TextAsset>("Config/level_config");
                 var goodsConfigFile = await Resources.LoadAsync<TextAsset>("Config/goods_config");
-                var levelConfig = JsonConvert.DeserializeObject<LevelConfig>(levelConfigFile.ToString());
+                var levelConfig = JsonConvert.DeserializeObject<PuzzleLevelConfig>(levelConfigFile.ToString());
                 var goodsConfig = JsonConvert.DeserializeObject<GoodsConfig[]>(goodsConfigFile.ToString());
                 var initializeData = new ServiceInitializeData(levelConfig, goodsConfig);
                 var initializer = new ServiceInitializer();
