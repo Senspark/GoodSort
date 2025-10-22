@@ -68,7 +68,12 @@ namespace UI
             dragDropManager.Init(CanAcceptDropInto);
             dragDropManager.SetOnDragStarted(OnDragStarted);
             CleanUp();
-            LoadLevel(3);
+            LoadLevel(5);
+        }
+
+        public void testBAD()
+        {
+            
         }
 
         private void Update()

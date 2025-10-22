@@ -14,7 +14,7 @@ namespace manager
     {
         public IDataManager DataManager { get; set; }
         public IAudioManager AudioManager { get; set; }
-        public ILevelStoreManager LevelStoreManager { get; set; }
+        public ILevelManager LevelManager { get; set; }
         public ISceneLoader SceneLoader { get; set; }
         public IScoreManager ScoreManager { get; set; }
         public IEventManager EventManager { get; set; }
@@ -30,7 +30,7 @@ namespace manager
 
         public IDataManager DataManager { get; set; }
         public IAudioManager AudioManager { get; set; }
-        public ILevelStoreManager LevelStoreManager { get; set; }
+        public ILevelManager LevelManager { get; set; }
         public ISceneLoader SceneLoader { get; set; }
         public IScoreManager ScoreManager { get; set; }
         public IEventManager EventManager { get; set; }
@@ -46,7 +46,7 @@ namespace manager
         {
             DataManager = new DefaultDataManager(new LocalDataStorage());
             AudioManager = new DefaultAudioManager(DataManager);
-            LevelStoreManager = new DefaultLevelStoreManager(DataManager);
+            LevelManager = new DefaultLevelManager();
             SceneLoader = new DefaultSceneLoader();
             ScoreManager = new DefaultScoreManager(DataManager);
             EventManager = new EventManager();
@@ -60,7 +60,7 @@ namespace manager
             {
                 DataManager,
                 AudioManager,
-                LevelStoreManager,
+                LevelManager,
                 SceneLoader,
                 ScoreManager,
                 EventManager,

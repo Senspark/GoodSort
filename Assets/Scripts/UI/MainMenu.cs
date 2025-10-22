@@ -1,27 +1,25 @@
+using Dialog;
+using Factory;
 using UnityEngine;
-using manager.Interface;
 using Senspark;
-using TMPro;
-using Utilities;
 
 namespace UI
 {
     public class MainMenu : MonoBehaviour
-
     {
-    [SerializeField] private Canvas canvasDialog;
-    [SerializeField] private Transform playButton;
-    [SerializeField] private TMP_InputField tmpInputField;
+        [SerializeField] private Canvas canvasDialog;
+        [SerializeField] private GameObject selectLevelDialogPrefab;
 
-    public void OnPlayButtonPressed()
-    {
-        // get level from input field
-        _ = ServiceLocator.Instance
-            .Resolve<ISceneLoader>()
-            .LoadScene<GameScene>(nameof(GameScene)).Then(gameScene =>
-            {
-                // gameScene.SetLevel(int.Parse(tmpInputField.text));text
-            });
-    }
+        public void OnPlayButtonPressed()
+        {
+            // Resolve factory from ServiceLocator (initialized in SplashScene)
+            var factory = ServiceLocator.Instance.Resolve<IUIControllerFactory>();
+
+            // Instantiate dialog with automatic controller injection
+            var dialog = factory.Instantiate<SelectLevelDialog>(selectLevelDialogPrefab);
+
+            // Show dialog
+            dialog.Show(canvasDialog);
+        }
     }
 }

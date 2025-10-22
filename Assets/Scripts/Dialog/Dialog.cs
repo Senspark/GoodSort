@@ -12,7 +12,6 @@ namespace Dialog
     public class Dialog<T> : MonoBehaviour where T : Dialog<T>
     {
         [SerializeField] private CanvasGroup canvasGroup;
-        [SerializeField] private RectTransform trans;
         [SerializeField] private Image overlay;
         
         private readonly List<Action> _willShowActions = new();
