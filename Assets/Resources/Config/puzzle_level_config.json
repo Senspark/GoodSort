@@ -80,7 +80,7 @@
     },
     {
       "Id": 2,
-      "TimeLimit": 60,
+      "TimeLimit": 600,
       "Difficulty": "Easy",
       "Shelves": [
         {
@@ -327,7 +327,7 @@
     },
     {
       "Id": 3,
-      "TimeLimit": 60,
+      "TimeLimit": 600,
       "Difficulty": "Easy",
       "Shelves": [
         {
@@ -574,7 +574,7 @@
     },
     {
       "Id": 4,
-      "TimeLimit": 60,
+      "TimeLimit": 600,
       "Difficulty": "Easy",
       "Shelves": [
         {
@@ -897,7 +897,7 @@
     },
     {
       "Id": 5,
-      "TimeLimit": 60,
+      "TimeLimit": 600,
       "Difficulty": "Easy",
       "Shelves": [
         {

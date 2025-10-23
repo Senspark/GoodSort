@@ -7,5 +7,6 @@ namespace manager.Interface
     {
         void SetCurrentLevel(int level);
         int GetCurrentLevel();
+        void GoToNextLevel();
     }
 }

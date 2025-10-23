@@ -11,7 +11,7 @@ namespace Game
 
         private int _time;
         private int _maxTime;
-        private bool dirty;
+        private bool _dirty;
         
         private void Awake()
         {
@@ -25,7 +25,7 @@ namespace Game
             {
                 if (_time == value) return;
                 _time = value;
-                dirty = true;
+                _dirty = true;
             }
         }
         
@@ -36,14 +36,14 @@ namespace Game
             {
                 if (_maxTime == value) return;
                 _maxTime = value;
-                dirty = true;
+                _dirty = true;
             }
         }
         
         private void Update()
         {
-            if (!dirty) return;
-            dirty = false;
+            if (!_dirty) return;
+            _dirty = false;
             UpdateDisplay();
         }
         

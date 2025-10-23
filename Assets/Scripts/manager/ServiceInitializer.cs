@@ -46,7 +46,7 @@ namespace manager
         {
             DataManager = new DefaultDataManager(new LocalDataStorage());
             AudioManager = new DefaultAudioManager(DataManager);
-            LevelManager = new DefaultLevelManager();
+            LevelManager = new DefaultLevelManager(DataManager);
             SceneLoader = new DefaultSceneLoader();
             ScoreManager = new DefaultScoreManager(DataManager);
             EventManager = new EventManager();

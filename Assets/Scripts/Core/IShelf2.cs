@@ -1,4 +1,7 @@
+using System;
 using Engine.ShelfPuzzle;
+using JetBrains.Annotations;
+using UnityEngine;
 
 namespace Core
 {
@@ -12,5 +15,7 @@ namespace Core
         IDropZone[]  DropZones { get; }
         void Init(int shelfId, int lockCount);
         void DecreaseLockCount();
+        void OnTopLayerCleared([CanBeNull] Action<Vector2> onCleared);
+        
     }
 }

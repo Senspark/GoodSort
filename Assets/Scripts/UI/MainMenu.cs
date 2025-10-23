@@ -1,5 +1,6 @@
 using Dialog;
 using Factory;
+using manager.Interface;
 using UnityEngine;
 using Senspark;
 
@@ -12,14 +13,10 @@ namespace UI
 
         public void OnPlayButtonPressed()
         {
-            // Resolve factory from ServiceLocator (initialized in SplashScene)
-            var factory = ServiceLocator.Instance.Resolve<IUIControllerFactory>();
-
-            // Instantiate dialog with automatic controller injection
-            var dialog = factory.Instantiate<SelectLevelDialog>(selectLevelDialogPrefab);
-
-            // Show dialog
-            dialog.Show(canvasDialog);
+            var level = ServiceLocator.Instance.Resolve<ILevelManager>().GetCurrentLevel();
+            var dialog = UIControllerFactory.Instance.Instantiate<SelectLevelDialog>(selectLevelDialogPrefab);
+            dialog.SetCurrentLevel(level)
+                .Show(canvasDialog);
         }
     }
 }

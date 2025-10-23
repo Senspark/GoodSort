@@ -1,3 +1,4 @@
+using System;
 using Core;
 using Engine.ShelfPuzzle;
 using manager;
@@ -56,6 +57,11 @@ namespace Game
         {
             LockCount = Mathf.Max(0, LockCount - 1);
             lockView.gameObject.SetActive(LockCount > 0);
+        }
+        
+        public override void OnTopLayerCleared(Action<Vector2> onCleared)
+        {
+            onCleared?.Invoke(transform.position);
         }
     }
 }

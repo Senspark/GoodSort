@@ -1,6 +1,7 @@
 using System;
 using Core;
 using JetBrains.Annotations;
+using UnityEngine;
 
 namespace Strategy.Level
 {
@@ -15,6 +16,7 @@ namespace Strategy.Level
         private readonly LevelAnimationStepDragDrop _stateDragDrop;
         private readonly LevelAnimationSwitchStateControl _stateControl;
         [CanBeNull] private ILevelAnimationStep _currentStep;
+        private Action<Vector2> _onShelfCleared;
 
         public LevelAnimation(LevelDataManager levelDataManager, IDragDropManager dragDropManager)
         {
@@ -27,6 +29,11 @@ namespace Strategy.Level
             );
             _currentStep = _stateDragDrop =
                 new LevelAnimationStepDragDrop(_stateControl, levelDataManager, dragDropManager);
+        }
+        
+        public void SetOnShelfCleared(Action<Vector2> onShelfCleared)
+        {
+            _onShelfCleared = onShelfCleared;
         }
 
         public void Enter()
@@ -47,7 +54,7 @@ namespace Strategy.Level
         private void SwitchToState_MergeLayer(LevelAnimationStepMergeLayer.InputData data)
         {
             _currentStep?.Exit();
-            _currentStep = new LevelAnimationStepMergeLayer(_stateControl, data, _levelDataManager, _dragDropManager);
+            _currentStep = new LevelAnimationStepMergeLayer(_stateControl, data, _levelDataManager, _dragDropManager, _onShelfCleared);
             _currentStep.Enter();
         }
         

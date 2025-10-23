@@ -4975,7 +4975,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   canvasDialog: {fileID: 1000845860}
-  SelectLevelDialogPrefab: {fileID: 1756252027604635920, guid: 79998a12462204fe4a1acfeaaf0c0078, type: 3}
+  selectLevelDialogPrefab: {fileID: 1756252027604635920, guid: 79998a12462204fe4a1acfeaaf0c0078, type: 3}
 --- !u!1 &1724027353
 GameObject:
   m_ObjectHideFlags: 0

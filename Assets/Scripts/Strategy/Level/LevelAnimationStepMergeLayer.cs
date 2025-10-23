@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Core;
+using Game;
 using Sirenix.Utilities;
+using UnityEngine;
 
 namespace Strategy.Level
 {
@@ -12,17 +14,20 @@ namespace Strategy.Level
         private readonly LevelDataManager _levelDataManager;
         private readonly InputData _inputData;
         private readonly List<Data> _processingData = new();
+        private readonly Action<Vector2> _onMergeCompleted;
 
         public LevelAnimationStepMergeLayer(
             LevelAnimationSwitchStateControl control,
             InputData inputData,
             LevelDataManager levelDataManager,
-            IDragDropManager dragDropManager
+            IDragDropManager dragDropManager,
+            Action<Vector2> onMergeCompleted
         )
         {
             _control = control;
             _inputData = inputData;
             _levelDataManager = levelDataManager;
+            _onMergeCompleted = onMergeCompleted;
         }
 
         public void Enter()
@@ -50,6 +55,7 @@ namespace Strategy.Level
                 {
                     pData.Items.ForEach(e => e.DestroyItem());
                     pData.ItemDestroyed = true;
+                    
                 }
                 else
                 {
@@ -87,6 +93,9 @@ namespace Strategy.Level
             {
                 item.Bounce(onAnimationCompleted);
             }
+
+            var shelfBase = (ShelfBase)_levelDataManager.GetShelf(shelfId);
+            _onMergeCompleted(shelfBase.transform.position);
 
             _processingData.Add(processingData);
 

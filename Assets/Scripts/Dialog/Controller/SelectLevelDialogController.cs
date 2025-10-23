@@ -8,7 +8,6 @@ namespace Dialog.Controller
     public interface ISelectLevelDialogController
     {
         public void OpenLevel(int level);
-        public int GetLevel();
     }
     public class SelectLevelDialogController : ISelectLevelDialogController
     {
@@ -22,7 +21,6 @@ namespace Dialog.Controller
         
         public void OpenLevel(int level)
         {
-            _levelManager.SetCurrentLevel(level);
             _ = _sceneLoader.LoadScene<GameScene>(nameof(GameScene)).Then(_ =>
             {
             });

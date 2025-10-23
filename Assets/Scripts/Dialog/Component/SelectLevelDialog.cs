@@ -8,20 +8,18 @@ namespace  Dialog
     {
         [SerializeField] private TextMeshProUGUI textLevel;
         private ISelectLevelDialogController _controller;
+        private int _currentLevel;
 
-        private void Start()
+        public SelectLevelDialog SetCurrentLevel(int level)
         {
-            UpdatePopupContent();
+            _currentLevel = level;
+            textLevel.text = $"Level {_currentLevel}";
+            return this;
         }
-
+        
         public void OnClickLevelButton()
         {
-            _controller.OpenLevel(_controller.GetLevel());
-        }
-
-        private void UpdatePopupContent()
-        {
-            textLevel.text = $"Level {_controller.GetLevel()}";
+            _controller.OpenLevel(_currentLevel);
         }
         
     }

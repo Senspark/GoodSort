@@ -8,6 +8,5 @@ namespace Defines
         Started, // đã bắt đầu chơi
         Paused, // đang tạm dừng
         GameOver, // đã kết thúc
-        GameConcluded // đã kết thúc và đã show kết quả
     }
 }
