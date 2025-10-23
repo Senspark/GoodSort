@@ -74,7 +74,7 @@ namespace UI
             dragDropManager.Init(CanAcceptDropInto);
             dragDropManager.SetOnDragStarted(OnDragStarted);
             CleanUp();
-            LoadLevel(_levelManager.GetCurrentLevel());
+            LoadLevel(Math.Max(_levelManager.GetCurrentLevel(), 5));
         }
 
         private void Update()

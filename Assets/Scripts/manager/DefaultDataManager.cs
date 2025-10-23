@@ -1,5 +1,6 @@
 using Cysharp.Threading.Tasks;
 using manager.Interface;
+using UnityEngine;
 
 namespace manager
 {
@@ -14,6 +15,7 @@ namespace manager
 
         public UniTask<bool> Initialize()
         {
+            // clear all data
             return UniTask.FromResult(true);
         }
         
