@@ -43,8 +43,15 @@ namespace Core
         public bool ContainsPosition(Vector2 position)
         {
             var bounds = spriteRenderer.bounds;
-            var testPos = new Vector3(position.x, position.y, bounds.center.z);
-            return bounds.Contains(testPos);
+            var center = bounds.center;
+            var size = bounds.size;
+
+            size.y = 1.7f;
+
+            var expandedBounds = new Bounds(center, size);
+
+            var testPos = new Vector3(position.x, position.y, center.z);
+            return expandedBounds.Contains(testPos);
         }
 
         public bool CanBeDragged()
@@ -89,6 +96,28 @@ namespace Core
         public void ReturnToOriginalPosition()
         {
             transform.position = _originalPosition;
+        }
+
+        // 🔍 Debug Gizmo: visualize Sprite bounds
+        private void OnDrawGizmosSelected()
+        {
+            if (spriteRenderer == null)
+                return;
+
+            // Lấy bounds thật của sprite
+            var b = spriteRenderer.bounds;
+
+            // Chọn màu cho Gizmo
+            Gizmos.color = Color.green;
+
+            // Vẽ wire cube theo bounds (tọa độ world)
+            Gizmos.DrawWireCube(b.center, b.size);
+
+            // Option: vẽ label nhỏ ở tâm bounds
+#if UNITY_EDITOR
+            UnityEditor.Handles.color = Color.yellow;
+            UnityEditor.Handles.Label(b.center, $"Bounds\nSize: {b.size}");
+#endif
         }
 
         // Getters/Setters
