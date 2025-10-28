@@ -935,7 +935,7 @@ MonoBehaviour:
   shelfItemPrefab: {fileID: -3984508902149505473, guid: 126b1ec0e429d4fea8fce05b2e0b83de, type: 3}
   levelJsonFile: {fileID: 4900000, guid: fad2086de7594ea085e93aa8d8997972, type: 3}
   levelSolutionJsonFile: {fileID: 4900000, guid: 4a0fefc00d404d7ea5ae161f3ae85ea0, type: 3}
-  newLevelTxtFile: {fileID: 4900000, guid: 2187dd86009cc407c971f69f11ffe986, type: 3}
+  newLevelTxtFile: {fileID: 4900000, guid: 50514bd5f6ed84258b55a43f7ad8d0d7, type: 3}
 --- !u!4 &1595673185 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7060899050049777936, guid: 0ef9c12b14de946d4aae14de5cc91078, type: 3}

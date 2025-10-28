@@ -95,7 +95,7 @@ namespace Strategy.Level
             }
 
             var shelfBase = (ShelfBase)_levelDataManager.GetShelf(shelfId);
-            _onMergeCompleted(shelfBase.transform.position);
+            _onMergeCompleted?.Invoke(shelfBase.transform.position);
 
             _processingData.Add(processingData);
 

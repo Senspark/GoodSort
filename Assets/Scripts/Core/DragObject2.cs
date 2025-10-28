@@ -12,6 +12,8 @@ namespace Core
         private bool isDraggable = true;
 
         [SerializeField] private bool returnToOriginal = true;
+        [SerializeField] private bool useCustomBounds = false;
+        [SerializeField] private Vector2 customBounds = new(1f, 1.8f);
 
         public int Id { get; private set; }
         public Vector3 Position => transform.position;
@@ -42,12 +44,20 @@ namespace Core
         // Called by manager
         public bool ContainsPosition(Vector2 position)
         {
-            var bounds = spriteRenderer.bounds;
-            var center = bounds.center;
-            var size = bounds.size;
+            // var bounds = spriteRenderer.bounds;
+            // var center = bounds.center;
+            // var size = bounds.size;
+            //
+            // size.y = 1.7f;
+            //
+            // var expandedBounds = new Bounds(center, size);
+            //
+            // var testPos = new Vector3(position.x, position.y, center.z);
+            //return expandedBounds.Contains(testPos);
 
-            size.y = 1.7f;
-
+            var foot = spriteRenderer.transform.position;
+            var center = new Vector3(foot.x, foot.y + 0.9f, foot.z);
+            var size = new Vector3(1f, 1.8f, 0f);
             var expandedBounds = new Bounds(center, size);
 
             var testPos = new Vector3(position.x, position.y, center.z);
@@ -106,18 +116,18 @@ namespace Core
 
             // Lấy bounds thật của sprite
             var b = spriteRenderer.bounds;
+            
+            var foot = spriteRenderer.transform.position;
+            var center = new Vector3(foot.x, foot.y + 0.9f, foot.z);
+            var size = new Vector3(1f, 1.8f, 0f);           
+            var expandedBounds = new Bounds(center, size);
 
             // Chọn màu cho Gizmo
-            Gizmos.color = Color.green;
+            Gizmos.color = Color.blue;
 
             // Vẽ wire cube theo bounds (tọa độ world)
-            Gizmos.DrawWireCube(b.center, b.size);
 
-            // Option: vẽ label nhỏ ở tâm bounds
-#if UNITY_EDITOR
-            UnityEditor.Handles.color = Color.yellow;
-            UnityEditor.Handles.Label(b.center, $"Bounds\nSize: {b.size}");
-#endif
+            Gizmos.DrawWireCube(expandedBounds.center, expandedBounds.size);
         }
 
         // Getters/Setters
