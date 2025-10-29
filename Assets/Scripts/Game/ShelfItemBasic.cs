@@ -94,6 +94,26 @@ namespace Game
             // Color
             spriteRenderer.color = GetDisplayColor(_display);
         }
+        
+        public void FadeInVisual(float duration)
+        {
+            if (_display == ShelfLayerDisplay.Top)
+            {
+                gameObject.SetActive(true);
+                // Position
+                var layerOrder = (int)_display;
+                var offset = (Vector3)_spacingData.GetPosition(layerOrder, Meta.SlotId);
+                offset.z = MaxZ + layerOrder * 0.01f; // z càng nhỏ thì càng hiển thị trên cùng
+                if (Meta.SlotId == 1)
+                {
+                    offset.z -= 0.001f; // cho item ở giữa hiển thị nổi bật hơn 
+                }
+                transform.localPosition = offset;
+                var targetColor = GetDisplayColor(_display);
+                spriteRenderer.DOColor(targetColor, duration)
+                    .SetEase(Ease.OutQuad);
+            }
+        }
 
         public void DestroyItem()
         {

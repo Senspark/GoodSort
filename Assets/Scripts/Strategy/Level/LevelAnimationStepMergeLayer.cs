@@ -110,7 +110,8 @@ namespace Strategy.Level
             foreach (var item in nextTopLayer)
             {
                 item?.SetDisplay(ShelfLayerDisplay.Top);
-                item?.ResetVisual();
+                item?.FadeInVisual(0.2f);
+                // item?.ResetVisual();
             }
 
             // đưa layer dưới lên seconds

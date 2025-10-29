@@ -1,0 +1,44 @@
+Number of IDs: 2
+Number of Shelves: 4
+Number of Layers: 1
+Locked Shelves: 0
+Pair Rate: 1.0000
+Pair Amount: 2 - Single Amount: 2
+Weight: W1=1.0000 - W2=0.0000 - W3=0.0000
+W1 Validation Threshold: 0.7000
+
+W3 IDs: []
+W2 IDs: []
+W1 IDs: [1, 2]
+W1 Solver-Placed IDs: []
+
+===
+
+.------------------------------------------.
+|  Shelf  | Lock Count |      Layer 0      |
+|---------|------------|-------------------|
+| Shelf 0 |          0 | 1 single (1-item) |
+| Shelf 1 |          0 | 1 pair (2-item)   |
+| Shelf 2 |          0 | 1 single (1-item) |
+| Shelf 3 |          0 | 1 pair (2-item)   |
+'------------------------------------------'
+
+===
+
+.--------------------------------.
+|  Shelf  | Lock Count | Layer 0 |
+|---------|------------|---------|
+| Shelf 0 |          0 | [0,2,0] |
+| Shelf 1 |          0 | [2,2,0] |
+| Shelf 2 |          0 | [1,0,0] |
+| Shelf 3 |          0 | [1,1,0] |
+'--------------------------------'
+
+===
+
+.----------------------------------------.
+| Step | Item ID | From Shelf | To Shelf |
+|------|---------|------------|----------|
+|    0 |       2 |          0 |        1 |
+|    1 |       1 |          2 |        3 |
+'----------------------------------------'

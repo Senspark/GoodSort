@@ -281,6 +281,8 @@ MonoBehaviour:
   spriteRenderer: {fileID: 4054510554758841274}
   isDraggable: 1
   returnToOriginal: 1
+  useCustomBounds: 1
+  customBounds: {x: 1, y: 1.8}
 --- !u!114 &-3984508902149505473
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -74,7 +74,7 @@ namespace UI
             dragDropManager.Init(CanAcceptDropInto);
             dragDropManager.SetOnDragStarted(OnDragStarted);
             CleanUp();
-            LoadLevel(Math.Max(_levelManager.GetCurrentLevel(), 5));
+            LoadLevel(_levelManager.GetCurrentLevel());
         }
 
         private void Update()
@@ -101,15 +101,15 @@ namespace UI
             var levelView = builder.LevelObject.GetComponent<LevelView>();
             levelView.transform.SetParent(container.transform,false);
             
-            var levelConfig = _configManager.GetValue<PuzzleLevelConfig>(ConfigKey.LevelConfig);
+            // var levelConfig = _configManager.GetValue<PuzzleLevelConfig>(ConfigKey.LevelConfig);
             var levelCreator = new LevelCreator(container, shelfItemPrefab);
-            var inputData = levelConfig.GetLevel(level).Shelves;
+            var inputData = _levelLoaderManager.GetInputData(level);
             var levelData = levelCreator.SpawnLevel(inputData, OnItemDestroy);
             _levelDataManager = new LevelDataManager(levelData);
             _levelAnimation = new LevelAnimation(_levelDataManager, dragDropManager);
             _levelAnimation.Enter();
             
-            levelView.Initialize(levelUI, levelConfig.GetLevel(level));
+            levelView.Initialize(levelUI);
             _levelAnimation.SetOnShelfCleared(levelView.OnTopLayerCleared);
             _levelView = levelView;
         }

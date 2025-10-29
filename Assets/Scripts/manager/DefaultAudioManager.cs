@@ -109,11 +109,15 @@ namespace manager
         
         private async UniTask<bool> InitializeImpl()
         {
-            var MusicVolume = 0.4f;
-            var SoundVolume = 0.6f;
             await UniTask.WhenAll(
-                LoadAudioClipAsync(Audio.Music1, ("Music1", MusicVolume)),
-                LoadAudioClipAsync(Audio.Music2, ("Music2", MusicVolume))
+                LoadAudioClipAsync(Audio.MenuMusic, ("menu_bg_music", 1f)),
+                LoadAudioClipAsync(Audio.GameMusic, ("gameplay_bg_music", 1f)),
+                LoadAudioClipAsync(Audio.ClickButton, ("Pop Up 3", 1f)),
+                LoadAudioClipAsync(Audio.CloseDialog, ("Pop Up 1", 1f)),
+                LoadAudioClipAsync(Audio.CoinFly, ("pick-coin", 1f)),
+                LoadAudioClipAsync(Audio.PutGoods, ("Pop 06", 1f)),
+                LoadAudioClipAsync(Audio.Match, ("Score Multi", 1f)),
+                LoadAudioClipAsync(Audio.LevelComplete, ("Level Up", 1f))
             );
 
             initialized = true;

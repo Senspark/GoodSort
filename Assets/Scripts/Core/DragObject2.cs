@@ -12,7 +12,7 @@ namespace Core
         private bool isDraggable = true;
 
         [SerializeField] private bool returnToOriginal = true;
-        [SerializeField] private bool useCustomBounds = false;
+        [SerializeField] private bool useCustomBounds = true;
         [SerializeField] private Vector2 customBounds = new(1f, 1.8f);
 
         public int Id { get; private set; }
@@ -44,24 +44,23 @@ namespace Core
         // Called by manager
         public bool ContainsPosition(Vector2 position)
         {
-            // var bounds = spriteRenderer.bounds;
-            // var center = bounds.center;
-            // var size = bounds.size;
-            //
-            // size.y = 1.7f;
-            //
-            // var expandedBounds = new Bounds(center, size);
-            //
-            // var testPos = new Vector3(position.x, position.y, center.z);
-            //return expandedBounds.Contains(testPos);
-
-            var foot = spriteRenderer.transform.position;
-            var center = new Vector3(foot.x, foot.y + 0.9f, foot.z);
-            var size = new Vector3(1f, 1.8f, 0f);
-            var expandedBounds = new Bounds(center, size);
+            var objectBound = spriteRenderer.bounds;
+            var center = objectBound.center;
+            
+            if(useCustomBounds)
+            {
+                var foot = spriteRenderer.transform.position;
+                center = new Vector3(foot.x, foot.y + customBounds.y / 2f, foot.z);
+                var size = new Vector3(customBounds.x, customBounds.y, 0f);
+                objectBound = new Bounds(center, size);
+            }
+            else
+            {
+                objectBound = spriteRenderer.bounds;
+            }
 
             var testPos = new Vector3(position.x, position.y, center.z);
-            return expandedBounds.Contains(testPos);
+            return objectBound.Contains(testPos);
         }
 
         public bool CanBeDragged()

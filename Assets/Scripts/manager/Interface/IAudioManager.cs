@@ -6,8 +6,14 @@ namespace manager.Interface
     public enum Audio
     {
         None,
-        Music1,
-        Music2,
+        MenuMusic,
+        GameMusic,
+        ClickButton,
+        CloseDialog,
+        CoinFly,
+        PutGoods,
+        Match,
+        LevelComplete,
     }
     [Service(nameof(IAudioManager))]
     public interface IAudioManager : IService

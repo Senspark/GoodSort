@@ -13,6 +13,8 @@ namespace Core
         void SetShelf(ShelfItemMeta meta, ISpacingData spacingData, ShelfLayerDisplay display);
         void SetDisplay(ShelfLayerDisplay display);
         void ResetVisual();
+
+        void FadeInVisual(float duration);
         void DestroyItem();
         public void Bounce([CanBeNull] Action onCompleted, float delay = 0f);
     }
