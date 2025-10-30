@@ -2,7 +2,6 @@ using Constant;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
-using manager;
 using manager.Interface;
 using Senspark;
 

@@ -1,5 +1,7 @@
 using Cysharp.Threading.Tasks;
+using Defines;
 using manager.Interface;
+using Senspark;
 using UI;
 using Utilities;
 
@@ -12,11 +14,9 @@ namespace Dialog.Controller
     public class SelectLevelDialogController : ISelectLevelDialogController
     {
         private readonly ISceneLoader _sceneLoader;
-        private readonly ILevelManager _levelManager;
-        public SelectLevelDialogController(ISceneLoader sceneLoader, ILevelManager levelManager)
+        public SelectLevelDialogController(ISceneLoader sceneLoader)
         {
             _sceneLoader = sceneLoader;
-            _levelManager = levelManager;
         }
         
         public void OpenLevel(int level)
@@ -24,11 +24,6 @@ namespace Dialog.Controller
             _ = _sceneLoader.LoadScene<GameScene>(nameof(GameScene)).Then(_ =>
             {
             });
-        }
-        
-        public int GetLevel()
-        {
-            return _levelManager.GetCurrentLevel();
         }
     }
 }

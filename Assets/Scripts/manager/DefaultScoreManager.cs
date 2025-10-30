@@ -1,6 +1,7 @@
 using System;
 using Cysharp.Threading.Tasks;
 using manager.Interface;
+using Senspark;
 using UnityEngine;
 
 namespace manager
@@ -35,7 +36,7 @@ namespace manager
 
         private void LoadData() {
             try {
-                var raw = _dataManager.GetString(SaveKey, "{}");
+                var raw = _dataManager.Get(SaveKey, "{}");
                 var data = JsonUtility.FromJson<InternalData>(raw);
                 HighestLevelPlayed = data.highestLevelPlayed;
                 LastLevelPlayed = data.lastLevelPlayed;
@@ -53,7 +54,7 @@ namespace manager
                 amountLevelPlayed = AmountLevelPlayed
             };
             var json = JsonUtility.ToJson(d);
-            _dataManager.SetString(SaveKey, json);
+            _dataManager.Set(SaveKey, json);
         }
 
         [Serializable]

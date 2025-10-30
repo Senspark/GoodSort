@@ -1005,6 +1005,7 @@ GameObject:
   - component: {fileID: 2872341536324773901}
   - component: {fileID: 3850992566923844243}
   - component: {fileID: 6011887847140192965}
+  - component: {fileID: 3204383761126534488}
   m_Layer: 5
   m_Name: FreeGiftButton
   m_TagString: Untagged
@@ -1115,6 +1116,19 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &3204383761126534488
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3090248521142891020}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c712a079016471c827881f5f7ed6257, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  audioEnum: 2
 --- !u!1 &3123822369061450824
 GameObject:
   m_ObjectHideFlags: 0
@@ -2233,6 +2247,7 @@ GameObject:
   - component: {fileID: 7905714347902856882}
   - component: {fileID: 5217320913633648797}
   - component: {fileID: 2332247762195461308}
+  - component: {fileID: 246767631058057773}
   m_Layer: 5
   m_Name: PlayButton
   m_TagString: Untagged
@@ -2354,6 +2369,19 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &246767631058057773
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5930871351837473438}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c712a079016471c827881f5f7ed6257, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  audioEnum: 2
 --- !u!1 &6116767114625486849
 GameObject:
   m_ObjectHideFlags: 0
