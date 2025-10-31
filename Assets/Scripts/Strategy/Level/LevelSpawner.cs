@@ -31,29 +31,58 @@ namespace Strategy.Level
             Action<ShelfItemMeta> onItemDestroy
         )
         {
-            var shelves = _container.GetComponentsInChildren<IShelf2>().Take(input.Length).ToArray();
+            var foundShelves = _container.GetComponentsInChildren<IShelf2>();
+            var commonShelves = foundShelves.Where(e => e.Type == ShelfType.Common).ToArray();
+            var singleShelves = foundShelves.Where(e => e.Type == ShelfType.Single).ToArray();
 
-            if (shelves.Length != input.Length)
+            var uiCommonAmount = commonShelves.Length;
+            var uiSingleAmount = singleShelves.Length;
+
+            var ipCommonAmount = Array.FindAll(input, e => e.Type == ShelfType.Common).Length;
+            var ipSingleAmount = Array.FindAll(input, e => e.Type == ShelfType.Single).Length;
+
+            if (uiCommonAmount < ipCommonAmount)
             {
-                CleanLogger.Error($"Số lượng Shelves không khớp {shelves.Length} != {input.Length}");
+                CleanLogger.Error($"Số lượng Common Shelves không khớp {uiCommonAmount} < {ipCommonAmount}");
                 return null;
             }
 
-            PreProcessData(ref shelves, ref input);
+            if (uiSingleAmount < ipSingleAmount)
+            {
+                CleanLogger.Error($"Số lượng Single Shelves không khớp {uiSingleAmount} < {ipSingleAmount}");
+                return null;
+            }
 
-            var shelvesItems = new IShelfItem[input.Length][][];
+            var totalShelvesAmount = input.Length;
+            var outputShelves = new IShelf2[totalShelvesAmount];
+            var shelvesItems = new IShelfItem[totalShelvesAmount][][];
             var itemId = 0;
             Func<int> getItemId = () => itemId++;
 
-            for (var shelfId = 0; shelfId < input.Length; shelfId++)
+            int commonShelfId = 0, singleShelfId = 0;
+            for (var shelfId = 0; shelfId < totalShelvesAmount; shelfId++)
             {
                 var shelfData = input[shelfId];
-                var shelf = shelves[shelfId];
+                IShelf2 shelf;
+                switch (shelfData.Type)
+                {
+                    case ShelfType.Common:
+                        shelf = commonShelves[commonShelfId++];
+                        break;
+                    case ShelfType.Single:
+                        shelf = singleShelves[singleShelfId++];
+                        break;
+                    default:
+                        CleanLogger.Error($"Chưa xử lý case này: ${shelfData.Type}");
+                        return null;
+                }
+
                 shelf.Init(shelfId, shelfData.LockCount);
                 shelvesItems[shelfId] = SpawnShelf(shelfId, shelf, shelfData, getItemId, onItemDestroy);
+                outputShelves[shelfId] = shelf;
             }
 
-            return new LevelData(shelvesItems, shelves);
+            return new LevelData(shelvesItems, outputShelves);
         }
 
         private IShelfItem[][] SpawnShelf(
@@ -119,41 +148,6 @@ namespace Strategy.Level
                 1 => ShelfLayerDisplay.Second,
                 _ => ShelfLayerDisplay.Hidden
             };
-        }
-
-        /* Sắp xếp lại theo thứ tự:
-         Common Shelve -> Single Shelve
-         */
-        private static void PreProcessData(ref IShelf2[] ui, ref ShelfPuzzleInputData[] input)
-        {
-            // Validate: Count shelf types in both arrays
-            var uiCommonCount = ui.Count(shelf => shelf.Type == ShelfType.Common);
-            var uiTakeOnlyCount = ui.Count(shelf => shelf.Type == ShelfType.Single);
-            var inputCommonCount = input.Count(data => data.Type == ShelfType.Common);
-            var inputTakeOnlyCount = input.Count(data => data.Type == ShelfType.Single);
-
-            if (uiCommonCount != inputCommonCount)
-            {
-                CleanLogger.Error($"ShelfType.Common count mismatch: UI={uiCommonCount}, Input={inputCommonCount}");
-                throw new InvalidOperationException(
-                    $"ShelfType.Common count mismatch: UI={uiCommonCount}, Input={inputCommonCount}");
-            }
-
-            if (uiTakeOnlyCount != inputTakeOnlyCount)
-            {
-                CleanLogger.Error(
-                    $"ShelfType.TakeOnly count mismatch: UI={uiTakeOnlyCount}, Input={inputTakeOnlyCount}");
-                throw new InvalidOperationException(
-                    $"ShelfType.TakeOnly count mismatch: UI={uiTakeOnlyCount}, Input={inputTakeOnlyCount}");
-            }
-
-            // Sort: Common first, TakeOnly second (stable sort preserves original order within each type)
-            var sortedUi = ui.OrderBy(shelf => shelf.Type == ShelfType.Common ? 0 : 1).ToArray();
-            var sortedInput = input.OrderBy(data => data.Type == ShelfType.Common ? 0 : 1).ToArray();
-
-            // Copy sorted results back to original arrays
-            Array.Copy(sortedUi, ui, ui.Length);
-            Array.Copy(sortedInput, input, input.Length);
         }
     }
 

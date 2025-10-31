@@ -34,7 +34,7 @@ namespace UI
         private void Start()
         {
             dragDropManager.Init(CanAcceptDropInto);
-            btnOpenLevel.onClick.AddListener(DownloadLevel);
+            btnOpenLevel?.onClick.AddListener(DownloadLevel);
         }
 
         private void Update()
@@ -80,16 +80,19 @@ namespace UI
                 var levelCreator = new LevelCreator(container, shelfItemPrefab);
                 var (inputData, moves) = LevelFileParser.ParseLevelFile(txt);
                 CleanUp();
+                LevelFileParser.JustLog(inputData);
 
                 var levelData = levelCreator.SpawnLevel(inputData, OnItemDestroy);
                 _levelDataManager = new LevelDataManager(levelData);
                 _levelAnimation = new LevelAnimation(_levelDataManager, dragDropManager);
                 _levelAnimation.Enter();
 
-                LevelFileParser.JustLog(inputData);
 
-                btnSampleSolve.onClick.RemoveAllListeners();
-                btnSampleSolve.onClick.AddListener(() => { Solve(moves); });
+                if (btnSampleSolve)
+                {
+                    btnSampleSolve.onClick.RemoveAllListeners();
+                    btnSampleSolve.onClick.AddListener(() => { Solve(moves); });    
+                }
             });
         }
 
