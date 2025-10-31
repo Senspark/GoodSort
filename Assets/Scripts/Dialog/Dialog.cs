@@ -105,7 +105,7 @@ namespace Dialog
         {
             HadShowed = false;
             _willShowActions.ForEach(item => item?.Invoke());
-            _willHideActions.Clear();
+            // _willHideActions.Clear();
 
             var fade = canvasGroup.DOFade(1, 0.3f).SetEase(Ease.OutBack);
             var sequence = DOTween.Sequence();
@@ -117,7 +117,7 @@ namespace Dialog
             _showSequence = sequence.AppendCallback(() =>
                 {
                     _didShowActions.ForEach(item => item?.Invoke());
-                    _didHideActions.Clear();
+                    // _didHideActions.Clear();
                     HadShowed = true;
                 })
                 .SetUpdate(UpdateType.Normal, true);
@@ -128,14 +128,14 @@ namespace Dialog
             if(_isHiding) return;
             _isHiding = true;
             _willHideActions.ForEach(item => item?.Invoke());
-            _willShowActions.Clear();
+            // _willShowActions.Clear();
             var fade = canvasGroup.DOFade(0, 0.3f).SetEase(Ease.InOutSine);
             _hideSequence = DOTween.Sequence()
                 .Append(fade)
                 .AppendCallback(() =>
                 {
                     _didHideActions.ForEach(item => item?.Invoke());
-                    _didShowActions.Clear();
+                    // _didShowActions.Clear();
                     _isHiding = false;
                     Destroy(gameObject);
                 })

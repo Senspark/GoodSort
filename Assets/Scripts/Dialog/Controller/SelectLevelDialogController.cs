@@ -10,12 +10,15 @@ namespace Dialog.Controller
     public interface ISelectLevelDialogController
     {
         public void OpenLevel(int level);
+        public void PlayEffect(AudioEnum audioEnum);
     }
     public class SelectLevelDialogController : ISelectLevelDialogController
     {
         private readonly ISceneLoader _sceneLoader;
-        public SelectLevelDialogController(ISceneLoader sceneLoader)
+        private readonly IAudioManager _audioManager;
+        public SelectLevelDialogController(IAudioManager audioManager, ISceneLoader sceneLoader)
         {
+            _audioManager = audioManager;
             _sceneLoader = sceneLoader;
         }
         
@@ -24,6 +27,11 @@ namespace Dialog.Controller
             _ = _sceneLoader.LoadScene<GameScene>(nameof(GameScene)).Then(_ =>
             {
             });
+        }
+        
+        public void PlayEffect(AudioEnum audioEnum)
+        {
+            _audioManager.PlaySound(audioEnum, 1f);
         }
     }
 }
