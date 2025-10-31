@@ -1,27 +1,46 @@
+using Dialog;
+using Factory;
 using UnityEngine;
 using manager.Interface;
 using Senspark;
 using TMPro;
-using Utilities;
+using UnityEngine.UI;
 
 namespace UI
 {
     public class MainMenu : MonoBehaviour
-
     {
-    [SerializeField] private Canvas canvasDialog;
-    [SerializeField] private Transform playButton;
-    [SerializeField] private TMP_InputField tmpInputField;
+        [SerializeField] private Canvas canvasDialog;
+        [SerializeField] private GameObject selectLevelDialogPrefab;
+        
+        [Header("Cheat")]
+        [SerializeField] private TMP_InputField cheatInputField;
+        [SerializeField] private Button cheatButton;
 
-    public void OnPlayButtonPressed()
-    {
-        // get level from input field
-        _ = ServiceLocator.Instance
-            .Resolve<ISceneLoader>()
-            .LoadScene<GameScene>(nameof(GameScene)).Then(gameScene =>
+        public void OnPlayButtonPressed()
+        {
+            var levelManager = ServiceLocator.Instance.Resolve<ILevelManager>();
+            levelManager.GetCurrentLevel();
+            var dialog = UIControllerFactory.Instance.Instantiate<SelectLevelDialog>(selectLevelDialogPrefab);
+            dialog.SetCurrentLevel(levelManager.GetCurrentLevel())
+                .Show(canvasDialog);
+        }
+        
+        public void OnCheatButtonPressed()
+        {
+            var text = cheatInputField != null ? cheatInputField.text : null;
+            int level;
+            if (string.IsNullOrWhiteSpace(text) || !int.TryParse(text, out var parsed))
             {
-                // gameScene.SetLevel(int.Parse(tmpInputField.text));text
-            });
-    }
+                level = 1;
+            }
+            else
+            {
+                level = Mathf.Clamp(parsed, 1, 14);
+            }
+
+            var dataManager = ServiceLocator.Instance.Resolve<IDataManager>();
+            dataManager.Set("CurrentLevel", level);
+        }
     }
 }

@@ -34,5 +34,9 @@ namespace Game
         public override void DecreaseLockCount()
         {
         }
+        
+        public override void OnTopLayerCleared(Action<Vector2> onCleared)
+        {
+        }
     }
 }

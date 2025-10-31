@@ -12,6 +12,8 @@ namespace Core
         private bool isDraggable = true;
 
         [SerializeField] private bool returnToOriginal = true;
+        [SerializeField] private bool useCustomBounds = true;
+        [SerializeField] private Vector2 customBounds = new(1f, 1.8f);
 
         public int Id { get; private set; }
         public Vector3 Position => transform.position;
@@ -42,9 +44,23 @@ namespace Core
         // Called by manager
         public bool ContainsPosition(Vector2 position)
         {
-            var bounds = spriteRenderer.bounds;
-            var testPos = new Vector3(position.x, position.y, bounds.center.z);
-            return bounds.Contains(testPos);
+            var objectBound = spriteRenderer.bounds;
+            var center = objectBound.center;
+            
+            if(useCustomBounds)
+            {
+                var foot = spriteRenderer.transform.position;
+                center = new Vector3(foot.x, foot.y + customBounds.y / 2f, foot.z);
+                var size = new Vector3(customBounds.x, customBounds.y, 0f);
+                objectBound = new Bounds(center, size);
+            }
+            else
+            {
+                objectBound = spriteRenderer.bounds;
+            }
+
+            var testPos = new Vector3(position.x, position.y, center.z);
+            return objectBound.Contains(testPos);
         }
 
         public bool CanBeDragged()
@@ -89,6 +105,28 @@ namespace Core
         public void ReturnToOriginalPosition()
         {
             transform.position = _originalPosition;
+        }
+
+        // 🔍 Debug Gizmo: visualize Sprite bounds
+        private void OnDrawGizmosSelected()
+        {
+            if (spriteRenderer == null)
+                return;
+
+            // Lấy bounds thật của sprite
+            var b = spriteRenderer.bounds;
+            
+            var foot = spriteRenderer.transform.position;
+            var center = new Vector3(foot.x, foot.y + 0.9f, foot.z);
+            var size = new Vector3(1f, 1.8f, 0f);           
+            var expandedBounds = new Bounds(center, size);
+
+            // Chọn màu cho Gizmo
+            Gizmos.color = Color.blue;
+
+            // Vẽ wire cube theo bounds (tọa độ world)
+
+            Gizmos.DrawWireCube(expandedBounds.center, expandedBounds.size);
         }
 
         // Getters/Setters

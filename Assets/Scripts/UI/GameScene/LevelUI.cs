@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 
 namespace Game
@@ -6,8 +7,8 @@ namespace Game
     {
         [SerializeField] private LevelTimeView levelTimeView;
         [SerializeField] private LevelComboView levelComboView;
-
-        private float _timeAccumulator = 0f;
+        
+        private float _timeAccumulator;
 
         public void SetMaxTime(int maxTime)
         {
@@ -23,12 +24,12 @@ namespace Game
                 levelTimeView.Time += 1;
                 _timeAccumulator -= 1f;
             }
+            levelComboView.Step(dt);
         }
-
-        public void ResetTimer()
+        
+        public void AddScore()
         {
-            levelTimeView.Time = 0;
-            _timeAccumulator = 0f;
+            levelComboView.AddScore();
         }
     }
 }

@@ -7,19 +7,18 @@ namespace Factory
 {
     public class UIControllerFactory
     {
+        private static UIControllerFactory _instance;
+        public static UIControllerFactory Instance => _instance ??= new UIControllerFactory();
         private readonly Dictionary<string, Func<object>> _uiControllers = new();
         
         /// <summary>
-        /// Đăng ký controller cho 1 component type
+        /// Đăng ký controller cho 1 Dialog
         /// </summary>
         public void Register<T>(Func<object> controllerFactory) where T : Component
         {
             _uiControllers[typeof(T).Name] = controllerFactory;
         }
 
-        /// <summary>
-        /// Tạo controller theo tên component
-        /// </summary>
         public T CreateController<T>(string componentType)
         {
             if(_uiControllers.TryGetValue(componentType, out var factory))
@@ -29,33 +28,21 @@ namespace Factory
             throw new Exception($"Controller {componentType} not found");
         }
         
-        /// <summary>
-        /// Instantiate prefab và thêm controller vào component có _controller field
-        /// </summary>
         public T Instantiate<T>(GameObject prefab) where T : Component
         {
             var instance = UnityEngine.Object.Instantiate(prefab);
             var component = instance.GetComponent<T>();
-            if(component == null)
-            {
-                throw new Exception($"Component {typeof(T).Name} not found");
-            }
             var typeName = typeof(T).Name;
-            if(!_uiControllers.TryGetValue(typeName, out var factory))
-            {
+
+            if (!_uiControllers.TryGetValue(typeName, out var factory))
                 throw new Exception($"Controller {typeName} not registered");
-            }
 
+            var controller = factory();
             var field = typeof(T).GetField("_controller", BindingFlags.Instance | BindingFlags.NonPublic);
-            if (field != null)
-            {
-                field.SetValue(component, factory);
-            }
-            else
-            {
+            if (field == null)
                 throw new Exception($"Field _controller not found in {typeof(T).Name}");
-            }
 
+            field.SetValue(component, controller);
             return component;
         }
     }

@@ -3,7 +3,9 @@ using System.Linq;
 using Core;
 using Cysharp.Threading.Tasks;
 using Defines;
+using Dialog;
 using Engine.ShelfPuzzle;
+using Factory;
 using Game;
 using JetBrains.Annotations;
 using manager;
@@ -17,15 +19,18 @@ namespace UI
 {
     public class GameScene : MonoBehaviour
     {
+        [SerializeField] private Canvas canvasDialog;
         [SerializeField] private DragDropManager2 dragDropManager;
         [SerializeField] private GameObject container;
         [SerializeField] private ShelfItemBasic shelfItemPrefab;
         [SerializeField] private LevelUI levelUI;
+        [SerializeField] private GameObject completeLevelDialogPrefab;
 
         [CanBeNull] private LevelDataManager _levelDataManager;
         [CanBeNull] private LevelAnimation _levelAnimation;
 
         private ILevelLoaderManager _levelLoaderManager; 
+        private ILevelManager _levelManager;
         private IConfigManager _configManager;
 
         private GameStateType State { get; set; } = GameStateType.UnInitialize;
@@ -56,6 +61,7 @@ namespace UI
                 var services = ServiceLocator.Instance;
                 _levelLoaderManager = services.Resolve<ILevelLoaderManager>();
                 _configManager = services.Resolve<IConfigManager>();
+                _levelManager = services.Resolve<ILevelManager>();
                 State = GameStateType.Initialized;
             }
         }
@@ -68,7 +74,7 @@ namespace UI
             dragDropManager.Init(CanAcceptDropInto);
             dragDropManager.SetOnDragStarted(OnDragStarted);
             CleanUp();
-            LoadLevel(3);
+            LoadLevel(_levelManager.GetCurrentLevel());
         }
 
         private void Update()
@@ -92,19 +98,20 @@ namespace UI
         private void LoadLevel(int level)
         {
             var builder = new LevelConfigBuilder(_levelLoaderManager).SetLevel(level).Build();
-            var leveView = builder.LevelObject.GetComponent<LevelView>();
-            leveView.transform.SetParent(container.transform,false);
+            var levelView = builder.LevelObject.GetComponent<LevelView>();
+            levelView.transform.SetParent(container.transform,false);
             
-            var levelConfig = _configManager.GetValue<PuzzleLevelConfig>(ConfigKey.LevelConfig);
+            // var levelConfig = _configManager.GetValue<PuzzleLevelConfig>(ConfigKey.LevelConfig);
             var levelCreator = new LevelCreator(container, shelfItemPrefab);
-            var inputData = levelConfig.GetLevel(level).Shelves;
+            var inputData = _levelLoaderManager.GetInputData(level);
             var levelData = levelCreator.SpawnLevel(inputData, OnItemDestroy);
             _levelDataManager = new LevelDataManager(levelData);
             _levelAnimation = new LevelAnimation(_levelDataManager, dragDropManager);
             _levelAnimation.Enter();
             
-            leveView.Initialize(levelUI, levelConfig.GetLevel(level));
-            _levelView = leveView;
+            levelView.Initialize(levelUI);
+            _levelAnimation.SetOnShelfCleared(levelView.OnTopLayerCleared);
+            _levelView = levelView;
         }
         
         private void CleanUp()
@@ -134,6 +141,7 @@ namespace UI
         {
             dragDropManager.UnregisterDragObject(itemMeta.Id);
             _levelDataManager?.RemoveItem(itemMeta.Id);
+            CheckGameClear();
         }
         
         private void OnDragStarted(IDragObject dragObject)
@@ -141,6 +149,19 @@ namespace UI
             if (State > GameStateType.Started) return;
             State = GameStateType.Started;
             // Chuyển state Started khi bắt đầu drag lần đầu tiên
+        }
+
+        private void CheckGameClear()
+        {
+            if (_levelDataManager == null) return;
+            var remainingItems = _levelDataManager.GetItems();
+            if (remainingItems.Count == 0)
+            {
+                // Game clear
+                State = GameStateType.GameOver;
+                var dialog = UIControllerFactory.Instance.Instantiate<CompleteLevelDialog>(completeLevelDialogPrefab);
+                dialog.Show(canvasDialog);
+            }
         }
         
         [Button]

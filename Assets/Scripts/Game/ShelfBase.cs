@@ -1,6 +1,7 @@
 using Core;
 using Engine.ShelfPuzzle;
 using UnityEngine;
+using System;
 
 namespace Game
 {
@@ -13,5 +14,6 @@ namespace Game
         public abstract IDropZone[] DropZones { get; protected set; }
         public abstract void Init(int shelfId, int lockCount);
         public abstract void DecreaseLockCount();
+        public abstract void OnTopLayerCleared(Action<Vector2> onCleared);
     }
 }

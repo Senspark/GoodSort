@@ -13,11 +13,16 @@ namespace Game
     public class LevelView : MonoBehaviour 
     {
         private LevelUI _levelUI;
+        public Action<Vector2> OnTopLayerCleared;
 
-        public void Initialize(LevelUI levelUI, PuzzleLevelData levelData)
+        public void Initialize(LevelUI levelUI)
         {
             _levelUI = levelUI;
-            _levelUI.SetMaxTime(levelData.TimeLimit);
+            _levelUI.SetMaxTime(600); // 10 phút
+            OnTopLayerCleared = vector2 =>
+            {
+                _levelUI.AddScore();
+            };
         }
         
         public void Step(float dt)

@@ -12,7 +12,6 @@ namespace Dialog
     public class Dialog<T> : MonoBehaviour where T : Dialog<T>
     {
         [SerializeField] private CanvasGroup canvasGroup;
-        [SerializeField] private RectTransform trans;
         [SerializeField] private Image overlay;
         
         private readonly List<Action> _willShowActions = new();
@@ -108,7 +107,7 @@ namespace Dialog
             _willShowActions.ForEach(item => item?.Invoke());
             _willHideActions.Clear();
 
-            var fade = canvasGroup.DOFade(1, 0.5f).SetEase(Ease.InOutSine);
+            var fade = canvasGroup.DOFade(1, 0.3f).SetEase(Ease.OutBack);
             var sequence = DOTween.Sequence();
             if (delay > 0)
             {
@@ -130,7 +129,7 @@ namespace Dialog
             _isHiding = true;
             _willHideActions.ForEach(item => item?.Invoke());
             _willShowActions.Clear();
-            var fade = canvasGroup.DOFade(0, 0.5f).SetEase(Ease.InOutSine);
+            var fade = canvasGroup.DOFade(0, 0.3f).SetEase(Ease.InOutSine);
             _hideSequence = DOTween.Sequence()
                 .Append(fade)
                 .AppendCallback(() =>

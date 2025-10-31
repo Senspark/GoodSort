@@ -8,8 +8,14 @@ namespace Factory
     {
         public void Initialize(IServiceDeclaration containerManager)
         {
-            var factory = new UIControllerFactory();
-            factory.Register<TestDialog>(() => new TestDialogController(containerManager.DataManager));
+            var factory = UIControllerFactory.Instance;
+            factory.Register<SelectLevelDialog>(() => new SelectLevelDialogController(
+                containerManager.SceneLoader
+            ));
+            factory.Register<CompleteLevelDialog>(() => new CompleteLevelDialogController(
+                containerManager.LevelManager,
+                containerManager.SceneLoader
+            ));
         }
     }
 }

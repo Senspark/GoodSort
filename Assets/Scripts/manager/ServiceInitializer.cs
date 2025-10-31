@@ -1,12 +1,11 @@
 using System;
+using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using Defines;
 using Factory;
 using JetBrains.Annotations;
 using manager.Interface;
 using Senspark;
-using IAudioManager = manager.Interface.IAudioManager;
-using IDataManager = manager.Interface.IDataManager;
 
 namespace manager
 {
@@ -14,7 +13,7 @@ namespace manager
     {
         public IDataManager DataManager { get; set; }
         public IAudioManager AudioManager { get; set; }
-        public ILevelStoreManager LevelStoreManager { get; set; }
+        public ILevelManager LevelManager { get; set; }
         public ISceneLoader SceneLoader { get; set; }
         public IScoreManager ScoreManager { get; set; }
         public IEventManager EventManager { get; set; }
@@ -30,7 +29,7 @@ namespace manager
 
         public IDataManager DataManager { get; set; }
         public IAudioManager AudioManager { get; set; }
-        public ILevelStoreManager LevelStoreManager { get; set; }
+        public ILevelManager LevelManager { get; set; }
         public ISceneLoader SceneLoader { get; set; }
         public IScoreManager ScoreManager { get; set; }
         public IEventManager EventManager { get; set; }
@@ -45,8 +44,22 @@ namespace manager
         )
         {
             DataManager = new DefaultDataManager(new LocalDataStorage());
-            AudioManager = new DefaultAudioManager(DataManager);
-            LevelStoreManager = new DefaultLevelStoreManager(DataManager);
+
+            // Build audio infos from Resources/Audio
+            var infos = new Dictionary<Enum, IAudioInfo>
+            {
+                { AudioEnum.MenuMusic, new AudioInfo("Audio/menu_bg_music", 1f) },
+                { AudioEnum.GameMusic, new AudioInfo("Audio/gameplay_bg_music", 1f) },
+                { AudioEnum.ClickButton, new AudioInfo("Audio/Pop Up 3", 1f) },
+                { AudioEnum.CloseDialog, new AudioInfo("Audio/Pop Up 1", 1f) },
+                { AudioEnum.CoinFly, new AudioInfo("Audio/pick-coin", 1f) },
+                { AudioEnum.PutGoods, new AudioInfo("Audio/Pop 06", 1f) },
+                { AudioEnum.Match, new AudioInfo("Audio/Score Multi", 1f) },
+                { AudioEnum.LevelComplete, new AudioInfo("Audio/Level Up", 1f) }
+            };
+            AudioManager = new AudioManager(DataManager, "AudioManager", infos);
+
+            LevelManager = new DefaultLevelManager(DataManager);
             SceneLoader = new DefaultSceneLoader();
             ScoreManager = new DefaultScoreManager(DataManager);
             EventManager = new EventManager();
@@ -56,11 +69,16 @@ namespace manager
             configManager.SetDefaultValue(ConfigKey.LevelConfig, data.LevelConfig);
             configManager.SetDefaultValue(ConfigKey.GoodsConfig, data.GoodsConfig);
 
+            await DataManager.Initialize();
+            ServiceLocator.Instance.Provide(DataManager);
+            await AudioManager.Initialize();
+            ServiceLocator.Instance.Provide(AudioManager);
+            
             var services = new IService[]
             {
-                DataManager,
-                AudioManager,
-                LevelStoreManager,
+                // DataManager,
+                // AudioManager,
+                LevelManager,
                 SceneLoader,
                 ScoreManager,
                 EventManager,
