@@ -148,7 +148,8 @@ namespace Strategy.Level
             var speed = distance / step;
             for (var i = 0; i < step; i++)
             {
-                var newPos = Vector2.MoveTowards(posFrom, posTo, speed);
+                var newPos = Vector3.MoveTowards(posFrom, posTo, speed);
+                newPos.z = -9;
                 drag.transform.position = newPos;
                 posFrom = newPos;
                 yield return null;

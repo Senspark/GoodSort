@@ -8,7 +8,10 @@ using manager;
 using Newtonsoft.Json;
 using Sirenix.OdinInspector;
 using Strategy.Level;
+using TMPro;
 using UnityEngine;
+using UnityEngine.Networking;
+using UnityEngine.UI;
 using Utilities;
 
 namespace UI
@@ -21,6 +24,9 @@ namespace UI
         [SerializeField] public TextAsset levelJsonFile;
         [SerializeField] public TextAsset levelSolutionJsonFile;
         [SerializeField] public TextAsset newLevelTxtFile;
+        [SerializeField] public TMP_InputField inputLvUrl;
+        [SerializeField] public Button btnOpenLevel;
+        [SerializeField] public Button btnSampleSolve;
 
         [CanBeNull] private LevelDataManager _levelDataManager;
         [CanBeNull] private LevelAnimation _levelAnimation;
@@ -28,6 +34,13 @@ namespace UI
         private void Start()
         {
             dragDropManager.Init(CanAcceptDropInto);
+            btnOpenLevel.onClick.AddListener(DownloadLevel);
+        }
+
+        private void Update()
+        {
+            var dt = Time.deltaTime;
+            _levelAnimation?.Update(dt);
         }
 
         [Button]
@@ -52,14 +65,32 @@ namespace UI
             _levelDataManager = new LevelDataManager(levelData);
             _levelAnimation = new LevelAnimation(_levelDataManager, dragDropManager);
             _levelAnimation.Enter();
-            
+
             LevelFileParser.JustLog(inputData);
         }
 
-        private void Update()
+        private void DownloadLevel()
         {
-            var dt = Time.deltaTime;
-            _levelAnimation?.Update(dt);
+            if (inputLvUrl.text == "") return;
+            UniTask.Void(async () =>
+            {
+                var fullUrl = $"https://s.senspark.com/web/ut-goodsort-gen/output/{inputLvUrl.text}";
+                var txt = (await UnityWebRequest.Get(fullUrl).SendWebRequest()).downloadHandler.text;
+                if (txt == null) return;
+                var levelCreator = new LevelCreator(container, shelfItemPrefab);
+                var (inputData, moves) = LevelFileParser.ParseLevelFile(txt);
+                CleanUp();
+
+                var levelData = levelCreator.SpawnLevel(inputData, OnItemDestroy);
+                _levelDataManager = new LevelDataManager(levelData);
+                _levelAnimation = new LevelAnimation(_levelDataManager, dragDropManager);
+                _levelAnimation.Enter();
+
+                LevelFileParser.JustLog(inputData);
+
+                btnSampleSolve.onClick.RemoveAllListeners();
+                btnSampleSolve.onClick.AddListener(() => { Solve(moves); });
+            });
         }
 
         private void CleanUp()
@@ -94,23 +125,20 @@ namespace UI
         [Button]
         private void AutoSolve()
         {
-            if (_levelDataManager == null) return;
             var moves = JsonConvert.DeserializeObject<Move[]>(levelSolutionJsonFile.text);
-
-            var autoplay = gameObject.GetComponent<AutoPlay2>();
-            if (!autoplay)
-            {
-                autoplay = gameObject.AddComponent<AutoPlay2>();
-            }
-
-            autoplay.Play(_levelDataManager, dragDropManager, moves);
+            Solve(moves);
         }
 
         [Button]
         private void AutoSolve2()
         {
-            if (_levelDataManager == null) return;
             var (_, moves) = LevelFileParser.ParseLevelFile(newLevelTxtFile.text);
+            Solve(moves);
+        }
+
+        private void Solve(Move[] moves)
+        {
+            if (_levelDataManager == null) return;
 
             var autoplay = gameObject.GetComponent<AutoPlay2>();
             if (!autoplay)
