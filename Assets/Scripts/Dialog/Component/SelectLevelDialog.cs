@@ -22,15 +22,6 @@ namespace  Dialog
         {
             _controller.OpenLevel(_currentLevel);
         }
-        
-        public override void Show(Canvas canvas)
-        {
-            OnDidHide(() =>
-            {
-                _controller.PlayEffect(AudioEnum.CloseDialog);
-            });
-            base.Show(canvas);
-        }
     }
 
 }

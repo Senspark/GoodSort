@@ -14,6 +14,7 @@ using Senspark;
 using Sirenix.OdinInspector;
 using Strategy.Level;
 using UnityEngine;
+using Utilities;
 
 namespace UI
 {
@@ -24,7 +25,6 @@ namespace UI
         [SerializeField] private GameObject container;
         [SerializeField] private ShelfItemBasic shelfItemPrefab;
         [SerializeField] private LevelUI levelUI;
-        [SerializeField] private GameObject completeLevelDialogPrefab;
 
         [CanBeNull] private LevelDataManager _levelDataManager;
         [CanBeNull] private LevelAnimation _levelAnimation;
@@ -45,13 +45,12 @@ namespace UI
             catch (Exception e)
             {
                 // missing service - re-initialize
-                MockGameInitializer.Initialize()
-                    .ContinueWith(() =>
-                    {
-                        GetServices();
-                        Start();
-                    })
-                    .Forget();
+                UniTaskExtensions.Forget(MockGameInitializer.Initialize()
+                        .ContinueWith(() =>
+                        {
+                            GetServices();
+                            Start();
+                        }));
             }
 
             return;
@@ -151,7 +150,7 @@ namespace UI
             // Chuyển state Started khi bắt đầu drag lần đầu tiên
         }
 
-        private void CheckGameClear()
+        private async UniTaskVoid CheckGameClear()
         {
             if (_levelDataManager == null) return;
             var remainingItems = _levelDataManager.GetItems();
@@ -159,7 +158,8 @@ namespace UI
             {
                 // Game clear
                 State = GameStateType.GameOver;
-                var dialog = UIControllerFactory.Instance.Instantiate<CompleteLevelDialog>(completeLevelDialogPrefab);
+                var prefabDialog = await PrefabUtils.LoadPrefab("Prefabs/Dialog/CompleteLevelDialog");
+                var dialog = UIControllerFactory.Instance.Instantiate<CompleteLevelDialog>(prefabDialog);
                 dialog.Show(canvasDialog);
             }
         }

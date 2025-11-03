@@ -15,9 +15,9 @@ namespace Dialog
         
         public override void Show(Canvas canvas)
         {
-            OnDidHide(() =>
+            OnWillShow(() =>
             {
-                _controller.PlayEffect(AudioEnum.CloseDialog);
+                _controller.PlayEffect(AudioEnum.LevelComplete);
             });
             base.Show(canvas);
         }

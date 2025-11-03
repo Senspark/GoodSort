@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System;
 using DG.Tweening;
 using Cysharp.Threading.Tasks;
+using Defines;
+using Senspark;
 using UnityEngine.Assertions;
 using UnityEngine.EventSystems;
 
@@ -136,6 +138,7 @@ namespace Dialog
                 {
                     _didHideActions.ForEach(item => item?.Invoke());
                     // _didShowActions.Clear();
+                    ServiceLocator.Instance.Resolve<IAudioManager>().PlaySound(AudioEnum.CloseDialog, 1f);
                     _isHiding = false;
                     Destroy(gameObject);
                 })

@@ -1,3 +1,4 @@
+using Cysharp.Threading.Tasks;
 using Defines;
 using Dialog;
 using Factory;
@@ -6,13 +7,13 @@ using manager.Interface;
 using Senspark;
 using TMPro;
 using UnityEngine.UI;
+using Utilities;
 
 namespace UI
 {
     public class MainMenu : MonoBehaviour
     {
         [SerializeField] private Canvas canvasDialog;
-        [SerializeField] private GameObject selectLevelDialogPrefab;
         
         [Header("Cheat")]
         [SerializeField] private TMP_InputField cheatInputField;
@@ -20,11 +21,7 @@ namespace UI
 
         public void OnPlayButtonPressed()
         {
-            var levelManager = ServiceLocator.Instance.Resolve<ILevelManager>();
-            levelManager.GetCurrentLevel();
-            var dialog = UIControllerFactory.Instance.Instantiate<SelectLevelDialog>(selectLevelDialogPrefab);
-            dialog.SetCurrentLevel(levelManager.GetCurrentLevel())
-                .Show(canvasDialog);
+            OpenSelectLevelDialog().Forget();
         }
         
         public void OnCheatButtonPressed()
@@ -42,6 +39,16 @@ namespace UI
 
             var dataManager = ServiceLocator.Instance.Resolve<IDataManager>();
             dataManager.Set("CurrentLevel", level);
+        }
+
+        private async UniTaskVoid OpenSelectLevelDialog()
+        {
+            var levelManager = ServiceLocator.Instance.Resolve<ILevelManager>();
+            levelManager.GetCurrentLevel();
+            var selectLevelDialogPrefab = await PrefabUtils.LoadPrefab("Prefabs/Dialog/SelectLevelDialog");
+            var dialog = UIControllerFactory.Instance.Instantiate<SelectLevelDialog>(selectLevelDialogPrefab);
+            dialog.SetCurrentLevel(levelManager.GetCurrentLevel())
+                .Show(canvasDialog);
         }
     }
 }
