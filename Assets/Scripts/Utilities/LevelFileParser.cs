@@ -18,6 +18,9 @@ namespace Utilities
         /// <returns>Tuple of (ShelfPuzzleInputData array, Move array)</returns>
         public static (ShelfPuzzleInputData[], Move[]) ParseLevelFile(string fileContent)
         {
+            // Detect file version
+            var version = DetectVersion(fileContent);
+
             var parts = fileContent.Split(new[] { "===" }, StringSplitOptions.None);
 
             if (parts.Length < 4)
@@ -26,7 +29,7 @@ namespace Utilities
             }
 
             // Parse Part 3 (index 2): Shelf Data
-            var shelfData = ParseShelfData(parts[2]);
+            var shelfData = ParseShelfData(parts[2], version);
 
             // Parse Part 4 (index 3): Solution Steps
             var moves = ParseSolutionSteps(parts[3]);
@@ -35,9 +38,39 @@ namespace Utilities
         }
 
         /// <summary>
+        /// Detects the version of the level file format.
+        /// </summary>
+        /// <param name="fileContent">The full file content</param>
+        /// <returns>Version number (1 or 2), defaults to 1 if not specified</returns>
+        private static int DetectVersion(string fileContent)
+        {
+            // Check the first 5 lines for a version indicator
+            var lines = fileContent.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
+            var linesToCheck = Math.Min(5, lines.Length);
+
+            for (int i = 0; i < linesToCheck; i++)
+            {
+                var line = lines[i].Trim();
+                if (line.StartsWith("Version:", StringComparison.OrdinalIgnoreCase))
+                {
+                    var versionPart = line.Substring("Version:".Length).Trim();
+                    if (int.TryParse(versionPart, out var version))
+                    {
+                        return version;
+                    }
+                }
+            }
+
+            // Default to version 1 for backward compatibility
+            return 1;
+        }
+
+        /// <summary>
         /// Parses the shelf data table from Part 3.
         /// </summary>
-        private static ShelfPuzzleInputData[] ParseShelfData(string tableText)
+        /// <param name="tableText">The table text to parse</param>
+        /// <param name="version">The file format version (1 or 2)</param>
+        private static ShelfPuzzleInputData[] ParseShelfData(string tableText, int version)
         {
             var lines = tableText.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
             var shelfDataList = new List<ShelfPuzzleInputData>();
@@ -45,7 +78,11 @@ namespace Utilities
             foreach (var line in lines)
             {
                 // Skip decorator lines, headers, and separators
-                if (line.Contains("---") || line.Contains("Shelf") && line.Contains("Layer") ||
+                // V1: "Shelf" and "Layer" columns
+                // V2: "Single" and "Lock" and "Layer" columns
+                if (line.Contains("---") ||
+                    (line.Contains("Shelf") && line.Contains("Layer")) ||
+                    (line.Contains("Single") && line.Contains("Lock") && line.Contains("Layer")) ||
                     line.StartsWith(".") || line.StartsWith("'"))
                 {
                     continue;
@@ -54,7 +91,7 @@ namespace Utilities
                 // Process data rows (contain shelf data)
                 if (line.Contains("|"))
                 {
-                    var shelfData = ParseShelfRow(line);
+                    var shelfData = ParseShelfRow(line, version);
                     if (shelfData != null)
                     {
                         shelfDataList.Add(shelfData);
@@ -67,10 +104,29 @@ namespace Utilities
 
         /// <summary>
         /// Parses a single shelf row and extracts layer data.
+        /// Dispatches to version-specific parsers.
         /// </summary>
-        private static ShelfPuzzleInputData ParseShelfRow(string row)
+        /// <param name="row">The row text to parse</param>
+        /// <param name="version">The file format version (1 or 2)</param>
+        private static ShelfPuzzleInputData ParseShelfRow(string row, int version)
         {
-            // Extract Lock Count value from the row (new format has Lock Count column)
+            if (version == 2)
+            {
+                return ParseShelfRowV2(row);
+            }
+            else
+            {
+                return ParseShelfRowV1(row);
+            }
+        }
+
+        /// <summary>
+        /// Parses a single shelf row in V1 format.
+        /// V1 format: | Shelf X | Lock Count | [layer0] | [layer1] | ...
+        /// All shelves in V1 are Common type.
+        /// </summary>
+        private static ShelfPuzzleInputData ParseShelfRowV1(string row)
+        {
             var lockCount = 0;
             var parts = row.Split('|')
                 .Select(s => s.Trim())
@@ -115,9 +171,80 @@ namespace Utilities
                 return null;
             }
 
+            // V1 files always have Common type shelves
             return new ShelfPuzzleInputData
             {
                 Type = ShelfType.Common,
+                LockCount = lockCount,
+                Data = layers.ToArray()
+            };
+        }
+
+        /// <summary>
+        /// Parses a single shelf row in V2 format.
+        /// V2 format: | Shelf# | Single | Lock | [layer0] | [layer1] | ...
+        /// Single column: 'x' for Single type, empty for Common type.
+        /// </summary>
+        private static ShelfPuzzleInputData ParseShelfRowV2(string row)
+        {
+            var parts = row.Split('|')
+                .Select(s => s.Trim())
+                .Where(s => !string.IsNullOrEmpty(s))
+                .ToArray();
+
+            if (parts.Length < 3)
+            {
+                return null; // Need at least: Shelf#, Single indicator, Lock count
+            }
+
+            // Column 1 (index 1): Single indicator ('x' for Single, empty for Common)
+            var singleIndicator = parts[1];
+            var shelfType = singleIndicator.Equals("x", StringComparison.OrdinalIgnoreCase)
+                ? ShelfType.Single
+                : ShelfType.Common;
+
+            // Column 2 (index 2): Lock count
+            var lockCount = 0;
+            if (int.TryParse(parts[2], out var parsedLockCount))
+            {
+                lockCount = parsedLockCount;
+            }
+
+            // Extract all array patterns [x,y,z] from the row
+            var arrayPattern = @"\[([^\]]+)\]";
+            var matches = Regex.Matches(row, arrayPattern);
+
+            if (matches.Count == 0)
+            {
+                return null; // No data arrays found
+            }
+
+            var layers = new List<int[]>();
+
+            foreach (Match match in matches)
+            {
+                // Parse the array content "x,y,z"
+                var arrayContent = match.Groups[1].Value;
+                var values = arrayContent.Split(',')
+                    .Select(s => s.Trim())
+                    .Where(s => !string.IsNullOrEmpty(s))
+                    .Select(int.Parse)
+                    .ToArray();
+
+                if (values.Length > 0)
+                {
+                    layers.Add(values);
+                }
+            }
+
+            if (layers.Count == 0)
+            {
+                return null;
+            }
+
+            return new ShelfPuzzleInputData
+            {
+                Type = shelfType,
                 LockCount = lockCount,
                 Data = layers.ToArray()
             };
