@@ -18,6 +18,12 @@ namespace Factory
                 containerManager.LevelManager,
                 containerManager.SceneLoader
             ));
+            factory.Register<SettingDialog>(() => new SettingDialogController(
+                containerManager.AudioManager
+            ));
+            factory.Register<PauseGameDialog>(() => new SettingDialogController(
+                containerManager.AudioManager
+            ));
         }
     }
 }

@@ -34,7 +34,7 @@ namespace UI
         private IEnumerator OnAppLoaded()
         {
             yield return new WaitForSeconds(1f);
-            ServiceLocator.Instance.Resolve<IAudioManager>().PlayMusic(AudioEnum.MenuMusic, 1f);
+            ServiceLocator.Instance.Resolve<IAudioManager>().PlayMusic(AudioEnum.MenuMusic);
             GoToMenuScene();
         }
 

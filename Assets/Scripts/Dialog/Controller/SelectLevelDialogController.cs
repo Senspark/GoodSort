@@ -25,7 +25,7 @@ namespace Dialog.Controller
         {
             _ = _sceneLoader.LoadScene<GameScene>(nameof(GameScene)).Then(_ =>
             {
-                _audioManager.PlayMusic(AudioEnum.GameMusic, 1f);
+                _audioManager.PlayMusic(AudioEnum.GameMusic);
             });
         }
     }

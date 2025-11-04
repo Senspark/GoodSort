@@ -36,7 +36,7 @@ namespace Dialog.Controller
         
         public void PlayEffect(AudioEnum audioEnum)
         {
-            _audioManager.PlaySound(audioEnum, 1f);
+            _audioManager.PlaySound(audioEnum);
         }
     }
 }

@@ -4961,7 +4961,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1438563287}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1713247979}
+        m_TargetAssemblyTypeName: UI.MainMenu, Assembly-CSharp
+        m_MethodName: OnClickSettingButton
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1438563287
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5895,7 +5907,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   canvasDialog: {fileID: 1000845860}
-  selectLevelDialogPrefab: {fileID: 1756252027604635920, guid: 79998a12462204fe4a1acfeaaf0c0078, type: 3}
   cheatInputField: {fileID: 1068718199}
   cheatButton: {fileID: 1677314871}
 --- !u!1 &1724027353
@@ -6589,7 +6600,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1713247979}
         m_TargetAssemblyTypeName: UI.MainMenu, Assembly-CSharp
-        m_MethodName: OnPlayButtonPressed
+        m_MethodName: OnClickPlayButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

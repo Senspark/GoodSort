@@ -7,12 +7,12 @@ namespace Dialog.Controller
 {
     public interface ISettingDialogController
     {
-        public void MuteSound();
-        public void UnmuteSound();
-        public void MuteMusic();
-        public void UnmuteMusic();
-        public void TurnOnVibrate();
-        public void TurnOffVibrate();
+        public void SetEnableSound(bool isEnable);
+        public void SetEnableMusic(bool isEnable);
+        public void SetEnableVibrate(bool isEnable);
+        public bool IsSoundEnabled();
+        public bool IsMusicEnabled();
+        public bool IsVibrateEnabled();
         public void OnAboutUsButtonPressed();
         public void OnContactUsButtonPressed();
     }
@@ -25,35 +25,37 @@ namespace Dialog.Controller
         {
             _audioManager = audioManager;
         }
-        public void MuteSound()
+        
+        public void SetEnableSound(bool isEnable)
         {
-            _audioManager.IsSoundEnabled = false;
+            _audioManager.IsSoundEnabled = isEnable;
         }
-
-        public void UnmuteSound()
+        
+        public void SetEnableMusic(bool isEnable)
         {
-            _audioManager.IsSoundEnabled = true;
+            _audioManager.IsMusicEnabled = isEnable;
         }
-
-        public void MuteMusic()
+        
+        public void SetEnableVibrate(bool isEnable)
         {
-            _audioManager.IsMusicEnabled = false;
+            // TODO: Implement vibrate
         }
-
-        public void UnmuteMusic()
+        
+        public bool IsSoundEnabled()
         {
-            _audioManager.IsMusicEnabled = true;
+            return _audioManager.IsSoundEnabled;
         }
-
-        public void TurnOnVibrate()
+        
+        public bool IsMusicEnabled()
         {
-            Debug.Log("Turn on vibrate");
+            return _audioManager.IsMusicEnabled;
         }
-
-        public void TurnOffVibrate()
+        
+        public bool IsVibrateEnabled()
         {
-            Debug.Log("Turn off vibrate");
+            return false;
         }
+        
 
         public void OnAboutUsButtonPressed()
         {

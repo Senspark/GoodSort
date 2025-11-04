@@ -31,7 +31,7 @@ namespace UI
 
         private ILevelLoaderManager _levelLoaderManager; 
         private ILevelManager _levelManager;
-        private IConfigManager _configManager;
+        private IAudioManager _audioManager;
 
         private GameStateType State { get; set; } = GameStateType.UnInitialize;
         private LevelView _levelView;
@@ -59,8 +59,8 @@ namespace UI
             {
                 var services = ServiceLocator.Instance;
                 _levelLoaderManager = services.Resolve<ILevelLoaderManager>();
-                _configManager = services.Resolve<IConfigManager>();
                 _levelManager = services.Resolve<ILevelManager>();
+                _audioManager = services.Resolve<IAudioManager>();
                 State = GameStateType.Initialized;
             }
         }
@@ -147,7 +147,6 @@ namespace UI
         {
             if (State > GameStateType.Started) return;
             State = GameStateType.Started;
-            // Chuyển state Started khi bắt đầu drag lần đầu tiên
         }
 
         private async UniTaskVoid CheckGameClear()
@@ -160,33 +159,55 @@ namespace UI
                 State = GameStateType.GameOver;
                 var prefabDialog = await PrefabUtils.LoadPrefab("Prefabs/Dialog/CompleteLevelDialog");
                 var dialog = UIControllerFactory.Instance.Instantiate<CompleteLevelDialog>(prefabDialog);
+                dialog.OnDidHide(BackToMenu);
                 dialog.Show(canvasDialog);
             }
         }
-        
-        [Button]
-        private void AutoSolve()
+    
+        public void OnClickPauseButton()
         {
-            if (_levelDataManager == null) return;
-            var logger = new AppendLogger();
+            if (State == GameStateType.Paused) return;
+            State = GameStateType.Paused;
+            dragDropManager.Pause();
 
             UniTask.Void(async () =>
             {
-                await UniTask.SwitchToThreadPool();
-                var exportedData = _levelDataManager.Export();
-                var solution = new PuzzleSolver(logger).SolvePuzzleWithStateChanges(exportedData);
-
-                await UniTask.SwitchToMainThread();
-                logger.PrintLogs();
-
-                var autoplay = gameObject.GetComponent<AutoPlay2>();
-                if (!autoplay)
+                var prefabDialog = await PrefabUtils.LoadPrefab("Prefabs/Dialog/PauseGameDialog");
+                var dialog = UIControllerFactory.Instance.Instantiate<PauseGameDialog>(prefabDialog);
+                dialog.SetActions(() =>
                 {
-                    autoplay = gameObject.AddComponent<AutoPlay2>();
-                }
-
-                autoplay.Play(_levelDataManager, dragDropManager, solution);
+                    State = GameStateType.Started;
+                    dragDropManager.Unpause();
+                    dialog.Hide();
+                }, () =>
+                {
+                    dialog.Hide();
+                    OpenQuitLevelDialog().Forget();
+                });
+                dialog.Show(canvasDialog);
             });
+        }
+        
+        private async UniTaskVoid OpenQuitLevelDialog()
+        {
+            var prefabDialog = await PrefabUtils.LoadPrefab("Prefabs/Dialog/QuitLevelDialog");
+            var dialog = prefabDialog.GetComponent<QuitLevelDialog>();
+            dialog.SetActions(BackToMenu);
+            dialog.OnDidHide(() =>
+            {
+                State = GameStateType.Started;
+                dragDropManager.Unpause();
+            });
+            dialog.Show(canvasDialog);
+        }
+
+        private void BackToMenu()
+        {
+            _audioManager.PlayMusic(AudioEnum.MenuMusic);
+            ServiceLocator.Instance
+                .Resolve<ISceneLoader>()
+                .LoadScene<MainMenu>(nameof(MainMenu))
+                .Forget();
         }
     }
 }

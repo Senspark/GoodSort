@@ -13,7 +13,7 @@ namespace UI
         {
             GetComponent<Button>().onClick.AddListener(() =>
             {
-                ServiceLocator.Instance.Resolve<IAudioManager>().PlaySound(audioEnum, 1f);
+                ServiceLocator.Instance.Resolve<IAudioManager>().PlaySound(audioEnum);
             });
         }
     }

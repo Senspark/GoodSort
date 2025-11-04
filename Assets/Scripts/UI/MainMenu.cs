@@ -19,9 +19,14 @@ namespace UI
         [SerializeField] private TMP_InputField cheatInputField;
         [SerializeField] private Button cheatButton;
 
-        public void OnPlayButtonPressed()
+        public void OnClickPlayButton()
         {
             OpenSelectLevelDialog().Forget();
+        }
+        
+        public void OnClickSettingButton()
+        {
+            OpenSettingDialog().Forget();
         }
         
         public void OnCheatButtonPressed()
@@ -49,6 +54,13 @@ namespace UI
             var dialog = UIControllerFactory.Instance.Instantiate<SelectLevelDialog>(selectLevelDialogPrefab);
             dialog.SetCurrentLevel(levelManager.GetCurrentLevel())
                 .Show(canvasDialog);
+        }
+
+        private async UniTaskVoid OpenSettingDialog()
+        {
+            var dialogPrefab = await PrefabUtils.LoadPrefab("Prefabs/Dialog/SettingDialog");
+            var dialog = UIControllerFactory.Instance.Instantiate<SettingDialog>(dialogPrefab);
+            dialog.Show(canvasDialog);
         }
     }
 }

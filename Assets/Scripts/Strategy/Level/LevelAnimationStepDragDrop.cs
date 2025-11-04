@@ -63,7 +63,7 @@ namespace Strategy.Level
 
             if (slotData == null)
             {
-                ServiceLocator.Instance.Resolve<AudioManager>().PlaySound(AudioEnum.PutGoods, 1f);
+                ServiceLocator.Instance.Resolve<IAudioManager>().PlaySound(AudioEnum.PutGoods);
                 var item = (ShelfItemBasic)_levelDataManager.FindItem(itemId);
                 var shelf = (ShelfBase)_levelDataManager.GetShelf(shelfId);
                 item.transform.parent = shelf.transform;

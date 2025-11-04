@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: d21591a1f08124c86adcde506ad2381a
+guid: cff1ff4e78e104abe99c0b072c679600
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -3579516424164632068
-    second: button_red_0
+      213: -3954351951112005796
+    second: icon_break_heart_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,23 +113,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: button_red_0
+      name: icon_break_heart_0
       rect:
         serializedVersion: 2
-        x: 1
-        y: 1
-        width: 190
-        height: 190
+        x: 0
+        y: 7
+        width: 128
+        height: 114
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 80, y: 80, z: 80, w: 80}
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: cf99dfdf6c0035ec0800000000000000
-      internalID: -3579516424164632068
+      spriteID: c57981df9d15f19c0800000000000000
+      internalID: -3954351951112005796
       vertices: []
       indices: 
       edges: []
@@ -138,7 +138,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: d3041348765394e98bd373c6083d37a2
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      button_red_0: -3579516424164632068
+      icon_break_heart_0: -3954351951112005796
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

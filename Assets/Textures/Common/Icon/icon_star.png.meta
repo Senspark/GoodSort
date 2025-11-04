@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: d21591a1f08124c86adcde506ad2381a
+guid: 91c754122b1bc4f9db953e7fd5a6d74c
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -3579516424164632068
-    second: button_red_0
+      213: 1818913276908518488
+    second: icon_star_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,23 +113,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: button_red_0
+      name: icon_star_0
       rect:
         serializedVersion: 2
-        x: 1
-        y: 1
-        width: 190
-        height: 190
+        x: 0
+        y: 0
+        width: 126
+        height: 116
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 80, y: 80, z: 80, w: 80}
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: cf99dfdf6c0035ec0800000000000000
-      internalID: -3579516424164632068
+      spriteID: 85cbf530df31e3910800000000000000
+      internalID: 1818913276908518488
       vertices: []
       indices: 
       edges: []
@@ -138,7 +138,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: d3041348765394e98bd373c6083d37a2
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      button_red_0: -3579516424164632068
+      icon_star_0: 1818913276908518488
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

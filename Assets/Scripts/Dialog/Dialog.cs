@@ -138,7 +138,7 @@ namespace Dialog
                 {
                     _didHideActions.ForEach(item => item?.Invoke());
                     // _didShowActions.Clear();
-                    ServiceLocator.Instance.Resolve<IAudioManager>().PlaySound(AudioEnum.CloseDialog, 1f);
+                    ServiceLocator.Instance.Resolve<IAudioManager>().PlaySound(AudioEnum.CloseDialog);
                     _isHiding = false;
                     Destroy(gameObject);
                 })

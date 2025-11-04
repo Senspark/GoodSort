@@ -4,6 +4,7 @@ using UnityEngine.UI;
 
 namespace UI
 {
+    // Not work, can't extend from Toggle builtin.
     public class UIToggle : Toggle
     {
         [SerializeField] private Image onImage;
