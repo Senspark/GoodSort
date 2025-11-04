@@ -233,6 +233,12 @@ namespace Utilities
 
                 if (values.Length > 0)
                 {
+                    // ignore empty layer
+                    if (values.All(e => e == 0))
+                    {
+                        continue;
+                    }
+
                     layers.Add(values);
                 }
             }
