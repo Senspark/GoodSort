@@ -96,7 +96,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8024387809503085902}
-  - component: {fileID: 3713050466513019549}
   - component: {fileID: 6852321089390248677}
   m_Layer: 0
   m_Name: Goods
@@ -121,19 +120,6 @@ Transform:
   - {fileID: 3393598149485877585}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &3713050466513019549
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8830650904719733458}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4f1049311e464484ade14f3279f816e5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  spriteIcon: {fileID: 275133113370904955}
 --- !u!114 &6852321089390248677
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -149,4 +135,5 @@ MonoBehaviour:
   spriteRenderer: {fileID: 275133113370904955}
   isDraggable: 1
   returnToOriginal: 1
-  objectType: default
+  useCustomBounds: 1
+  customBounds: {x: 1, y: 1.8}

@@ -902,7 +902,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 3234950212628734418}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: Dialog.QuitLevelDialog, Assembly-CSharp
         m_MethodName: Hide
         m_Mode: 1
@@ -1464,7 +1464,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7323684308865526555}
   - component: {fileID: 8953854876351851799}
-  - component: {fileID: 3234950212628734418}
+  - component: {fileID: 4495625328364554548}
   m_Layer: 5
   m_Name: TimeOutDialog
   m_TagString: Untagged
@@ -1505,7 +1505,7 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
---- !u!114 &3234950212628734418
+--- !u!114 &4495625328364554548
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1514,14 +1514,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 4497383344283526504}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5e3c2072628743e9a2820cf44da05f9d, type: 3}
+  m_Script: {fileID: 11500000, guid: 1d518874925040eda0ec25aab7746518, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   canvasGroup: {fileID: 8953854876351851799}
   overlay: {fileID: 2299124968345601846}
-  remindNodes:
-  - {fileID: 0}
-  - {fileID: 0}
+  remindPanels:
+  - {fileID: 4303035369524187904}
+  - {fileID: 6496616044030151095}
 --- !u!1 &5171911329345908490
 GameObject:
   m_ObjectHideFlags: 0
@@ -2091,7 +2091,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 3234950212628734418}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: Dialog.QuitLevelDialog, Assembly-CSharp
         m_MethodName: OnClickQuitButton
         m_Mode: 1
@@ -2801,7 +2801,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 3234950212628734418}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: Dialog.QuitLevelDialog, Assembly-CSharp
         m_MethodName: Hide
         m_Mode: 1

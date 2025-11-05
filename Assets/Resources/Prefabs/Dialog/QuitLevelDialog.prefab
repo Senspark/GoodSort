@@ -988,7 +988,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 3234950212628734418}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: Dialog.QuitLevelDialog, Assembly-CSharp
         m_MethodName: Hide
         m_Mode: 1
@@ -1036,7 +1036,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 93.75}
-  m_SizeDelta: {x: 738, y: 557.5}
+  m_SizeDelta: {x: 638, y: 557.5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &275016415886146877
 CanvasRenderer:
@@ -1115,7 +1115,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 790.4, y: 802}
+  m_SizeDelta: {x: 690.4, y: 802}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1035468714480787903
 CanvasRenderer:
@@ -1190,7 +1190,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 488.5714, y: 228.5714}
+  m_SizeDelta: {x: 388.5714, y: 228.5714}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3291792400289038350
 CanvasRenderer:
@@ -1278,7 +1278,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7323684308865526555}
   - component: {fileID: 8953854876351851799}
-  - component: {fileID: 3234950212628734418}
+  - component: {fileID: 6088996478507458246}
   m_Layer: 5
   m_Name: QuitLevelDialog
   m_TagString: Untagged
@@ -1319,7 +1319,7 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
---- !u!114 &3234950212628734418
+--- !u!114 &6088996478507458246
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1328,12 +1328,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 4497383344283526504}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5e3c2072628743e9a2820cf44da05f9d, type: 3}
+  m_Script: {fileID: 11500000, guid: 1d518874925040eda0ec25aab7746518, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   canvasGroup: {fileID: 8953854876351851799}
   overlay: {fileID: 2299124968345601846}
-  remindNodes:
+  remindPanels:
   - {fileID: 1752067892889867874}
   - {fileID: 9194678731634484578}
 --- !u!1 &4969914795499217769
@@ -1447,7 +1447,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 790.4, y: 802}
+  m_SizeDelta: {x: 690.4, y: 802}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2075834279844095915
 CanvasRenderer:
@@ -1628,7 +1628,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 488.5714, y: 228.5714}
+  m_SizeDelta: {x: 388.5714, y: 228.5714}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &942579985880079407
 CanvasRenderer:
@@ -1864,7 +1864,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 3234950212628734418}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: Dialog.QuitLevelDialog, Assembly-CSharp
         m_MethodName: OnClickQuitButton
         m_Mode: 1
@@ -2072,7 +2072,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 3234950212628734418}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: Dialog.QuitLevelDialog, Assembly-CSharp
         m_MethodName: Hide
         m_Mode: 1

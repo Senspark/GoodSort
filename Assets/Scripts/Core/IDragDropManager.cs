@@ -14,5 +14,7 @@ namespace Core
         void Unpause();
         void ManualDropInto(IDragObject dragObject, IDropZone dropZone);
         void Init(Func<IDropZone, bool> canAcceptDropIntoFunc);
+        
+        bool IsDragging();
     }
 }

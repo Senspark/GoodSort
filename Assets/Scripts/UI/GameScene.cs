@@ -29,12 +29,13 @@ namespace UI
         [CanBeNull] private LevelDataManager _levelDataManager;
         [CanBeNull] private LevelAnimation _levelAnimation;
 
-        private ILevelLoaderManager _levelLoaderManager; 
+        private ILevelLoaderManager _levelLoaderManager;
         private ILevelManager _levelManager;
         private IAudioManager _audioManager;
 
         private GameStateType State { get; set; } = GameStateType.UnInitialize;
         private LevelView _levelView;
+        private bool _didDrag = false;
 
         private void Awake()
         {
@@ -69,9 +70,7 @@ namespace UI
         {
             if (State != GameStateType.Initialized) return;
             Time.timeScale = 1;
-            State = GameStateType.Loaded;
             dragDropManager.Init(CanAcceptDropInto);
-            dragDropManager.SetOnDragStarted(OnDragStarted);
             CleanUp();
             LoadLevel(_levelManager.GetCurrentLevel());
         }
@@ -86,20 +85,27 @@ namespace UI
         private void ProcessUpdate()
         {
             if (State == GameStateType.Paused) return;
-            if (State == GameStateType.Started)
+            if (!_didDrag && dragDropManager.IsDragging())
             {
-                if (_levelView)                                                             
-                    _levelView.Step(Time.deltaTime);
+                if (State < GameStateType.Playing)
+                {
+                    _didDrag = true;
+                    State = GameStateType.Playing;
+                }
             }
-            
+            if (State == GameStateType.Playing)
+            {
+                _levelView.Step(Time.deltaTime);
+            }
+
         }
-        
+
         private void LoadLevel(int level)
         {
             var builder = new LevelConfigBuilder(_levelLoaderManager).SetLevel(level).Build();
             var levelView = builder.LevelObject.GetComponent<LevelView>();
             levelView.transform.SetParent(container.transform,false);
-            
+
             // var levelConfig = _configManager.GetValue<PuzzleLevelConfig>(ConfigKey.LevelConfig);
             var levelCreator = new LevelCreator(container, shelfItemPrefab);
             var inputData = _levelLoaderManager.GetInputData(level);
@@ -107,12 +113,13 @@ namespace UI
             _levelDataManager = new LevelDataManager(levelData);
             _levelAnimation = new LevelAnimation(_levelDataManager, dragDropManager);
             _levelAnimation.Enter();
-            
+
             levelView.Initialize(levelUI);
             _levelAnimation.SetOnShelfCleared(levelView.OnTopLayerCleared);
             _levelView = levelView;
+            State = GameStateType.Loaded;
         }
-        
+
         private void CleanUp()
         {
             dragDropManager.RemoveAll();
@@ -138,32 +145,37 @@ namespace UI
 
         private void OnItemDestroy(ShelfItemMeta itemMeta)
         {
+            var itemPosition = _levelDataManager?.FindItem(itemMeta.Id).DragObject.Position;
+            if (itemPosition.HasValue)
+            {
+                var effectPosition = new Vector3(itemPosition.Value.x, itemPosition.Value.y + 0.5f, itemPosition.Value.z);
+                EffectUtils.BlinkOnPosition(effectPosition, _levelView.gameObject);
+            }
+            
+            
             dragDropManager.UnregisterDragObject(itemMeta.Id);
             _levelDataManager?.RemoveItem(itemMeta.Id);
-            CheckGameClear();
+            var itemLeft = _levelDataManager?.GetItems().Count;
+            if (itemLeft == 0)
+            {
+                OnGameClear();
+            }
         }
         
-        private void OnDragStarted(IDragObject dragObject)
+        private void OnGameClear()
         {
-            if (State > GameStateType.Started) return;
-            State = GameStateType.Started;
-        }
-
-        private async UniTaskVoid CheckGameClear()
-        {
-            if (_levelDataManager == null) return;
-            var remainingItems = _levelDataManager.GetItems();
-            if (remainingItems.Count == 0)
+            if (State == GameStateType.GameOver) return;
+            State = GameStateType.GameOver;
+            UniTask.Void(async () =>
             {
-                // Game clear
-                State = GameStateType.GameOver;
+                await UniTask.Delay(TimeSpan.FromSeconds(1f));
                 var prefabDialog = await PrefabUtils.LoadPrefab("Prefabs/Dialog/CompleteLevelDialog");
                 var dialog = UIControllerFactory.Instance.Instantiate<CompleteLevelDialog>(prefabDialog);
                 dialog.OnDidHide(BackToMenu);
                 dialog.Show(canvasDialog);
-            }
+            });
         }
-    
+
         public void OnClickPauseButton()
         {
             if (State == GameStateType.Paused) return;
@@ -176,7 +188,7 @@ namespace UI
                 var dialog = UIControllerFactory.Instance.Instantiate<PauseGameDialog>(prefabDialog);
                 dialog.SetActions(() =>
                 {
-                    State = GameStateType.Started;
+                    State = GameStateType.Playing;
                     dragDropManager.Unpause();
                     dialog.Hide();
                 }, () =>
@@ -187,15 +199,21 @@ namespace UI
                 dialog.Show(canvasDialog);
             });
         }
-        
+
         private async UniTaskVoid OpenQuitLevelDialog()
         {
             var prefabDialog = await PrefabUtils.LoadPrefab("Prefabs/Dialog/QuitLevelDialog");
-            var dialog = prefabDialog.GetComponent<QuitLevelDialog>();
-            dialog.SetActions(BackToMenu);
+            var dialog = prefabDialog.GetComponent<ConfirmDialog>();
+            dialog.SetActions(() =>
+            {
+                BackToMenu();
+            }, () =>
+            {
+                dialog.Hide();
+            });
             dialog.OnDidHide(() =>
             {
-                State = GameStateType.Started;
+                State = GameStateType.Playing;
                 dragDropManager.Unpause();
             });
             dialog.Show(canvasDialog);

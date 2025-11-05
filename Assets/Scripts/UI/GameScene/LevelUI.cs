@@ -18,7 +18,6 @@ namespace Game
         public void Step(float dt)
         {
             _timeAccumulator += dt;
-
             if (_timeAccumulator >= 1f)
             {
                 levelTimeView.Time += 1;
@@ -30,6 +29,11 @@ namespace Game
         public void AddScore()
         {
             levelComboView.AddScore();
+        }
+
+        public bool LevelTimeOut()
+        {
+            return levelTimeView.Time >= levelTimeView.MaxTime;
         }
     }
 }
