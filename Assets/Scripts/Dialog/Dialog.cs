@@ -130,6 +130,7 @@ namespace Dialog
             if(_isHiding) return;
             _isHiding = true;
             _willHideActions.ForEach(item => item?.Invoke());
+            ServiceLocator.Instance.Resolve<IAudioManager>().PlaySound(AudioEnum.CloseDialog);
             // _willShowActions.Clear();
             var fade = canvasGroup.DOFade(0, 0.3f).SetEase(Ease.InOutSine);
             _hideSequence = DOTween.Sequence()
@@ -138,7 +139,6 @@ namespace Dialog
                 {
                     _didHideActions.ForEach(item => item?.Invoke());
                     // _didShowActions.Clear();
-                    ServiceLocator.Instance.Resolve<IAudioManager>().PlaySound(AudioEnum.CloseDialog);
                     _isHiding = false;
                     Destroy(gameObject);
                 })

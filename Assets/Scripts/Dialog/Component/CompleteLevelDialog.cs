@@ -1,26 +1,147 @@
+using System;
+using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using Defines;
+using DG.Tweening;
 using Dialog.Controller;
+using UI;
 using UnityEngine;
+using Utilities;
+using Random = UnityEngine.Random;
 
 namespace Dialog
 {
     public class CompleteLevelDialog : Dialog<CompleteLevelDialog>
     {
+        [SerializeField] private RectTransform pointer;
+        [SerializeField] private RectTransform left;
+        [SerializeField] private RectTransform right;
+        [SerializeField] private CurrencyBar coinBar;
+        [SerializeField] private ClaimButton claimAdsRewardButton;
+        [SerializeField] private ClaimButton claimRewardButton;
+            
+        [SerializeField] private GameObject coinPrefab;
         private ICompleteLevelDialogController _controller;
-        
-        public void OnClickNextLevelButton()
-        {
-            _controller.OnNextLevelButtonPressed();
-        }
+        private float t;
+        private bool clickedClaim;
+        private bool isSlidingBonusBar;
+        private const int BaseCoin = 10;
         
         public override void Show(Canvas canvas)
         {
             OnWillShow(() =>
             {
                 _controller.PlayEffect(AudioEnum.LevelComplete);
+                isSlidingBonusBar = true;
+                
+                claimRewardButton.SetMode(ClaimButton.Mode.Normal);
+                claimRewardButton.Setup(BaseCoin, OnClaimReward);
+                
+                claimAdsRewardButton.SetMode(ClaimButton.Mode.WithAds, 2);
+                claimAdsRewardButton.Setup(BaseCoin, OnClaimAdsReward);
+                
+                coinBar.SetValue(0);
             });
             base.Show(canvas);
         }
+
+        private async void OnClaimReward()
+        {
+            if (clickedClaim) return;
+            clickedClaim = true;
+            isSlidingBonusBar = false;
+            _ = ShowEffectReward(claimRewardButton.transform as RectTransform, coinBar.GetIcon().transform as RectTransform, BaseCoin);
+            await coinBar.NumberTo(1f, BaseCoin);
+            // wait a bit second then load menu scene
+            await UniTask.Delay(1000);
+            _controller.AddCoin(BaseCoin);
+            _controller.BackToMenuScene();
+        }
         
+        private async void OnClaimAdsReward()
+        {
+            if (clickedClaim) return;
+            clickedClaim = true;
+            isSlidingBonusBar = false;
+            var multiplier = CalculateMultiplier();
+            claimAdsRewardButton.SetMode(ClaimButton.Mode.WithAds, multiplier);
+            _ = ShowEffectReward(claimAdsRewardButton.transform as RectTransform, coinBar.GetIcon().transform as RectTransform, BaseCoin);
+            await coinBar.NumberTo(1f, BaseCoin * multiplier);
+            await UniTask.Delay(1000);
+            _controller.AddCoin(BaseCoin * multiplier);
+            _controller.BackToMenuScene();
+        }
+
+        private int CalculateMultiplier()
+        {
+            var xPoint = pointer.anchoredPosition.x;
+            if (Math.Abs(xPoint) < 85f) return 5;
+            if (Math.Abs(xPoint) < 180f && Math.Abs(xPoint) >= 85f ) return 3;
+            return 2;
+        }
+        
+        void Update()
+        {
+            if (!isSlidingBonusBar) return;
+            t += Time.deltaTime * 2f;
+            var sinValue = (Mathf.Sin(t) + 1f) * 0.5f; // dao động từ 0 → 1 → 0
+            pointer.anchoredPosition = Vector2.Lerp(left.anchoredPosition, right.anchoredPosition, sinValue);
+        }
+        
+        // Effect helper
+        private GameObject SpawnCoin(Vector3 position)
+        {
+            var coin = Instantiate(coinPrefab, position, Quaternion.identity);
+            coin.transform.SetParent(transform);
+            return coin;
+        }
+        
+        private async UniTask ShowEffectReward(RectTransform from, RectTransform to, int count)
+        {
+            var startPos = from.position;
+            var endPos = to.position;
+
+            var coins = new List<GameObject>(count);
+            var tasks = new List<UniTask>(count);
+
+            for (var i = 0; i < count; i++)
+            {
+                var offset = Random.insideUnitCircle * Random.Range(15f, 30f);
+                var coin = SpawnCoin(startPos + (Vector3)offset);
+                coins.Add(coin);
+            }
+
+            foreach (var coin in coins)
+            {
+                tasks.Add(MoveCoinAsync(coin, endPos));
+            }
+
+            await UniTask.WhenAll(tasks);
+        }
+
+        private async UniTask MoveCoinAsync(GameObject coin, Vector3 targetPos)
+        {
+            var startPos = coin.transform.position;
+            var midOffset = new Vector3(Random.Range(-100f, 100f), Random.Range(50f, 150f), 0f);
+
+            var delay = Random.Range(0f, 0.1f);
+            await UniTask.Delay(TimeSpan.FromSeconds(delay));
+
+            var duration = Random.Range(0.6f, 0.9f);
+            var tick = 0f;
+
+            while (tick < 1f)
+            {
+                tick += Time.deltaTime / duration;
+                var mid = Vector3.Lerp(startPos, targetPos, tick);
+                mid += Vector3.Lerp(midOffset, Vector3.zero, tick); 
+                coin.transform.position = mid;
+                await UniTask.Yield();
+            }
+
+            coin.transform.position = targetPos;
+            Destroy(coin);
+        }
+
     }
 }
