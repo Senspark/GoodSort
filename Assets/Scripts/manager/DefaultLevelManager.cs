@@ -1,5 +1,7 @@
 using Cysharp.Threading.Tasks;
 using manager.Interface;
+using Senspark;
+using UnityEngine;
 
 namespace manager
 {
@@ -22,12 +24,12 @@ namespace manager
         public void SetCurrentLevel(int level)
         {
             CurrentLevel = level;
-            _dataManager.SetInt("current_level", level);
+            _dataManager.Set("CurrentLevel", level);
         }
         
         public int GetCurrentLevel()
         {
-            return _dataManager.GetInt("current_level", 1);
+            return Mathf.Min(_dataManager.Get("CurrentLevel", 1), 14);
         }
         
         public void GoToNextLevel()

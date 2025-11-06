@@ -10,12 +10,19 @@ namespace Factory
         {
             var factory = UIControllerFactory.Instance;
             factory.Register<SelectLevelDialog>(() => new SelectLevelDialogController(
-                containerManager.SceneLoader,
-                containerManager.LevelManager
+                containerManager.AudioManager,
+                containerManager.SceneLoader
             ));
             factory.Register<CompleteLevelDialog>(() => new CompleteLevelDialogController(
+                containerManager.AudioManager,
                 containerManager.LevelManager,
                 containerManager.SceneLoader
+            ));
+            factory.Register<SettingDialog>(() => new SettingDialogController(
+                containerManager.AudioManager
+            ));
+            factory.Register<PauseGameDialog>(() => new SettingDialogController(
+                containerManager.AudioManager
             ));
         }
     }

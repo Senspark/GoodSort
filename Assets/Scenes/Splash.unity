@@ -148,8 +148,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d35879a57ac1488798eeafdddfb86039, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  loadingbar: {fileID: 0}
-  progress: {fileID: 0}
   levelConfigDefault: {fileID: 4900000, guid: 8b0b7e41d584493b95f08afbdef03cb1, type: 3}
   iconConfigDefault: {fileID: 4900000, guid: ce8b5c6c84659498c9ea28e2a5b1596c, type: 3}
 --- !u!4 &184481886

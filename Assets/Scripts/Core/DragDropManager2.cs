@@ -25,7 +25,6 @@ namespace Core
         [SerializeField] private Vector3 dragScale = new(1.1f, 1.1f, 1f);
 
         private Func<IDropZone, bool> _canAcceptDropIntoFunc;
-        private Action<IDragObject> OnDragStarted;
 
         // Registered objects
         private List<IDragObject> _dragObjects;
@@ -105,11 +104,6 @@ namespace Core
             return _currentDraggingObject;
         }
         
-        public void SetOnDragStarted(Action<IDragObject> onDragStarted)
-        {
-            OnDragStarted = onDragStarted;
-        }
-
         public void ResetAllObjects()
         {
             foreach (var obj in _dragObjects)
@@ -180,7 +174,6 @@ namespace Core
             _dragOffset = dragObject.Position - mousePos;
 
             dragObject.OnStartDrag();
-            OnDragStarted?.Invoke(dragObject);
 
             if (enableVisualFeedback)
             {

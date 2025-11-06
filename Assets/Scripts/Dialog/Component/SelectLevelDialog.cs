@@ -1,3 +1,4 @@
+using Defines;
 using Dialog.Controller;
 using TMPro;
 using UnityEngine;
@@ -9,7 +10,7 @@ namespace  Dialog
         [SerializeField] private TextMeshProUGUI textLevel;
         private ISelectLevelDialogController _controller;
         private int _currentLevel;
-
+        
         public SelectLevelDialog SetCurrentLevel(int level)
         {
             _currentLevel = level;
@@ -21,7 +22,6 @@ namespace  Dialog
         {
             _controller.OpenLevel(_currentLevel);
         }
-        
     }
 
 }

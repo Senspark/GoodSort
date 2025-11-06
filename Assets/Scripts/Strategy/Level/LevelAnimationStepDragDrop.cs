@@ -1,6 +1,8 @@
 using Core;
+using Defines;
 using Game;
 using manager;
+using Senspark;
 
 namespace Strategy.Level
 {
@@ -61,6 +63,7 @@ namespace Strategy.Level
 
             if (slotData == null)
             {
+                // ServiceLocator.Instance.Resolve<IAudioManager>().PlaySound(AudioEnum.PutGoods);
                 var item = (ShelfItemBasic)_levelDataManager.FindItem(itemId);
                 var shelf = (ShelfBase)_levelDataManager.GetShelf(shelfId);
                 item.transform.parent = shelf.transform;
