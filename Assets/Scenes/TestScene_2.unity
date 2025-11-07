@@ -1063,7 +1063,7 @@ MonoBehaviour:
   shelfItemPrefab: {fileID: -3984508902149505473, guid: 126b1ec0e429d4fea8fce05b2e0b83de, type: 3}
   levelJsonFile: {fileID: 4900000, guid: fad2086de7594ea085e93aa8d8997972, type: 3}
   levelSolutionJsonFile: {fileID: 4900000, guid: 4a0fefc00d404d7ea5ae161f3ae85ea0, type: 3}
-  newLevelTxtFile: {fileID: 4900000, guid: a3bb6f0aea314041888c7fe405a5a5df, type: 3}
+  newLevelTxtFile: {fileID: 4900000, guid: 737809ab93983468ba8d0d925712d7e7, type: 3}
   inputLvUrl: {fileID: 0}
   btnOpenLevel: {fileID: 0}
   btnSampleSolve: {fileID: 0}
