@@ -2354,7 +2354,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 2312241255967906428, guid: 4ecf9bc586b2a4777968031d15465d4a, type: 3}
+  m_Sprite: {fileID: 7675826601332790545, guid: 371040423c2a44510a060d989d5569a3, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -5907,6 +5907,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   canvasDialog: {fileID: 1000845860}
+  textCoin: {fileID: 1763272515}
+  textCurrentLevel: {fileID: 1443477054}
   cheatInputField: {fileID: 1068718199}
   cheatButton: {fileID: 1677314871}
 --- !u!1 &1724027353

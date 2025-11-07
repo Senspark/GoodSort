@@ -14,10 +14,39 @@ namespace UI
     public class MainMenu : MonoBehaviour
     {
         [SerializeField] private Canvas canvasDialog;
+        [SerializeField] private TMP_Text textCoin;
+        [SerializeField] private TMP_Text textCurrentLevel;
         
         [Header("Cheat")]
         [SerializeField] private TMP_InputField cheatInputField;
         [SerializeField] private Button cheatButton;
+        
+        private void Start()
+        {
+            // get coin from data manager
+            UpdateUI();
+        }
+
+        private void UpdateUI()
+        {
+            // TODO: Refactor using observer
+            UpdateCoinBar();
+            UpdateLevel();
+        }
+        
+        private void UpdateCoinBar()
+        {
+            var dataManager = ServiceLocator.Instance.Resolve<IDataManager>();
+            var coin = dataManager.Get("Coin", 0);
+            textCoin.text = $"{coin}";
+        }
+        
+        private void UpdateLevel()
+        {
+            var levelManager = ServiceLocator.Instance.Resolve<ILevelManager>();
+            textCurrentLevel.text = $"Level {levelManager.GetCurrentLevel()}";
+        }
+        
 
         public void OnClickPlayButton()
         {
@@ -44,6 +73,7 @@ namespace UI
 
             var dataManager = ServiceLocator.Instance.Resolve<IDataManager>();
             dataManager.Set("CurrentLevel", level);
+            UpdateLevel();
         }
 
         private async UniTaskVoid OpenSelectLevelDialog()

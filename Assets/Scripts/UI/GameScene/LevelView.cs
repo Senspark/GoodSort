@@ -26,7 +26,7 @@ namespace Game
         {
             _levelUI = levelUI;
             _loaded = true;
-            _levelUI.SetMaxTime(600); // 10 phút
+            _levelUI.SetMaxTime(900); // 10 phút
             OnTopLayerCleared = vector2 =>
             {
                 _levelUI.AddScore();

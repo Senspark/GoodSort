@@ -96,6 +96,11 @@ namespace UI
             if (State == GameStateType.Playing)
             {
                 _levelView.Step(Time.deltaTime);
+                if (_levelView.GetStatus() == LevelStatus.Finished)
+                {
+                    State = GameStateType.GameOver;
+                    OpenTimeOutDialog().Forget();
+                }
             }
 
         }
@@ -166,6 +171,8 @@ namespace UI
         {
             if (State == GameStateType.GameOver) return;
             State = GameStateType.GameOver;
+            dragDropManager.Pause();
+            
             UniTask.Void(async () =>
             {
                 await UniTask.Delay(TimeSpan.FromSeconds(1f));
@@ -217,6 +224,30 @@ namespace UI
                 dragDropManager.Unpause();
             });
             dialog.Show(canvasDialog);
+        }
+        
+        private async UniTaskVoid OpenTimeOutDialog()
+        {
+            var prefabDialog = await PrefabUtils.LoadPrefab("Prefabs/Dialog/TimeOutDialog");
+            var dialog = prefabDialog.GetComponent<ConfirmDialog>();
+            dialog.SetActions(() =>
+            {
+                BackToMenu();
+            }, () =>
+            {
+                OpenSelectLevelDialog().Forget();
+            });
+            dialog.Show(canvasDialog);
+        }
+        
+        private async UniTaskVoid OpenSelectLevelDialog()
+        {
+            var levelManager = ServiceLocator.Instance.Resolve<ILevelManager>();
+            levelManager.GetCurrentLevel();
+            var selectLevelDialogPrefab = await PrefabUtils.LoadPrefab("Prefabs/Dialog/SelectLevelDialog");
+            var dialog = UIControllerFactory.Instance.Instantiate<SelectLevelDialog>(selectLevelDialogPrefab);
+            dialog.SetCurrentLevel(levelManager.GetCurrentLevel())
+                .Show(canvasDialog);
         }
 
         private void BackToMenu()

@@ -16,7 +16,8 @@ namespace Factory
             factory.Register<CompleteLevelDialog>(() => new CompleteLevelDialogController(
                 containerManager.AudioManager,
                 containerManager.LevelManager,
-                containerManager.SceneLoader
+                containerManager.SceneLoader,
+                containerManager.DataManager
             ));
             factory.Register<SettingDialog>(() => new SettingDialogController(
                 containerManager.AudioManager
