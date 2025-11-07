@@ -189,7 +189,7 @@ namespace Utilities
         {
             var parts = row.Split('|')
                 .Select(s => s.Trim())
-                .Where(s => !string.IsNullOrEmpty(s))
+                .Skip(1).SkipLast(1)
                 .ToArray();
 
             if (parts.Length < 3)
