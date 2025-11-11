@@ -1,3 +1,5 @@
+using Defines;
+using Senspark;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -20,9 +22,9 @@ namespace Game
             set
             {
                 _combo = value;
-                gameObject.SetActive(_combo > 0);
-                if (_combo <= 0) return;
                 UpdateDisplay();
+                if (_combo <= 0) return;
+                PlaySoundCombo(_combo);
                 var duration = GetDuration(value);
                 _speed = 1f / (duration); // 60 FPS
                 progressBar.value = 1;
@@ -64,7 +66,7 @@ namespace Game
 
         private void UpdateDisplay()
         {
-            comboText.text = $"Combo x{_combo}";
+            comboText.text = _combo <= 0 ? "" : $"Combo x{_combo}";
             scoreText.text = $"{_score}";
         }
 
@@ -79,6 +81,13 @@ namespace Game
         private int GetScore(int combo)
         {
             return (_combo - 1) / 3 + 1;
+        }
+
+        private void PlaySoundCombo(int combo)
+        {
+            // play sound with pitch
+            var audioMgr = ServiceLocator.Instance.Resolve<IAudioManager>();
+            audioMgr.PlaySoundOnPitch(AudioEnum.Match, Mathf.Clamp(1f + combo * 0.1f, 1f, 2f) );
         }
     }
 }

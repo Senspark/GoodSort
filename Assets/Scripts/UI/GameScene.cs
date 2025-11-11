@@ -153,7 +153,7 @@ namespace UI
             var itemPosition = _levelDataManager?.FindItem(itemMeta.Id).DragObject.Position;
             if (itemPosition.HasValue)
             {
-                var effectPosition = new Vector3(itemPosition.Value.x, itemPosition.Value.y + 0.5f, itemPosition.Value.z);
+                var effectPosition = new Vector3(itemPosition.Value.x, itemPosition.Value.y + 0.2f, itemPosition.Value.z);
                 EffectUtils.BlinkOnPosition(effectPosition, _levelView.gameObject);
             }
             

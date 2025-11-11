@@ -84,6 +84,11 @@ namespace Senspark {
         public void PlaySound(AudioClip clip, float volume) {
             _audioSource.PlayOneShot(clip, volume);
         }
+        
+        public void PlaySound(AudioClip clip, float volume, float pitch) {
+            _audioSource.pitch = pitch;
+            _audioSource.PlayOneShot(clip, volume);
+        }
 
         public void Stop() {
             _audioSource.Stop();
