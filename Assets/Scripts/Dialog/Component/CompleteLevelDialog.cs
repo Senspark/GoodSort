@@ -4,6 +4,7 @@ using Cysharp.Threading.Tasks;
 using Defines;
 using DG.Tweening;
 using Dialog.Controller;
+using Senspark;
 using UI;
 using UnityEngine;
 using Utilities;
@@ -41,6 +42,11 @@ namespace Dialog
                 claimAdsRewardButton.Setup(BaseCoin, OnClaimAdsReward);
                 
                 coinBar.SetValue(0);
+            });
+            OnDidShow(() =>
+            {
+                // stop background music
+                ServiceLocator.Instance.Resolve<IAudioManager>().StopMusic();
             });
             base.Show(canvas);
         }

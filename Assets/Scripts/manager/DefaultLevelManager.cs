@@ -29,7 +29,7 @@ namespace manager
         
         public int GetCurrentLevel()
         {
-            return Mathf.Min(_dataManager.Get("CurrentLevel", 1), 25);
+            return Mathf.Min(_dataManager.Get("CurrentLevel", 1), 42);
         }
         
         public void GoToNextLevel()

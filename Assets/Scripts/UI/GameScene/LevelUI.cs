@@ -35,5 +35,7 @@ namespace Game
         {
             return levelTimeView.Time >= levelTimeView.MaxTime;
         }
+        
+        public Transform GetComboViewTransform() => levelComboView.transform;
     }
 }

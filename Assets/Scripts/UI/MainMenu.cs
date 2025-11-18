@@ -68,7 +68,7 @@ namespace UI
             }
             else
             {
-                level = Mathf.Clamp(parsed, 1, 20);
+                level = Mathf.Clamp(parsed, 1, 42);
             }
 
             var dataManager = ServiceLocator.Instance.Resolve<IDataManager>();

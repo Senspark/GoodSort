@@ -11,19 +11,21 @@ using JetBrains.Annotations;
 using manager;
 using manager.Interface;
 using Senspark;
-using Sirenix.OdinInspector;
 using Strategy.Level;
 using UnityEngine;
+using UnityEngine.Rendering.UI;
 using Utilities;
 
 namespace UI
 {
     public class GameScene : MonoBehaviour
     {
+        [SerializeField] private Canvas uiCanvas;
         [SerializeField] private Canvas canvasDialog;
         [SerializeField] private DragDropManager2 dragDropManager;
         [SerializeField] private GameObject container;
         [SerializeField] private ShelfItemBasic shelfItemPrefab;
+        [SerializeField] private GameObject starPrefab;
         [SerializeField] private LevelUI levelUI;
 
         [CanBeNull] private LevelDataManager _levelDataManager;
@@ -119,7 +121,7 @@ namespace UI
             _levelAnimation = new LevelAnimation(_levelDataManager, dragDropManager);
             _levelAnimation.Enter();
 
-            levelView.Initialize(levelUI);
+            levelView.Initialize(levelUI, uiCanvas, starPrefab);
             _levelAnimation.SetOnShelfCleared(levelView.OnTopLayerCleared);
             _levelView = levelView;
             State = GameStateType.Loaded;
@@ -153,8 +155,8 @@ namespace UI
             var itemPosition = _levelDataManager?.FindItem(itemMeta.Id).DragObject.Position;
             if (itemPosition.HasValue)
             {
-                var effectPosition = new Vector3(itemPosition.Value.x, itemPosition.Value.y + 0.2f, itemPosition.Value.z);
-                EffectUtils.BlinkOnPosition(effectPosition, _levelView.gameObject);
+                var effectPosition = new Vector3(itemPosition.Value.x, itemPosition.Value.y + 0.2f, itemPosition.Value.z); 
+                // EffectUtils.BlinkOnPosition(effectPosition, _levelView.gameObject);
             }
             
             
