@@ -295,8 +295,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: -2.4, y: 0}
-  m_SizeDelta: {x: 22, y: 22}
+  m_AnchoredPosition: {x: -2.3999996, y: 0}
+  m_SizeDelta: {x: 20, y: 24}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &98735902
 MonoBehaviour:
@@ -318,7 +318,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 4815476061570213978, guid: ddacdf1117c254745895bc65a8da9009, type: 3}
+  m_Sprite: {fileID: -6349492043611115144, guid: 5fec6b313d70e4a7eb5ace5d37c93f10, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -974,6 +974,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   levelTimeView: {fileID: 1325894784}
   levelComboView: {fileID: 1930820924}
+  scoreBar: {fileID: 687329931}
 --- !u!1 &774581031
 GameObject:
   m_ObjectHideFlags: 0

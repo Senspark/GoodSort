@@ -29,12 +29,13 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 6827035089953450831}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: 1.3999939, y: -0.44}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 22, y: 22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5105252129173775869
@@ -75,3 +76,85 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!1001 &6823507499291853319
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 2933033787876194271}
+    m_Modifications:
+    - target: {fileID: 1837852753901714, guid: 90c8130738fd44a8c954b69bc79943da, type: 3}
+      propertyPath: m_Name
+      value: FlashMissileYellow
+      objectReference: {fileID: 0}
+    - target: {fileID: 1837852753901714, guid: 90c8130738fd44a8c954b69bc79943da, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4353882239805768, guid: 90c8130738fd44a8c954b69bc79943da, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 4353882239805768, guid: 90c8130738fd44a8c954b69bc79943da, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 4353882239805768, guid: 90c8130738fd44a8c954b69bc79943da, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 4353882239805768, guid: 90c8130738fd44a8c954b69bc79943da, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4353882239805768, guid: 90c8130738fd44a8c954b69bc79943da, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4353882239805768, guid: 90c8130738fd44a8c954b69bc79943da, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.68
+      objectReference: {fileID: 0}
+    - target: {fileID: 4353882239805768, guid: 90c8130738fd44a8c954b69bc79943da, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 4353882239805768, guid: 90c8130738fd44a8c954b69bc79943da, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 4353882239805768, guid: 90c8130738fd44a8c954b69bc79943da, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4353882239805768, guid: 90c8130738fd44a8c954b69bc79943da, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4353882239805768, guid: 90c8130738fd44a8c954b69bc79943da, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: -90
+      objectReference: {fileID: 0}
+    - target: {fileID: 4353882239805768, guid: 90c8130738fd44a8c954b69bc79943da, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4353882239805768, guid: 90c8130738fd44a8c954b69bc79943da, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4353882239805768, guid: 90c8130738fd44a8c954b69bc79943da, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 90c8130738fd44a8c954b69bc79943da, type: 3}
+--- !u!4 &6827035089953450831 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4353882239805768, guid: 90c8130738fd44a8c954b69bc79943da, type: 3}
+  m_PrefabInstance: {fileID: 6823507499291853319}
+  m_PrefabAsset: {fileID: 0}

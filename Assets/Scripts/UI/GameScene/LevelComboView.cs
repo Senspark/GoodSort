@@ -60,7 +60,11 @@ namespace Game
 
         public void AddScore()
         {
-            Score += GetScore(Combo);
+            Score += GetScore();
+        }
+
+        public void IncreaseCombo()
+        {
             Combo++;
         }
 
@@ -78,7 +82,7 @@ namespace Game
             return 3 + (t0 - 3) / (1 + Mathf.Exp(decayRate * (combo - 9)));
         }
 
-        private int GetScore(int combo)
+        public int GetScore()
         {
             return (_combo - 1) / 3 + 1;
         }

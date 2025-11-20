@@ -20,19 +20,12 @@ namespace Game
     {
         private LevelUI _levelUI;
         private bool _loaded;
-        public Action<Vector2> OnTopLayerCleared;
 
-        public void Initialize(LevelUI levelUI, Canvas canvas, GameObject starPrefab)
+        public void Initialize(LevelUI levelUI)
         {
             _levelUI = levelUI;
             _loaded = true;
-            _levelUI.SetMaxTime(900); // 10 phút
-            OnTopLayerCleared = vector2 =>
-            {
-                var uiTarget = levelUI.GetComboViewTransform();
-                EffectUtils.FlyStarToUI(vector2, uiTarget as RectTransform, canvas, starPrefab);
-                _levelUI.AddScore();
-            };
+            _levelUI.SetMaxTime(900);
         }
         
         public void Step(float dt)

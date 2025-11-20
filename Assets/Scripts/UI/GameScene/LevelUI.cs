@@ -7,13 +7,17 @@ namespace Game
     {
         [SerializeField] private LevelTimeView levelTimeView;
         [SerializeField] private LevelComboView levelComboView;
-        
+        [SerializeField] private RectTransform scoreBar;
         private float _timeAccumulator;
 
         public void SetMaxTime(int maxTime)
         {
             levelTimeView.MaxTime = maxTime;
         }
+        
+        //get combo
+        public int GetScore() => levelComboView.GetScore();
+        public int GetCombo() => levelComboView.Combo;
 
         public void Step(float dt)
         {
@@ -26,16 +30,15 @@ namespace Game
             levelComboView.Step(dt);
         }
         
-        public void AddScore()
-        {
-            levelComboView.AddScore();
-        }
+        public void AddScore() => levelComboView.AddScore();
+        
+        public void IncreaseCombo() => levelComboView.IncreaseCombo();
 
         public bool LevelTimeOut()
         {
             return levelTimeView.Time >= levelTimeView.MaxTime;
         }
-        
-        public Transform GetComboViewTransform() => levelComboView.transform;
+
+        public RectTransform GetComboViewTransform() => scoreBar;
     }
 }

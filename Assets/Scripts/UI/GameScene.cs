@@ -1,9 +1,9 @@
 using System;
-using System.Linq;
 using Core;
 using Cysharp.Threading.Tasks;
 using Defines;
 using Dialog;
+using Effect;
 using Engine.ShelfPuzzle;
 using Factory;
 using Game;
@@ -13,7 +13,6 @@ using manager.Interface;
 using Senspark;
 using Strategy.Level;
 using UnityEngine;
-using UnityEngine.Rendering.UI;
 using Utilities;
 
 namespace UI
@@ -121,8 +120,8 @@ namespace UI
             _levelAnimation = new LevelAnimation(_levelDataManager, dragDropManager);
             _levelAnimation.Enter();
 
-            levelView.Initialize(levelUI, uiCanvas, starPrefab);
-            _levelAnimation.SetOnShelfCleared(levelView.OnTopLayerCleared);
+            levelView.Initialize(levelUI);
+            _levelAnimation.SetOnShelfCleared(OnTopLayerCleared);
             _levelView = levelView;
             State = GameStateType.Loaded;
         }
@@ -155,18 +154,56 @@ namespace UI
             var itemPosition = _levelDataManager?.FindItem(itemMeta.Id).DragObject.Position;
             if (itemPosition.HasValue)
             {
-                var effectPosition = new Vector3(itemPosition.Value.x, itemPosition.Value.y + 0.2f, itemPosition.Value.z); 
-                // EffectUtils.BlinkOnPosition(effectPosition, _levelView.gameObject);
+                var effectPosition = new Vector3(itemPosition.Value.x, itemPosition.Value.y + 0.5f, itemPosition.Value.z); 
+                EffectUtils.BlinkOnPosition(effectPosition, _levelView.gameObject);
             }
-            
             
             dragDropManager.UnregisterDragObject(itemMeta.Id);
             _levelDataManager?.RemoveItem(itemMeta.Id);
+            
             var itemLeft = _levelDataManager?.GetItems().Count;
             if (itemLeft == 0)
             {
                 OnGameClear();
             }
+        }
+        
+        private void OnTopLayerCleared(Vector2 position)
+        {
+            UniTask.Void(async () =>
+            {
+                await UniTask.Delay(TimeSpan.FromSeconds(0.3f)); // TODO: [Refactor] - bị hard code delay sau khi hiện xong hiệu ứng Blink
+                // demo show text combo
+                var starCount = levelUI.GetScore();
+                EffectUtils.FlyMultipleStarsToUI(position, levelUI.GetComboViewTransform(), uiCanvas, starPrefab, starCount);
+                levelUI.IncreaseCombo();
+                var combo = levelUI.GetCombo();
+                var comboColor = GetComboColor(combo);
+                EffectUtils.ShowComboText(position, uiCanvas, $"x{combo}", comboColor);
+                await UniTask.Delay(TimeSpan.FromSeconds(0.8f));
+                levelUI.AddScore();
+            });
+        }
+
+        private ComboVFXType GetComboColor(int combo)
+        {
+            if (combo >= 21)
+            {
+                return ComboVFXType.Gradient;
+            }
+
+            // Tính vị trí trong chu kỳ 5 (1-5, 6-10, 11-15, 16-20)
+            var position = ((combo - 1) % 5) + 1;
+
+            return position switch
+            {
+                1 => ComboVFXType.Pink,    // combo 1, 6, 11, 16
+                2 => ComboVFXType.Orange,  // combo 2, 7, 12, 17
+                3 => ComboVFXType.Green,   // combo 3, 8, 13, 18
+                4 => ComboVFXType.Blue,    // combo 4, 9, 14, 19
+                5 => ComboVFXType.Violet,  // combo 5, 10, 15, 20
+                _ => ComboVFXType.Blue     // fallback
+            };
         }
         
         private void OnGameClear()
