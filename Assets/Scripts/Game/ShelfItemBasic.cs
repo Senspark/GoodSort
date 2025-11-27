@@ -20,6 +20,7 @@ namespace Game
         private ISpacingData _spacingData;
         private ShelfLayerDisplay _display;
         private Action<ShelfItemMeta> _onDestroy;
+        private IShelf2 _shelf;
 
         private void Awake()
         {
@@ -33,16 +34,18 @@ namespace Game
             ISpacingData spacingData,
             ShelfLayerDisplay display,
             Action<ShelfItemMeta> onDestroy,
-            Sprite sprite
+            Sprite sprite,
+            IShelf2 shelf
         )
         {
             Meta = meta;
             _spacingData = spacingData;
             _display = display;
             _onDestroy = onDestroy;
+            _shelf = shelf;
             spriteRenderer.sprite = sprite;
             name = $"S{meta.ShelfId}-L{meta.LayerId}-T{meta.TypeId}-{meta.Id}";
-            dragObject.Init(meta.Id, () => _display == ShelfLayerDisplay.Top);
+            dragObject.Init(meta.Id, CanBeDragged);
 #if UNITY_EDITOR
             debugText.text = meta.TypeId.ToString();
 #endif
@@ -69,6 +72,20 @@ namespace Game
             _display = display;
         }
 
+        private bool CanBeDragged()
+        {
+            // Check display layer
+            if (_display != ShelfLayerDisplay.Top) return false;
+
+            // Check shelf lock
+            if (_shelf != null && _shelf.LockCount > 0)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
         public void ResetVisual()
         {
             // Visible
@@ -93,6 +110,10 @@ namespace Game
 
             // Color
             spriteRenderer.color = GetDisplayColor(_display);
+            
+            // Scale
+            // scale 1 for top, scale 0.9 for second
+            transform.localScale = new Vector3(1f, 1f, 1f);
         }
         
         public void FadeInVisual(float duration)
@@ -143,7 +164,7 @@ namespace Game
             return display switch
             {
                 ShelfLayerDisplay.Hidden => Color.clear,
-                ShelfLayerDisplay.Second => Color.gray,
+                ShelfLayerDisplay.Second => new Color(0.31f, 0.31f, 0.31f, 1f),
                 ShelfLayerDisplay.Top => Color.white,
                 _ => Color.red
             };

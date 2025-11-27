@@ -975,6 +975,7 @@ MonoBehaviour:
   levelTimeView: {fileID: 1325894784}
   levelComboView: {fileID: 1930820924}
   scoreBar: {fileID: 687329931}
+  starPosition: {fileID: 5419338978315657094}
 --- !u!1 &774581031
 GameObject:
   m_ObjectHideFlags: 0

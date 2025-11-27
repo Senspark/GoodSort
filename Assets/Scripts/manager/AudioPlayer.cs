@@ -86,8 +86,19 @@ namespace Senspark {
         }
         
         public void PlaySound(AudioClip clip, float volume, float pitch) {
+            // Lưu pitch hiện tại
+            var originalPitch = _audioSource.pitch;
+            // Set pitch mới
             _audioSource.pitch = pitch;
+            // Play sound với pitch đã set
             _audioSource.PlayOneShot(clip, volume);
+            // Schedule reset pitch về 1.0 sau khi clip kết thúc
+            StartCoroutine(ResetPitchAfterDelay(clip.length / pitch, originalPitch));
+        }
+
+        private System.Collections.IEnumerator ResetPitchAfterDelay(float delay, float originalPitch) {
+            yield return new WaitForSeconds(delay);
+            _audioSource.pitch = originalPitch;
         }
 
         public void Stop() {

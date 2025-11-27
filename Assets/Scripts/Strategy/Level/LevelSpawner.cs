@@ -109,7 +109,7 @@ namespace Strategy.Level
                     if (itemType > NullItemTypeId)
                     {
                         var meta = new ShelfItemMeta(shelfId, layerId, slotId, itemType, getItemIdFunc());
-                        newItem = SpawnItem(meta, spawnContainer, spacingData, onItemDestroy);
+                        newItem = SpawnItem(meta, spawnContainer, spacingData, onItemDestroy, shelf);
                     }
 
                     data[layerId][slotId] = newItem;
@@ -123,7 +123,8 @@ namespace Strategy.Level
             ShelfItemMeta meta,
             Transform parent,
             ISpacingData spacingData,
-            Action<ShelfItemMeta> onItemDestroy
+            Action<ShelfItemMeta> onItemDestroy,
+            IShelf2 shelf
         )
         {
             var spr = Resources.Load<Sprite>($"sprite/Items/Item{meta.TypeId}");
@@ -134,7 +135,7 @@ namespace Strategy.Level
             }
 
             var obj = Object.Instantiate(_prefab, parent);
-            obj.Init(meta, spacingData, FromLayerId(meta.LayerId), onItemDestroy, spr);
+            obj.Init(meta, spacingData, FromLayerId(meta.LayerId), onItemDestroy, spr, shelf);
             obj.ResetVisual();
 
             return obj;

@@ -8,6 +8,7 @@ namespace Game
         [SerializeField] private LevelTimeView levelTimeView;
         [SerializeField] private LevelComboView levelComboView;
         [SerializeField] private RectTransform scoreBar;
+        [SerializeField] private RectTransform starPosition;
         private float _timeAccumulator;
 
         public void SetMaxTime(int maxTime)
@@ -40,5 +41,6 @@ namespace Game
         }
 
         public RectTransform GetComboViewTransform() => scoreBar;
+        public RectTransform GetStarPosition() => starPosition;
     }
 }

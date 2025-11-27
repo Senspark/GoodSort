@@ -7,6 +7,8 @@ using Cysharp.Threading.Tasks;
 
 using JetBrains.Annotations;
 
+using manager.Interface;
+
 using Newtonsoft.Json;
 
 using Sirenix.OdinInspector;
@@ -63,7 +65,7 @@ namespace Senspark {
         }
     }
 
-    public class AudioManager : IAudioManager {
+    public class AudioManager : IAudioManager, IService {
         private class Data {
             [JsonProperty("music_enabled")]
             public bool IsMusicEnabled { get; set; }
@@ -90,7 +92,7 @@ namespace Senspark {
         [NotNull]
         private readonly Dictionary<Enum, AudioClip> _clips;
 
-        private Task _initializer;
+        private UniTask _initializer;
         private AudioPlayer _musicPlayer;
         private AudioPlayer _soundPlayer;
         private Data _data;
@@ -98,9 +100,23 @@ namespace Senspark {
         [CanBeNull]
         private Enum _music;
 
+        public UniTask Initialize()
+        {
+            return _initializer = _initializer.Status == UniTaskStatus.Succeeded ? _initializer : InitializeImpl();
+        }
+
+        async UniTask<bool> IService.Initialize()
+        {
+            await Initialize();
+            return true;
+        }
+
         public bool IsMusicEnabled {
-            get => _data.IsMusicEnabled;
+            get => _data?.IsMusicEnabled ?? true;
             set {
+                if (_data == null) {
+                    return;
+                }
                 if (_data.IsMusicEnabled == value) {
                     return;
                 }
@@ -111,8 +127,11 @@ namespace Senspark {
         }
 
         public bool IsSoundEnabled {
-            get => _data.IsSoundEnabled;
+            get => _data?.IsSoundEnabled ?? true;
             set {
+                if (_data == null) {
+                    return;
+                }
                 if (_data.IsSoundEnabled == value) {
                     return;
                 }
@@ -123,8 +142,11 @@ namespace Senspark {
         }
 
         public float MusicVolume {
-            get => _data.MusicVolume;
+            get => _data?.MusicVolume ?? 1f;
             set {
+                if (_data == null) {
+                    return;
+                }
                 if (Mathf.Approximately(_data.MusicVolume, value)) {
                     return;
                 }
@@ -135,8 +157,11 @@ namespace Senspark {
         }
 
         public float SoundVolume {
-            get => _data.SoundVolume;
+            get => _data?.SoundVolume ?? 1f;
             set {
+                if (_data == null) {
+                    return;
+                }
                 if (Mathf.Approximately(_data.SoundVolume, value)) {
                     return;
                 }
@@ -157,9 +182,8 @@ namespace Senspark {
             _clips = new Dictionary<Enum, AudioClip>();
         }
 
-        public Task Initialize() => _initializer ??= InitializeImpl();
 
-        private async Task InitializeImpl() {
+        private async UniTask InitializeImpl() {
             await _dataManager.Initialize();
             const string path = "Prefabs/Auxiliary/AudioPlayer";
             var prefab = (AudioPlayer) await Resources.LoadAsync<AudioPlayer>(path);

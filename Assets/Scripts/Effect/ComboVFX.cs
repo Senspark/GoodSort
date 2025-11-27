@@ -56,10 +56,10 @@ namespace Effect
 
             var sequence = DOTween.Sequence();
 
-            sequence.Join(rectTransform.DOAnchorPosY(rectTransform.anchoredPosition.y + 25f, 1.5f)
+            sequence.Append(rectTransform.DOAnchorPosY(rectTransform.anchoredPosition.y + 25f, 1.5f)
                 .SetEase(Ease.OutQuad));
 
-            sequence.Join(tmpText.DOFade(0f, 1.5f));
+            sequence.Append(tmpText.DOFade(0f, 0.5f));
 
             sequence.OnComplete(() => Destroy(gameObject));
         }

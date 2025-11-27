@@ -22,7 +22,7 @@ namespace Game
             {
                 boxes[i] = transform.GetChild(i);
             }
-            ArrangeInitialPositions();
+            ArrangePositions();
         }
 
         void Update()
@@ -34,14 +34,14 @@ namespace Game
             {
                 box.localPosition += new Vector3(moveDelta, 0, 0);
 
-                var halfWidth = boundary.x;
+                var halfWidth = boundary.x/2f;
 
-                if (rightToLeft && box.localPosition.x < -halfWidth)
+                if (rightToLeft && box.localPosition.x < -halfWidth - 1.5f)
                 {
                     var maxX = GetMaxX();
                     box.localPosition = new Vector3(maxX + spacing, box.localPosition.y, box.localPosition.z);
                 }
-                else if (!rightToLeft && box.localPosition.x > halfWidth)
+                else if (!rightToLeft && box.localPosition.x > halfWidth + 1.5f)
                 {
                     var minX = GetMinX();
                     box.localPosition = new Vector3(minX - spacing, box.localPosition.y, box.localPosition.z);
@@ -49,15 +49,20 @@ namespace Game
             }
         }
 
-        private void ArrangeInitialPositions()
+        private void ArrangePositions()
         {
+            var count = boxes.Length;
+            var centerIndex = (count - 1) / 2;   // Box chính giữa
             var direction = rightToLeft ? 1f : -1f;
-            for (var i = 0; i < boxes.Length; i++)
+
+            for (var i = 0; i < count; i++)
             {
-                var posX = i * spacing * direction;
+                var offsetFromCenter = i - centerIndex;
+                var posX = offsetFromCenter * spacing * direction;
                 boxes[i].localPosition = new Vector3(posX, 0, 0);
             }
         }
+
 
         private float GetMaxX()
         {

@@ -175,7 +175,7 @@ namespace UI
                 await UniTask.Delay(TimeSpan.FromSeconds(0.3f)); // TODO: [Refactor] - bị hard code delay sau khi hiện xong hiệu ứng Blink
                 // demo show text combo
                 var starCount = levelUI.GetScore();
-                EffectUtils.FlyMultipleStarsToUI(position, levelUI.GetComboViewTransform(), uiCanvas, starPrefab, starCount);
+                EffectUtils.FlyMultipleStarsToUI(position, levelUI.GetStarPosition(), uiCanvas, starPrefab, starCount);
                 levelUI.IncreaseCombo();
                 var combo = levelUI.GetCombo();
                 var comboColor = GetComboColor(combo);

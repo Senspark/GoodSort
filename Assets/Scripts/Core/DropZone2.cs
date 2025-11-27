@@ -14,7 +14,7 @@ namespace Core
         [SerializeField] private int maxObjects = 1;
         [SerializeField] private bool snapToCenter = true;
 
-        [Header("Custom Bounds (used when SpriteRenderer is null)")] // 
+        [Header("Custom Bounds")] // 
         [SerializeField]
         private Vector2 customSize = new(1f, 1f);
         
