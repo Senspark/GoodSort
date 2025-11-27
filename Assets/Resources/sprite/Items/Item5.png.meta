@@ -118,8 +118,8 @@ TextureImporter:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 97
-        height: 128
+        width: 109
+        height: 146
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -138,7 +138,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 1ef0df53841ac43d297e2d521289e181
+    spriteID: 733df3cf51242664abb4f32def5d99c4
     internalID: 0
     vertices: []
     indices: 
