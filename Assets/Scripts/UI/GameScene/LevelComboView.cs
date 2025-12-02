@@ -91,7 +91,7 @@ namespace Game
         {
             // play sound with pitch
             var audioMgr = ServiceLocator.Instance.Resolve<IAudioManager>();
-            audioMgr.PlaySoundOnPitch(AudioEnum.Match, Mathf.Clamp(1f + combo * 0.1f, 1f, 2f) );
+            // audioMgr.PlaySoundOnPitch(AudioEnum.Match, Mathf.Clamp(1f + combo * 0.1f, 1f, 2f) );
         }
     }
 }

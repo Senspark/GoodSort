@@ -71,6 +71,7 @@ namespace manager
 
             await DataManager.Initialize();
             ServiceLocator.Instance.Provide(DataManager);
+            
             await AudioManager.Initialize();
             ServiceLocator.Instance.Provide(AudioManager);
             

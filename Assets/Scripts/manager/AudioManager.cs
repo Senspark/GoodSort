@@ -65,7 +65,7 @@ namespace Senspark {
         }
     }
 
-    public class AudioManager : IAudioManager, IService {
+    public class AudioManager : IAudioManager {
         private class Data {
             [JsonProperty("music_enabled")]
             public bool IsMusicEnabled { get; set; }
@@ -92,7 +92,6 @@ namespace Senspark {
         [NotNull]
         private readonly Dictionary<Enum, AudioClip> _clips;
 
-        private UniTask _initializer;
         private AudioPlayer _musicPlayer;
         private AudioPlayer _soundPlayer;
         private Data _data;
@@ -102,13 +101,8 @@ namespace Senspark {
 
         public UniTask Initialize()
         {
-            return _initializer = _initializer.Status == UniTaskStatus.Succeeded ? _initializer : InitializeImpl();
-        }
-
-        async UniTask<bool> IService.Initialize()
-        {
-            await Initialize();
-            return true;
+            InitializeImpl().Forget();
+            return UniTask.CompletedTask;
         }
 
         public bool IsMusicEnabled {
@@ -183,7 +177,9 @@ namespace Senspark {
         }
 
 
-        private async UniTask InitializeImpl() {
+        private async UniTask InitializeImpl()
+        {
+            Debug.Log("Enter here please");
             await _dataManager.Initialize();
             const string path = "Prefabs/Auxiliary/AudioPlayer";
             var prefab = (AudioPlayer) await Resources.LoadAsync<AudioPlayer>(path);
@@ -233,12 +229,16 @@ namespace Senspark {
         public void PlayMusic(Enum id, float volume) {
             var player = _musicPlayer;
             if (player == null) {
+                Debug.Log("player is null");
                 return;
             }
-            if (id != null) {
+            if (id != null)
+            {
                 _music = id;
             }
-            if (_music == null) {
+            if (_music == null)
+            {
+                Debug.Log("_music is null");
                 return;
             }
             var clip = _clips[_music];
