@@ -179,7 +179,6 @@ namespace Senspark {
 
         private async UniTask InitializeImpl()
         {
-            Debug.Log("Enter here please");
             await _dataManager.Initialize();
             const string path = "Prefabs/Auxiliary/AudioPlayer";
             var prefab = (AudioPlayer) await Resources.LoadAsync<AudioPlayer>(path);

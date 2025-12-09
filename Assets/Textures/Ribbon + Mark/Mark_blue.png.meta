@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 2ea207633777a48d4a25b2b19a5db659
+guid: 4bdbeeba5f6d746f08804038fae36a52
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -7790544929387226549
-    second: Background 1_0
+      213: 1527173055945425109
+    second: Mark_blue_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Background 1_0
+      name: Mark_blue_0
       rect:
         serializedVersion: 2
-        x: 0
+        x: 1
         y: 0
-        width: 1080
-        height: 1920
+        width: 145
+        height: 146
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: b4a572da9ac62e390800000000000000
-      internalID: -7790544929387226549
+      spriteID: 5d0cc269dcb913510800000000000000
+      internalID: 1527173055945425109
       vertices: []
       indices: 
       edges: []
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Background 1_0: -7790544929387226549
+      Mark_blue_0: 1527173055945425109
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
