@@ -33,10 +33,6 @@ namespace Core
             {
                 _posList.Add(rectWidth.rect.width * i / horizontalLength);
             }
-            // for (var i = 0; i < content.childCount; i++)
-            // {
-            //     content.GetChild(i).GetComponent<RectTransform>().sizeDelta = new Vector2(rectWidth.rect.width, rectWidth.rect.height);
-            // }
         }
 
         private void Update()
