@@ -1,107 +1,300 @@
 using System;
 using System.Collections.Generic;
+using DG.Tweening;
+using UI.Menu;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.UI;
 
 namespace Core
 {
-    public class PageView : MonoBehaviour, IBeginDragHandler, IEndDragHandler
+    public class PageView : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
     {
-        private ScrollRect _rect;
-        private float _targetHorizontal;
-        private bool _isDrag;
-        private readonly List<float> _posList = new(); 
-        private int _currentPageIndex = -1;
-        public Action<int> OnPageChanged;
+        [Header("References")]
         public RectTransform content;
-        private bool _stopMove = true;
-        public float smooth = 4;
-        public float swipeThreshold = 0.05f; 
-        private float _startTime;
 
-        private float _startDragHorizontal;
+        [Tooltip("Optional: MenuTabIndicator to sync with page changes")]
+        [SerializeField] private MenuTabIndicator menuTabIndicator;
 
+        [Header("Settings")]
+        [Tooltip("Duration of page transition animation")]
+        public float transitionDuration = 0.3f;
+
+        [Tooltip("Ease type for page transition")]
+        public Ease transitionEase = Ease.OutQuad;
+
+        [Tooltip("Minimum swipe distance (in pixels) to trigger page change")]
+        public float swipeThreshold = 50f;
+
+        [Tooltip("Minimum swipe velocity to trigger page change")]
+        public float velocityThreshold = 500f;
+
+        [Tooltip("Enable debug logging")]
+        public bool enableDebugLog = false; // ✅ Disabled by default
+
+        [Tooltip("Minimum drag distance to determine scroll direction")]
+        public float directionDetectionThreshold = 10f;
+
+        [Header("Runtime Info (Read Only)")]
+        [SerializeField] private int _currentPageIndex = 0;
+        [SerializeField] private int _totalPages = 0;
+
+        // Events
+        public Action<int> OnPageChanged;
+
+        // Private fields
+        private List<float> _pagePositions = new List<float>();
+        private float _pageWidth;
+        private bool _isDragging = false;
+        private bool _isHorizontalDrag = false; // ✅ NEW: Track if this is horizontal drag
+        private bool _directionLocked = false; // ✅ NEW: Lock direction once determined
+        private Vector2 _dragStartPosition;
+        private float _dragStartTime;
+        private Vector2 _lastDragPosition;
+        private Tween _currentTween;
+        
         private void Start()
         {
-            _rect = transform.GetComponent<ScrollRect>();
-            var rectWidth = GetComponent<RectTransform>();
-            var tempWidth = content.transform.childCount * rectWidth.rect.width;
-            content.sizeDelta = new Vector2(tempWidth, rectWidth.rect.height);
-            var horizontalLength = content.rect.width - rectWidth.rect.width;
-            for (var i = 0; i < _rect.content.transform.childCount; i++)
+            Initialize();
+
+            // Subscribe to MenuTabIndicator events
+            if (menuTabIndicator != null)
             {
-                _posList.Add(rectWidth.rect.width * i / horizontalLength);
+                menuTabIndicator.OnChangeTabAction += GoToPage;
             }
+
+            GoToPage(1);
         }
 
-        private void Update()
+        private void Initialize()
         {
-            if (!_isDrag && !_stopMove)
+            if (content == null)
             {
-                _rect.horizontalNormalizedPosition = Mathf.Lerp(
-                    _rect.horizontalNormalizedPosition,
-                    _targetHorizontal,
-                    Time.deltaTime * smooth
-                );
-
-                if (Mathf.Abs(_rect.horizontalNormalizedPosition - _targetHorizontal) < 0.0001f)
-                {
-                    _rect.horizontalNormalizedPosition = _targetHorizontal;
-                    _stopMove = true;
-                }
+                return;
             }
+            
+            var viewportRect = GetComponent<RectTransform>();
+            _pageWidth = viewportRect.rect.width;
+            
+            _totalPages = content.childCount;
+            
+            if (_totalPages == 0)
+            {
+                return;
+            }
+            
+            content.sizeDelta = new Vector2(_pageWidth * _totalPages, content.sizeDelta.y);
+            
+            _pagePositions.Clear();
+            for (var i = 0; i < _totalPages; i++)
+            {
+                var xPos = -i * _pageWidth;
+                _pagePositions.Add(xPos);
+            }
+            
+            _currentPageIndex = 0;
+            content.anchoredPosition = new Vector2(_pagePositions[0], content.anchoredPosition.y);
+            
         }
-
-        public void PageTo(int index)
+        
+        #region PUBLIC_METHODS
+        
+        /// <summary>
+        /// Navigate to specific page with animation
+        /// </summary>
+        public void GoToPage(int pageIndex)
         {
-            if (index >= 0 && index < _posList.Count)
-            {
-                _rect.horizontalNormalizedPosition = _posList[index];
-                SetPageIndex(index);
-            }
-        }
+            if (pageIndex < 0 || pageIndex >= _totalPages) return;
+            if (pageIndex == _currentPageIndex) return;
 
-        private void SetPageIndex(int index)
+            _currentTween?.Kill();
+
+            var oldPage = _currentPageIndex;
+            _currentPageIndex = pageIndex;
+
+            // Update MenuTabIndicator immediately (no delay)
+            if (menuTabIndicator != null)
+            {
+                menuTabIndicator.SetTab(_currentPageIndex);
+            }
+
+            var targetPosition = new Vector2(_pagePositions[pageIndex], content.anchoredPosition.y);
+
+            _currentTween = content.DOAnchorPos(targetPosition, transitionDuration)
+                .SetEase(transitionEase)
+                .OnComplete(() => OnPageChanged?.Invoke(_currentPageIndex));
+        }
+        
+        /// <summary>
+        /// Go to next page
+        /// </summary>
+        public void NextPage()
         {
-            if (_currentPageIndex != index)
+            if (_currentPageIndex < _totalPages - 1)
             {
-                _currentPageIndex = index;
-                if (OnPageChanged != null)
-                    OnPageChanged(index);
+                GoToPage(_currentPageIndex + 1);
             }
         }
-
+        
+        /// <summary>
+        /// Go to previous page
+        /// </summary>
+        public void PreviousPage()
+        {
+            if (_currentPageIndex > 0)
+            {
+                GoToPage(_currentPageIndex - 1);
+            }
+        }
+        
+        /// <summary>
+        /// Get current page index
+        /// </summary>
+        public int GetCurrentPage()
+        {
+            return _currentPageIndex;
+        }
+        
+        /// <summary>
+        /// Get total number of pages
+        /// </summary>
+        public int GetTotalPages()
+        {
+            return _totalPages;
+        }
+        
+        #endregion
+        
+        #region DRAG_HANDLERS
+        
         public void OnBeginDrag(PointerEventData eventData)
         {
-            _isDrag = true;
-            _startDragHorizontal = _rect.horizontalNormalizedPosition;
-        }
+            
+            _currentTween?.Kill();
 
+            _isDragging = true;
+            _isHorizontalDrag = false; // ✅ Reset
+            _directionLocked = false; // ✅ Reset
+            _dragStartPosition = eventData.position;
+            _lastDragPosition = eventData.position;
+            _dragStartTime = Time.time;
+        }
+        
+        public void OnDrag(PointerEventData eventData)
+        {
+            if (!_isDragging) return;
+
+            // Calculate delta from start
+            var delta = eventData.position - _dragStartPosition;
+
+            if (!_directionLocked && delta.magnitude > directionDetectionThreshold)
+            {
+                var absDeltaX = Mathf.Abs(delta.x);
+                var absDeltaY = Mathf.Abs(delta.y);
+
+                _isHorizontalDrag = absDeltaX > absDeltaY;
+                _directionLocked = true;
+            }
+            else if (!_directionLocked)
+            {
+            }
+
+            if (!_isHorizontalDrag && _directionLocked)
+            {
+                return;
+            }
+
+            var newPosition = new Vector2(_pagePositions[_currentPageIndex] + delta.x, content.anchoredPosition.y);
+
+            var minX = _pagePositions[_totalPages - 1]; // Last page (most negative)
+            var maxX = _pagePositions[0]; // First page (0)
+            newPosition.x = Mathf.Clamp(newPosition.x, minX, maxX);
+
+            content.anchoredPosition = newPosition;
+
+            _lastDragPosition = eventData.position;
+        }
+        
         public void OnEndDrag(PointerEventData eventData)
         {
-            var posX = _rect.horizontalNormalizedPosition;
-            var delta = posX - _startDragHorizontal;
+            if (!_isDragging) return;
 
-            var index = _currentPageIndex;
-
-            if (Mathf.Abs(delta) > swipeThreshold)
+            if (!_isHorizontalDrag && _directionLocked)
             {
-                if (delta > 0 && index < _posList.Count - 1)
-                    index++;
-                else if (delta < 0 && index > 0)
-                    index--;
+                _isDragging = false;
+                _directionLocked = false;
+                return;
+            }
+
+            _isDragging = false;
+            _directionLocked = false;
+
+            var swipeDelta = eventData.position - _dragStartPosition;
+            var swipeDistance = swipeDelta.x;
+            var swipeTime = Time.time - _dragStartTime;
+            var swipeVelocity = swipeTime > 0 ? swipeDistance / swipeTime : 0;
+
+            var targetPage = _currentPageIndex;
+
+            var isFastSwipe = Mathf.Abs(swipeVelocity) > velocityThreshold;
+            var isLongSwipe = Mathf.Abs(swipeDistance) > swipeThreshold;
+
+            if (isFastSwipe || isLongSwipe)
+            {
+                // Swipe right (positive delta) -> go to previous page
+                if (swipeDistance > 0 && _currentPageIndex > 0)
+                {
+                    targetPage = _currentPageIndex - 1;
+                }
+                // Swipe left (negative delta) -> go to next page
+                else if (swipeDistance < 0 && _currentPageIndex < _totalPages - 1)
+                {
+                    targetPage = _currentPageIndex + 1;
+                }
             }
             else
             {
-                index = _currentPageIndex;
+                targetPage = GetNearestPage();
             }
-
-            SetPageIndex(index);
-            _targetHorizontal = _posList[index];
-
-            _isDrag = false;
-            _stopMove = false;
+            GoToPage(targetPage);
+        }
+        
+        #endregion
+        
+        #region PRIVATE_METHODS
+        
+        /// <summary>
+        /// Find nearest page based on current content position
+        /// </summary>
+        private int GetNearestPage()
+        {
+            float currentX = content.anchoredPosition.x;
+            int nearestPage = 0;
+            float minDistance = float.MaxValue;
+            
+            for (int i = 0; i < _totalPages; i++)
+            {
+                float distance = Mathf.Abs(_pagePositions[i] - currentX);
+                if (distance < minDistance)
+                {
+                    minDistance = distance;
+                    nearestPage = i;
+                }
+            }
+            
+            return nearestPage;
+        }
+        
+        #endregion
+        
+        private void OnDestroy()
+        {
+            // Clean up tween
+            _currentTween?.Kill();
+            if (menuTabIndicator != null)
+            {
+                menuTabIndicator.OnChangeTabAction -= GoToPage;
+            }
         }
     }
 }
+

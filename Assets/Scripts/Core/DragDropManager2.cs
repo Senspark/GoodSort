@@ -24,6 +24,7 @@ namespace Core
         [SerializeField] private Color dragColor = new(1f, 1f, 1f, 0.8f);
         [SerializeField] private Vector3 dragScale = new(1.1f, 1.1f, 1f);
 
+        private Vector3 _customDragOffset = new Vector3(0, 0.3f, 0);
         private Func<IDropZone, bool> _canAcceptDropIntoFunc;
 
         // Registered objects
@@ -171,7 +172,7 @@ namespace Core
 
             // Calculate offset
             var mousePos = GetMouseWorldPosition();
-            _dragOffset = dragObject.Position - mousePos;
+            _dragOffset = dragObject.Position - mousePos + _customDragOffset;
 
             dragObject.OnStartDrag();
 
