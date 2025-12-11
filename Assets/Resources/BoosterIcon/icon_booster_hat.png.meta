@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 0536969c148fd478c89942b65d9861ff
+guid: 7968b190679a84ba4af2f8b3106a2fdc
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -2536118286130564995
-    second: button_blue_half_0
+      213: -1589417127256692424
+    second: icon_booster_hat_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,23 +113,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: button_blue_half_0
+      name: icon_booster_hat_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 119
-        height: 116
+        x: 1
+        y: 7
+        width: 127
+        height: 113
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 40, y: 50, z: 40, w: 40}
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: d70b0de0bd5edccd0800000000000000
-      internalID: -2536118286130564995
+      spriteID: 83961f93b8141f9e0800000000000000
+      internalID: -1589417127256692424
       vertices: []
       indices: 
       edges: []
@@ -138,7 +138,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 9c8f445f503fb4b309c196b0996af2b5
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      button_blue_half_0: -2536118286130564995
+      icon_booster_hat_0: -1589417127256692424
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

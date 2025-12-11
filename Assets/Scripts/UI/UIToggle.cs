@@ -16,7 +16,7 @@ namespace UI
             onValueChanged.AddListener(RefreshState);
         }
 
-        private void OnDestroy()
+        protected override void OnDestroy()
         {
             onValueChanged.RemoveListener(RefreshState);
         }

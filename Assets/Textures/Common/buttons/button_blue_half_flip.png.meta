@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 0536969c148fd478c89942b65d9861ff
+guid: 12b34cc06bf984e51ac429a4fcd7d9fc
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -2536118286130564995
-    second: button_blue_half_0
+      213: -5602552746878361487
+    second: button_blue_half_flip_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,7 +113,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: button_blue_half_0
+      name: button_blue_half_flip_0
       rect:
         serializedVersion: 2
         x: 0
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: d70b0de0bd5edccd0800000000000000
-      internalID: -2536118286130564995
+      spriteID: 1702de6d5fbbf32b0800000000000000
+      internalID: -5602552746878361487
       vertices: []
       indices: 
       edges: []
@@ -138,7 +138,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 9c8f445f503fb4b309c196b0996af2b5
+    spriteID: 5110c66bc7b974ea5895a797cb11a24a
     internalID: 0
     vertices: []
     indices: 
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      button_blue_half_0: -2536118286130564995
+      button_blue_half_flip_0: -5602552746878361487
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
