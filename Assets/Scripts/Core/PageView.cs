@@ -4,6 +4,7 @@ using DG.Tweening;
 using UI.Menu;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 namespace Core
 {
@@ -44,19 +45,17 @@ namespace Core
         // Private fields
         private List<float> _pagePositions = new List<float>();
         private float _pageWidth;
-        private bool _isDragging = false;
-        private bool _isHorizontalDrag = false; // ✅ NEW: Track if this is horizontal drag
-        private bool _directionLocked = false; // ✅ NEW: Lock direction once determined
+        private bool _isDragging;
+        private bool _isHorizontalDrag; // ✅ NEW: Track if this is horizontal drag
+        private bool _directionLocked; // ✅ NEW: Lock direction once determined
         private Vector2 _dragStartPosition;
         private float _dragStartTime;
-        private Vector2 _lastDragPosition;
         private Tween _currentTween;
         
         private void Start()
         {
             Initialize();
 
-            // Subscribe to MenuTabIndicator events
             if (menuTabIndicator != null)
             {
                 menuTabIndicator.OnChangeTabAction += GoToPage;
@@ -108,10 +107,12 @@ namespace Core
 
             _currentTween?.Kill();
 
-            var oldPage = _currentPageIndex;
+            var oldPageIndex = _currentPageIndex;
             _currentPageIndex = pageIndex;
 
-            // Update MenuTabIndicator immediately (no delay)
+            // Reset old page background alpha
+            FadeOutPageBackground(oldPageIndex);
+
             if (menuTabIndicator != null)
             {
                 menuTabIndicator.SetTab(_currentPageIndex);
@@ -121,7 +122,11 @@ namespace Core
 
             _currentTween = content.DOAnchorPos(targetPosition, transitionDuration)
                 .SetEase(transitionEase)
-                .OnComplete(() => OnPageChanged?.Invoke(_currentPageIndex));
+                .OnComplete(() =>
+                {
+                    OnPageChanged?.Invoke(_currentPageIndex);
+                    FadeInPageBackground(pageIndex);
+                });
         }
         
         /// <summary>
@@ -175,7 +180,6 @@ namespace Core
             _isHorizontalDrag = false; // ✅ Reset
             _directionLocked = false; // ✅ Reset
             _dragStartPosition = eventData.position;
-            _lastDragPosition = eventData.position;
             _dragStartTime = Time.time;
         }
         
@@ -210,8 +214,6 @@ namespace Core
             newPosition.x = Mathf.Clamp(newPosition.x, minX, maxX);
 
             content.anchoredPosition = newPosition;
-
-            _lastDragPosition = eventData.position;
         }
         
         public void OnEndDrag(PointerEventData eventData)
@@ -267,13 +269,13 @@ namespace Core
         /// </summary>
         private int GetNearestPage()
         {
-            float currentX = content.anchoredPosition.x;
-            int nearestPage = 0;
-            float minDistance = float.MaxValue;
+            var currentX = content.anchoredPosition.x;
+            var nearestPage = 0;
+            var minDistance = float.MaxValue;
             
-            for (int i = 0; i < _totalPages; i++)
+            for (var i = 0; i < _totalPages; i++)
             {
-                float distance = Mathf.Abs(_pagePositions[i] - currentX);
+                var distance = Mathf.Abs(_pagePositions[i] - currentX);
                 if (distance < minDistance)
                 {
                     minDistance = distance;
@@ -283,9 +285,35 @@ namespace Core
             
             return nearestPage;
         }
-        
+
+        private void FadeInPageBackground(int pageIndex)
+        {
+            if (pageIndex < 0 || pageIndex >= content.childCount) return;
+
+            var page = content.GetChild(pageIndex);
+            var image = page.GetComponent<Image>();
+
+            if (image == null) return;
+
+            image.DOFade(0.95f, 0.3f)
+                .SetEase(Ease.OutQuad);
+        }
+
+        private void FadeOutPageBackground(int pageIndex)
+        {
+            if (pageIndex < 0 || pageIndex >= content.childCount) return;
+
+            var page = content.GetChild(pageIndex);
+            var image = page.GetComponent<Image>();
+
+            if (image == null) return;
+
+            image.DOFade(0.0f, 0.1f)
+                .SetEase(Ease.OutQuad);
+        }
+
         #endregion
-        
+
         private void OnDestroy()
         {
             // Clean up tween

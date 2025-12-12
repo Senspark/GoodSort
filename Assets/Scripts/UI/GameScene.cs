@@ -144,6 +144,7 @@ namespace UI
             var layer = _levelDataManager.GetTopLayer(dropzone.ShelfId);
             if (layer == null) return false;
             if (layer.Length == 0) return true; // Nếu layer rỗng thì có thể drop vào
+            if (shelf.LockCount > 0) return false;
 
             if (dropzone.SlotId < 0 || dropzone.SlotId >= layer.Length) return false;
             return layer[dropzone.SlotId] == null;

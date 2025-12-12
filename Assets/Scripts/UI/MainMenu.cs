@@ -58,6 +58,11 @@ namespace UI
             OpenSettingDialog().Forget();
         }
         
+        public void OnClickShopButton()
+        {
+            OpenShopDialog().Forget();
+        }
+        
         public void OnCheatButtonPressed()
         {
             var text = cheatInputField != null ? cheatInputField.text : null;
@@ -68,7 +73,7 @@ namespace UI
             }
             else
             {
-                level = Mathf.Clamp(parsed, 1, 43);
+                level = Mathf.Clamp(parsed, 1, 71);
             }
 
             var dataManager = ServiceLocator.Instance.Resolve<IDataManager>();
@@ -90,6 +95,13 @@ namespace UI
         {
             var dialogPrefab = await PrefabUtils.LoadPrefab("Prefabs/Dialog/SettingDialog");
             var dialog = UIControllerFactory.Instance.Instantiate<SettingDialog>(dialogPrefab);
+            dialog.Show(canvasDialog);
+        }
+
+        private async UniTaskVoid OpenShopDialog()
+        {
+            var dialogPrefab = await PrefabUtils.LoadPrefab("Prefabs/Dialog/ShopDialog");
+            var dialog = UIControllerFactory.Instance.Instantiate<ShopDialog>(dialogPrefab);
             dialog.Show(canvasDialog);
         }
     }

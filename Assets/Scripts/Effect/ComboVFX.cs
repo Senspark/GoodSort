@@ -61,7 +61,11 @@ namespace Effect
 
             sequence.Append(tmpText.DOFade(0f, 0.5f));
 
-            sequence.OnComplete(() => Destroy(gameObject));
+            sequence.OnComplete(() =>
+            {
+                Debug.Log("Destroy ------->");
+                Destroy(gameObject);
+            });
         }
     }
 }

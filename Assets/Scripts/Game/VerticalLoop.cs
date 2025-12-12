@@ -11,7 +11,7 @@ namespace Game
         [Header("Custom Boundary")] 
         public Vector2 boundary = new(3f, 10f);
         [Header("Spacing")] 
-        [SerializeField] private float spacing = 2f;
+        [SerializeField] private float spacing = 1.5f;
 
         private Transform[] boxes;
 

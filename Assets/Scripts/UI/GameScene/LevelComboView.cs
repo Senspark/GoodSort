@@ -90,8 +90,8 @@ namespace Game
         private void PlaySoundCombo(int combo)
         {
             // play sound with pitch
-            var audioMgr = ServiceLocator.Instance.Resolve<IAudioManager>();
-            // audioMgr.PlaySoundOnPitch(AudioEnum.Match, Mathf.Clamp(1f + combo * 0.1f, 1f, 2f) );
+            var audioMgr = ServiceLocator.Instance.Resolve<AudioManager>();
+            audioMgr.PlaySoundOnPitch(AudioEnum.Match, Mathf.Clamp(1f + combo * 0.1f, 1f, 1.5f) );
         }
     }
 }

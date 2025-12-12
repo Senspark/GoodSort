@@ -25,6 +25,8 @@ namespace Factory
             factory.Register<PauseGameDialog>(() => new SettingDialogController(
                 containerManager.AudioManager
             ));
+            factory.Register<ShopDialog>(() => new ShopDialogController(
+            ));
         }
     }
 }
