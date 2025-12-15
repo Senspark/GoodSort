@@ -54,6 +54,7 @@ namespace Dialog
         private async void OnClaimReward()
         {
             if (clickedClaim) return;
+            _controller.PlayEffect(AudioEnum.ClaimComplete);
             clickedClaim = true;
             isSlidingBonusBar = false;
             _ = ShowEffectReward(claimRewardButton.transform as RectTransform, coinBar.GetIcon().transform as RectTransform, BaseCoin);
@@ -67,6 +68,7 @@ namespace Dialog
         private async void OnClaimAdsReward()
         {
             if (clickedClaim) return;
+            _controller.PlayEffect(AudioEnum.ClaimComplete);
             clickedClaim = true;
             isSlidingBonusBar = false;
             var multiplier = CalculateMultiplier();
@@ -119,6 +121,7 @@ namespace Dialog
 
             foreach (var coin in coins)
             {
+                // play sound
                 tasks.Add(MoveCoinAsync(coin, endPos));
             }
 

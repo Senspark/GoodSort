@@ -22,8 +22,6 @@ namespace Utilities
         private void UpdateRect()
         {
             _rectTransform = GetComponent<RectTransform>();
-            Debug.Log(uiCanvas.rect.width);
-            Debug.Log(uiCanvas.rect.height);
             _rectTransform.sizeDelta = new Vector2(uiCanvas.rect.width, uiCanvas.rect.height);
         }
     }

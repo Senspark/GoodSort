@@ -55,7 +55,8 @@ namespace manager
                 { AudioEnum.CoinFly, new AudioInfo("Audio/pick-coin", 1f) },
                 { AudioEnum.PutGoods, new AudioInfo("Audio/Pop 06", 1f) },
                 { AudioEnum.Match, new AudioInfo("Audio/Score Multi", 1f) },
-                { AudioEnum.LevelComplete, new AudioInfo("Audio/Level Up", 1f) }
+                { AudioEnum.LevelComplete, new AudioInfo("Audio/Level Up", 1f) },
+                { AudioEnum.ClaimComplete, new AudioInfo("Audio/Collect Item", 1f) },
             };
             AudioManager = new AudioManager(DataManager, "AudioManager", infos);
 

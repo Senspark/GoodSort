@@ -120,12 +120,12 @@ namespace Core
 
             var targetPosition = new Vector2(_pagePositions[pageIndex], content.anchoredPosition.y);
 
+            FadeInPageBackground(pageIndex);
             _currentTween = content.DOAnchorPos(targetPosition, transitionDuration)
                 .SetEase(transitionEase)
                 .OnComplete(() =>
                 {
                     OnPageChanged?.Invoke(_currentPageIndex);
-                    FadeInPageBackground(pageIndex);
                 });
         }
         

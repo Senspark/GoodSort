@@ -10,5 +10,6 @@ namespace Defines
         PutGoods,
         Match,
         LevelComplete,
+        ClaimComplete,
     }
 }
