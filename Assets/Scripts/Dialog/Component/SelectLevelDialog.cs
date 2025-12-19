@@ -27,7 +27,7 @@ namespace  Dialog
         
         public void OnClickLevelButton()
         {
-            _controller.OpenLevel(_currentLevel);
+            _controller.OpenGameScene();
         }
     }
 

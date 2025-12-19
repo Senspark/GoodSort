@@ -23,17 +23,22 @@ namespace Dialog
             
         [SerializeField] private GameObject coinPrefab;
         private ICompleteLevelDialogController _controller;
-        private float t;
-        private bool clickedClaim;
-        private bool isSlidingBonusBar;
+        private float _t;
+        private bool _clickedClaim;
+        private bool _isSlidingBonusBar;
         private const int BaseCoin = 10;
-        
+
+        private void Start()
+        {
+            IgnoreOutsideClick = true;
+        }
+
         public override void Show(Canvas canvas)
         {
             OnWillShow(() =>
             {
                 _controller.PlayEffect(AudioEnum.LevelComplete);
-                isSlidingBonusBar = true;
+                _isSlidingBonusBar = true;
                 
                 claimRewardButton.SetMode(ClaimButton.Mode.Normal);
                 claimRewardButton.Setup(BaseCoin, OnClaimReward);
@@ -53,10 +58,10 @@ namespace Dialog
 
         private async void OnClaimReward()
         {
-            if (clickedClaim) return;
+            if (_clickedClaim) return;
             _controller.PlayEffect(AudioEnum.ClaimComplete);
-            clickedClaim = true;
-            isSlidingBonusBar = false;
+            _clickedClaim = true;
+            _isSlidingBonusBar = false;
             _ = ShowEffectReward(claimRewardButton.transform as RectTransform, coinBar.GetIcon().transform as RectTransform, BaseCoin);
             await coinBar.NumberTo(1f, BaseCoin);
             // wait a bit second then load menu scene
@@ -67,10 +72,10 @@ namespace Dialog
         
         private async void OnClaimAdsReward()
         {
-            if (clickedClaim) return;
+            if (_clickedClaim) return;
             _controller.PlayEffect(AudioEnum.ClaimComplete);
-            clickedClaim = true;
-            isSlidingBonusBar = false;
+            _clickedClaim = true;
+            _isSlidingBonusBar = false;
             var multiplier = CalculateMultiplier();
             claimAdsRewardButton.SetMode(ClaimButton.Mode.WithAds, multiplier);
             _ = ShowEffectReward(claimAdsRewardButton.transform as RectTransform, coinBar.GetIcon().transform as RectTransform, BaseCoin);
@@ -90,9 +95,9 @@ namespace Dialog
         
         void Update()
         {
-            if (!isSlidingBonusBar) return;
-            t += Time.deltaTime * 2f;
-            var sinValue = (Mathf.Sin(t) + 1f) * 0.5f; // dao động từ 0 → 1 → 0
+            if (!_isSlidingBonusBar) return;
+            _t += Time.deltaTime * 2f;
+            var sinValue = (Mathf.Sin(_t) + 1f) * 0.5f; // dao động từ 0 → 1 → 0
             pointer.anchoredPosition = Vector2.Lerp(left.anchoredPosition, right.anchoredPosition, sinValue);
         }
         

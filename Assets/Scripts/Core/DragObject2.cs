@@ -87,7 +87,10 @@ namespace Core
 
         public void UpdatePosition(Vector3 newPosition)
         {
-            transform.position = newPosition;
+            if (this != null && transform != null)
+            {
+                transform.position = newPosition;
+            }
         }
 
         public void ApplyDragVisuals(Color dragColor, Vector3 dragScale)

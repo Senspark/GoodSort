@@ -198,15 +198,25 @@ namespace Core
             if (_currentDraggingObject == null) return;
             var dragObject = _currentDraggingObject;
 
-            // Find drop zone at current position
             var dropPosition = dragObject.Position;
-            var targetZoneData = GetDropZoneAtPosition(dropPosition);
+            var originalPosition = dragObject.GetOriginalPosition();
+
+            var dragDistance = Vector2.Distance(
+                new Vector2(dropPosition.x, dropPosition.y),
+                new Vector2(originalPosition.x, originalPosition.y)
+            );
+
+            const float minDragDistance = 0.33f;
 
             var successfulDrop = false;
 
-            if (targetZoneData != null)
+            if (dragDistance >= minDragDistance)
             {
-                successfulDrop = DropInto(dragObject, targetZoneData);
+                var targetZoneData = GetDropZoneAtPosition(dropPosition);
+                if (targetZoneData != null)
+                {
+                    successfulDrop = DropInto(dragObject, targetZoneData);
+                }
             }
 
             // Handle unsuccessful drop

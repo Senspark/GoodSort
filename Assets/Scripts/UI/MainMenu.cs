@@ -50,7 +50,14 @@ namespace UI
 
         public void OnClickPlayButton()
         {
-            OpenSelectLevelDialog().Forget();
+            var levelManager = ServiceLocator.Instance.Resolve<ILevelManager>();
+            _ = PrefabUtils.LoadPrefab("Prefabs/Dialog/SelectLevelDialog")
+                .ContinueWith(prefab =>
+                {
+                    var dialog = UIControllerFactory.Instance.Instantiate<SelectLevelDialog>(prefab);
+                    dialog.SetCurrentLevel(levelManager.GetCurrentLevel())
+                        .Show(canvasDialog);
+                });
         }
         
         public void OnClickSettingButton()

@@ -87,8 +87,6 @@ namespace UI.Menu
 
                 // Resize pack to 90% screen width
                 ResizePackToScreenWidth(instance);
-
-                Debug.Log($"[ShopLayer] Loaded and instantiated: {prefabName}");
             }
             catch (System.Exception e)
             {

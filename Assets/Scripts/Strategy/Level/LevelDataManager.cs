@@ -184,6 +184,19 @@ namespace Strategy.Level
             layer[slotId] = item;
         }
 
+        public bool IsDeadlock()
+        {
+            // foreach all shelf
+            foreach (var shelf in _shelvesObjects.Where(s => s.Type == ShelfType.Common).ToArray())
+            {
+                if (shelf.LockCount > 0) continue;
+                var topLayer = GetTopLayer(shelf.Id);
+                if (topLayer == null || topLayer.Length == 0) return false;
+                if (topLayer.Any(t => t == null)) return false;
+            }
+            return true;
+        }
+
         /* Trả về Id của Layer đang empty, nếu tất cả layer đều empty thì trả về 0 - top layer */
         private static int FindNotEmptyLayer(IShelfItem[][] shelf)
         {

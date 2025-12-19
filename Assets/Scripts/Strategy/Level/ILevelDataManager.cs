@@ -21,5 +21,7 @@ namespace Strategy.Level
         IShelfItem[] GetLayer(int shelfId, int layerId);
         bool IsLayerEmpty(int shelfId, int layerId);
         void SetSlotData(int shelfId, int layerId, int slotId, IShelfItem item);
+
+        bool IsDeadlock();
     }
 }

@@ -9,7 +9,7 @@ namespace Dialog.Controller
 {
     public interface ISelectLevelDialogController
     {
-        public void OpenLevel(int level);
+        public void OpenGameScene();
     }
     public class SelectLevelDialogController : ISelectLevelDialogController
     {
@@ -21,7 +21,7 @@ namespace Dialog.Controller
             _sceneLoader = sceneLoader;
         }
         
-        public void OpenLevel(int level)
+        public void OpenGameScene()
         {
             _ = _sceneLoader.LoadScene<GameScene>(nameof(GameScene)).Then(_ =>
             {

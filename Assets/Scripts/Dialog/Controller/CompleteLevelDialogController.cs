@@ -37,6 +37,7 @@ namespace Dialog.Controller
         public void BackToMenuScene()
         {
             _levelManager.GoToNextLevel();
+            Debug.Log($"Current Level: {_levelManager.GetCurrentLevel()}");
             _ = _sceneLoader.LoadScene<MainMenu>(nameof(MainMenu)).Then(_ =>
             {
                 _audioManager.PlayMusic(AudioEnum.MenuMusic);

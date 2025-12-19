@@ -74,6 +74,7 @@ namespace UI
             dragDropManager.Init(CanAcceptDropInto);
             CleanUp();
             LoadLevel(_levelManager.GetCurrentLevel());
+            InvokeRepeating(nameof(IntervalAutoCheckDeadlock), 5f, 3f);
         }
 
         private void Update()
@@ -97,13 +98,22 @@ namespace UI
             if (State == GameStateType.Playing)
             {
                 _levelView.Step(Time.deltaTime);
-                if (_levelView.GetStatus() == LevelStatus.Finished)
-                {
-                    State = GameStateType.GameOver;
-                    OpenTimeOutDialog().Forget();
-                }
+                if (_levelView.GetStatus() != LevelStatus.Finished) return;
+                State = GameStateType.GameOver;
+                OpenTimeOutDialog().Forget();
             }
-
+        }
+        
+        // Tránh gọi trong update
+        private void IntervalAutoCheckDeadlock()
+        {
+            if (_levelDataManager != null && _levelDataManager.IsDeadlock())
+            {
+                if (State == GameStateType.GameOver) return;
+                State = GameStateType.GameOver;
+                dragDropManager.Pause();
+                Debug.Log("Deadlock");
+            }
         }
 
         private void LoadLevel(int level)
@@ -142,10 +152,7 @@ namespace UI
             if (shelf.Type != ShelfType.Common) return false; // Chỉ cho phép drop vào Common
 
             var layer = _levelDataManager.GetTopLayer(dropzone.ShelfId);
-            if (layer == null) return false;
-            if (layer.Length == 0) return true; // Nếu layer rỗng thì có thể drop vào
-            if (shelf.LockCount > 0) return false;
-
+            if (layer == null || layer.Length == 0 || shelf.LockCount > 0) return false;
             if (dropzone.SlotId < 0 || dropzone.SlotId >= layer.Length) return false;
             return layer[dropzone.SlotId] == null;
         }

@@ -2289,9 +2289,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: Dialog.QuitLevelDialog, Assembly-CSharp
-        m_MethodName: Hide
+      - m_Target: {fileID: 6088996478507458246}
+        m_TargetAssemblyTypeName: Dialog.ConfirmDialog, Assembly-CSharp
+        m_MethodName: OnClickNoButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
