@@ -30,6 +30,16 @@ namespace Factory
             factory.Register<ProfileDialog>(() => new ProfileDialogController(
                 containerManager.ProfileManager
             ));
+            factory.Register<LoseLevelDialog>(() => new LoseLevelDialogController(
+                containerManager.ProfileManager,
+                containerManager.SceneLoader,
+                containerManager.AudioManager
+            ));
+            factory.Register<OutOfLivesDialog>(() => new OutOfLivesDialogController(
+                containerManager.ProfileManager,
+                containerManager.SceneLoader,
+                containerManager.AudioManager
+            ));
         }
     }
 }

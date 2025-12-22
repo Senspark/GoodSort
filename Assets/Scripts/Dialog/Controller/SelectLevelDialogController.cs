@@ -23,10 +23,7 @@ namespace Dialog.Controller
         
         public void OpenGameScene()
         {
-            _ = _sceneLoader.LoadScene<GameScene>(nameof(GameScene)).Then(_ =>
-            {
-                _audioManager.PlayMusic(AudioEnum.GameMusic);
-            });
+            _ = _sceneLoader.LoadScene<GameScene>(nameof(GameScene));
         }
     }
 }

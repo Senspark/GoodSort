@@ -39,10 +39,7 @@ namespace Dialog.Controller
         {
             _levelManager.GoToNextLevel();
             Debug.Log($"Current Level: {_levelManager.GetCurrentLevel()}");
-            _ = _sceneLoader.LoadScene<MainMenu>(nameof(MainMenu)).Then(_ =>
-            {
-                _audioManager.PlayMusic(AudioEnum.MenuMusic);
-            });
+            _ = _sceneLoader.LoadScene<MainMenu>(nameof(MainMenu));
         }
 
         public void PlayEffect(AudioEnum audioEnum)

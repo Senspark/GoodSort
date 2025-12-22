@@ -17,6 +17,7 @@ using Utilities;
 
 namespace UI
 {
+    [SceneMusic(AudioEnum.GameMusic)]
     public class GameScene : MonoBehaviour
     {
         [SerializeField] private Canvas uiCanvas;
@@ -104,7 +105,6 @@ namespace UI
             }
         }
         
-        // Tránh gọi trong update
         private void IntervalAutoCheckDeadlock()
         {
             if (_levelDataManager != null && _levelDataManager.IsDeadlock())
@@ -112,7 +112,7 @@ namespace UI
                 if (State == GameStateType.GameOver) return;
                 State = GameStateType.GameOver;
                 dragDropManager.Pause();
-                Debug.Log("Deadlock");
+                OpenLoseLevelDialog().Forget();
             }
         }
 
@@ -272,21 +272,24 @@ namespace UI
             });
             dialog.Show(canvasDialog);
         }
-        
         private async UniTaskVoid OpenTimeOutDialog()
         {
             var prefabDialog = await PrefabUtils.LoadPrefab("Prefabs/Dialog/TimeOutDialog");
             var dialog = prefabDialog.GetComponent<ConfirmDialog>();
-            dialog.SetActions(() =>
-            {
-                BackToMenu();
-            }, () =>
+            dialog.SetActions(BackToMenu, () =>
             {
                 OpenSelectLevelDialog().Forget();
             });
             dialog.Show(canvasDialog);
         }
-        
+
+        private async UniTaskVoid OpenLoseLevelDialog()
+        {
+            var prefabDialog = await PrefabUtils.LoadPrefab("Prefabs/Dialog/LoseLevelDialog");
+            var dialog = UIControllerFactory.Instance.Instantiate<LoseLevelDialog>(prefabDialog);
+            dialog.Show(canvasDialog);
+        }
+
         private async UniTaskVoid OpenSelectLevelDialog()
         {
             var levelManager = ServiceLocator.Instance.Resolve<ILevelManager>();

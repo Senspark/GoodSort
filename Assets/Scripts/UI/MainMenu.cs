@@ -1,4 +1,5 @@
 using Cysharp.Threading.Tasks;
+using Defines;
 using Dialog;
 using Factory;
 using UnityEngine;
@@ -10,6 +11,7 @@ using Utilities;
 
 namespace UI
 {
+    [SceneMusic(AudioEnum.MenuMusic)]
     public class MainMenu : MonoBehaviour
     {
         [SerializeField] private Canvas canvasDialog;

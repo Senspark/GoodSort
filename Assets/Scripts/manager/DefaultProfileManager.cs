@@ -11,12 +11,14 @@ namespace manager
         private const string SaveKey = nameof(DefaultProfileManager);
         private const string DefaultName = "Player";
         private const string DefaultAvatarId = "avt_0";
+        private const int DefaultLives = 0;
 
         private readonly IDataManager _dataManager;
 
         private string _name;
         private string _avatarId;
         private int _coins;
+        private int _lives;
 
         public DefaultProfileManager(IDataManager dataManager)
         {
@@ -98,6 +100,28 @@ namespace manager
             return _coins;
         }
 
+        public void SetLives(int lives)
+        {
+            if (lives < 0) return;
+            _lives = lives;
+            SaveData();
+            DispatchEvent(observer => observer.OnLivesChanged?.Invoke(_lives));
+        }
+
+        public bool UseLive()
+        {
+            if (_lives <= 0) return false;
+            _lives--;
+            SaveData();
+            DispatchEvent(observer => observer.OnLivesChanged?.Invoke(_lives));
+            return true;
+        }
+
+        public int GetLives()
+        {
+            return _lives;
+        }
+
         #endregion
 
         #region Data Persistence
@@ -112,15 +136,15 @@ namespace manager
                 _name = string.IsNullOrEmpty(data.name) ? DefaultName : data.name;
                 _avatarId = string.IsNullOrEmpty(data.avatarId) ? DefaultAvatarId : data.avatarId;
                 _coins = data.coins;
-
-                Debug.Log($"[ProfileManager] Loaded profile - Name: {_name}, Avatar: {_avatarId}, Coins: {_coins}");
+                _lives = data.lives > 0 ? data.lives : DefaultLives;
+                Debug.Log($"LoadData: Name:{_name}, AvatarId: {_avatarId}, Coins: {_coins}, Lives: {_lives}");
             }
             catch (Exception e)
             {
-                Debug.LogWarning($"[ProfileManager] Failed to load data: {e.Message}. Using defaults.");
                 _name = DefaultName;
                 _avatarId = DefaultAvatarId;
                 _coins = 0;
+                _lives = DefaultLives;
             }
         }
 
@@ -130,7 +154,8 @@ namespace manager
             {
                 name = _name,
                 avatarId = _avatarId,
-                coins = _coins
+                coins = _coins,
+                lives = _lives
             };
 
             var json = JsonUtility.ToJson(data);
@@ -143,6 +168,7 @@ namespace manager
             public string name;
             public string avatarId;
             public int coins;
+            public int lives;
         }
 
         #endregion

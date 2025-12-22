@@ -57,7 +57,7 @@ namespace Strategy.Level
 
         private void OnDropped(int itemId, int shelfId, int slotId)
         {
-            CleanLogger.Log($"Dropped {itemId} at shelf {shelfId} slot {slotId}");
+            // CleanLogger.Log($"Dropped {itemId} at shelf {shelfId} slot {slotId}");
             var layerId = _levelDataManager.GetTopLayerOfShelf(shelfId);
             var slotData = _levelDataManager.GetItem(shelfId, layerId, slotId);
 

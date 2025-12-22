@@ -62,7 +62,7 @@ namespace manager
             AudioManager = new AudioManager(DataManager, "AudioManager", infos);
 
             LevelManager = new DefaultLevelManager(DataManager);
-            SceneLoader = new DefaultSceneLoader();
+            SceneLoader = new DefaultSceneLoader(AudioManager);
             EventManager = new EventManager();
             LevelLoaderManager = new DefaultLevelLoaderManager();
             ProfileManager = new DefaultProfileManager(DataManager);
