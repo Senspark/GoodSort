@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using Defines;
 using Senspark;
 
 namespace manager.Interface

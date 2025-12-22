@@ -17,7 +17,7 @@ namespace Factory
                 containerManager.AudioManager,
                 containerManager.LevelManager,
                 containerManager.SceneLoader,
-                containerManager.DataManager
+                containerManager.ProfileManager
             ));
             factory.Register<SettingDialog>(() => new SettingDialogController(
                 containerManager.AudioManager
@@ -26,6 +26,9 @@ namespace Factory
                 containerManager.AudioManager
             ));
             factory.Register<ShopDialog>(() => new ShopDialogController(
+            ));
+            factory.Register<ProfileDialog>(() => new ProfileDialogController(
+                containerManager.ProfileManager
             ));
         }
     }

@@ -99,10 +99,10 @@ namespace Senspark {
         [CanBeNull]
         private Enum _music;
 
-        public Task Initialize()
+        public UniTask Initialize()
         {
             InitializeImpl().Forget();
-            return Task.CompletedTask;
+            return UniTask.CompletedTask;
         }
 
         public bool IsMusicEnabled {

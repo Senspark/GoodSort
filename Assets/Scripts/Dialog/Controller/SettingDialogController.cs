@@ -26,8 +26,8 @@ namespace Dialog.Controller
             _audioManager = audioManager;
         }
         
-        public void SetEnableSound(bool isEnable)
-        {
+      public void SetEnableSound(bool isEnable)
+            {
             _audioManager.IsSoundEnabled = isEnable;
         }
         

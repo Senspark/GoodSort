@@ -1,5 +1,4 @@
 using Cysharp.Threading.Tasks;
-using Defines;
 using Dialog;
 using Factory;
 using UnityEngine;
@@ -36,8 +35,8 @@ namespace UI
         
         private void UpdateCoinBar()
         {
-            var dataManager = ServiceLocator.Instance.Resolve<IDataManager>();
-            var coin = dataManager.Get("Coin", 0);
+            var profileManager = ServiceLocator.Instance.Resolve<IProfileManager>();
+            var coin = profileManager.GetCoins();
             textCoin.text = $"{coin}";
         }
         
@@ -62,12 +61,32 @@ namespace UI
         
         public void OnClickSettingButton()
         {
-            OpenSettingDialog().Forget();
+            _ = PrefabUtils.LoadPrefab("Prefabs/Dialog/SettingDialog")
+                .ContinueWith(prefab =>
+                {
+                    var dialog = UIControllerFactory.Instance.Instantiate<SettingDialog>(prefab);
+                    dialog.Show(canvasDialog);
+                });
         }
         
         public void OnClickShopButton()
         {
-            OpenShopDialog().Forget();
+            _ = PrefabUtils.LoadPrefab("Prefabs/Dialog/ShopDialog")
+                .ContinueWith(prefab =>
+                {
+                    var dialog = UIControllerFactory.Instance.Instantiate<ShopDialog>(prefab);
+                    dialog.Show(canvasDialog);
+                });
+        }
+
+        public void OnClickProfile()
+        {
+            _ = PrefabUtils.LoadPrefab("Prefabs/Dialog/ProfileDialog")
+                .ContinueWith(prefab =>
+                {
+                    var dialog = UIControllerFactory.Instance.Instantiate<ProfileDialog>(prefab);
+                    dialog.Show(canvasDialog);
+                });
         }
         
         public void OnCheatButtonPressed()
@@ -86,30 +105,6 @@ namespace UI
             var dataManager = ServiceLocator.Instance.Resolve<IDataManager>();
             dataManager.Set("CurrentLevel", level);
             UpdateLevel();
-        }
-
-        private async UniTaskVoid OpenSelectLevelDialog()
-        {
-            var levelManager = ServiceLocator.Instance.Resolve<ILevelManager>();
-            levelManager.GetCurrentLevel();
-            var selectLevelDialogPrefab = await PrefabUtils.LoadPrefab("Prefabs/Dialog/SelectLevelDialog");
-            var dialog = UIControllerFactory.Instance.Instantiate<SelectLevelDialog>(selectLevelDialogPrefab);
-            dialog.SetCurrentLevel(levelManager.GetCurrentLevel())
-                .Show(canvasDialog);
-        }
-
-        private async UniTaskVoid OpenSettingDialog()
-        {
-            var dialogPrefab = await PrefabUtils.LoadPrefab("Prefabs/Dialog/SettingDialog");
-            var dialog = UIControllerFactory.Instance.Instantiate<SettingDialog>(dialogPrefab);
-            dialog.Show(canvasDialog);
-        }
-
-        private async UniTaskVoid OpenShopDialog()
-        {
-            var dialogPrefab = await PrefabUtils.LoadPrefab("Prefabs/Dialog/ShopDialog");
-            var dialog = UIControllerFactory.Instance.Instantiate<ShopDialog>(dialogPrefab);
-            dialog.Show(canvasDialog);
         }
     }
 }

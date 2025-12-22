@@ -7,7 +7,7 @@ namespace manager
 {
     public class DefaultLevelManager : ILevelManager
     {
-        public int CurrentLevel { get; private set; }
+        private int CurrentLevel { get; set; }
         private readonly IDataManager _dataManager;
         
         public DefaultLevelManager(IDataManager dataManager)
@@ -46,6 +46,6 @@ namespace manager
         {
             CurrentLevel = GetCurrentLevel() + 1;
             SetCurrentLevel(CurrentLevel);
-        }
+        } 
     }
 }

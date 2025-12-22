@@ -6,6 +6,7 @@ using Factory;
 using JetBrains.Annotations;
 using manager.Interface;
 using Senspark;
+using UnityEngine;
 
 namespace manager
 {
@@ -15,9 +16,9 @@ namespace manager
         public IAudioManager AudioManager { get; set; }
         public ILevelManager LevelManager { get; set; }
         public ISceneLoader SceneLoader { get; set; }
-        public IScoreManager ScoreManager { get; set; }
         public IEventManager EventManager { get; set; }
         public ILevelLoaderManager LevelLoaderManager { get; set; }
+        public IProfileManager ProfileManager { get; set; }
     }
 
     public class ServiceInitializer : IServiceDeclaration
@@ -31,9 +32,9 @@ namespace manager
         public IAudioManager AudioManager { get; set; }
         public ILevelManager LevelManager { get; set; }
         public ISceneLoader SceneLoader { get; set; }
-        public IScoreManager ScoreManager { get; set; }
         public IEventManager EventManager { get; set; }
         public ILevelLoaderManager LevelLoaderManager { get; set; }
+        public IProfileManager ProfileManager { get; set; }
 
         #endregion
 
@@ -62,9 +63,9 @@ namespace manager
 
             LevelManager = new DefaultLevelManager(DataManager);
             SceneLoader = new DefaultSceneLoader();
-            ScoreManager = new DefaultScoreManager(DataManager);
             EventManager = new EventManager();
             LevelLoaderManager = new DefaultLevelLoaderManager();
+            ProfileManager = new DefaultProfileManager(DataManager);
 
             var configManager = new DefaultConfigManager();
             configManager.SetDefaultValue(ConfigKey.LevelConfig, data.LevelConfig);
@@ -72,19 +73,17 @@ namespace manager
 
             await DataManager.Initialize();
             ServiceLocator.Instance.Provide(DataManager);
-            
+
             await AudioManager.Initialize();
             ServiceLocator.Instance.Provide(AudioManager);
             
             var services = new IService[]
             {
-                // DataManager,
-                // AudioManager,
                 LevelManager,
                 SceneLoader,
-                ScoreManager,
                 EventManager,
                 LevelLoaderManager,
+                ProfileManager,
                 configManager
             };
             TotalSteps = services.Length;
