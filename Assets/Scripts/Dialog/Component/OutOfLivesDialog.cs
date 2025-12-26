@@ -1,4 +1,5 @@
 using Dialog.Controller;
+using UI;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,6 +11,7 @@ namespace Dialog
         [SerializeField] private Button btnBuyLives;
 
         private IOutOfLivesDialogController _controller;
+        private bool _isProcessing;
 
         protected override void Awake()
         {
@@ -33,12 +35,26 @@ namespace Dialog
 
         private void OnShopClicked()
         {
-            _controller.GoToShop();
+            if (_isProcessing) return;
+            _isProcessing = true;
+            OnDidHide(_controller.GoToShop);
+            Hide();
         }
 
         private void OnBuyLivesClicked()
         {
-            _controller.BuyLivesAndRestart();
+            if (_isProcessing) return;
+            _isProcessing = true;
+
+            if (_controller.BuyLivesAndRestart())
+            {
+                OnDidHide(_controller.RestartGame);
+                Hide();
+            }
+            else
+            {
+                _isProcessing = false;
+            }
         }
     }
 }

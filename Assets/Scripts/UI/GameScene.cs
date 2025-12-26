@@ -200,7 +200,6 @@ namespace UI
                 return ComboVFXType.Gradient;
             }
 
-            // Tính vị trí trong chu kỳ 5 (1-5, 6-10, 11-15, 16-20)
             var position = ((combo - 1) % 5) + 1;
 
             return position switch

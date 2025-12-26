@@ -115,19 +115,13 @@ namespace Core
         {
             if (spriteRenderer == null)
                 return;
-
-            // Lấy bounds thật của sprite
-            var b = spriteRenderer.bounds;
             
             var foot = spriteRenderer.transform.position;
             var center = new Vector3(foot.x, foot.y + 0.9f, foot.z);
             var size = new Vector3(1f, 1.8f, 0f);           
             var expandedBounds = new Bounds(center, size);
 
-            // Chọn màu cho Gizmo
             Gizmos.color = Color.blue;
-
-            // Vẽ wire cube theo bounds (tọa độ world)
 
             Gizmos.DrawWireCube(expandedBounds.center, expandedBounds.size);
         }

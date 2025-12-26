@@ -12,7 +12,7 @@ namespace Dialog.Controller
         public void BackToMenuScene();
         public void PlayEffect(AudioEnum audioEnum);
 
-        public void AddCoin(int newCoin);
+        public void AddStar(int star);
     }
 
     public class CompleteLevelDialogController : ICompleteLevelDialogController
@@ -20,25 +20,24 @@ namespace Dialog.Controller
         private readonly IAudioManager _audioManager;
         private readonly ILevelManager _levelManager;
         private readonly ISceneLoader _sceneLoader;
-        private readonly IProfileManager _profileManager;
+        private readonly ICurrencyManager _currencyManager;
 
         public CompleteLevelDialogController(
             IAudioManager audioManager,
             ILevelManager levelManager,
             ISceneLoader sceneLoader,
-            IProfileManager profileManager
+            ICurrencyManager currencyManager
         )
         {
             _audioManager = audioManager;
             _levelManager = levelManager;
             _sceneLoader = sceneLoader;
-            _profileManager = profileManager;
+            _currencyManager = currencyManager;
         }
 
         public void BackToMenuScene()
         {
             _levelManager.GoToNextLevel();
-            Debug.Log($"Current Level: {_levelManager.GetCurrentLevel()}");
             _ = _sceneLoader.LoadScene<MainMenu>(nameof(MainMenu));
         }
 
@@ -47,11 +46,9 @@ namespace Dialog.Controller
             _audioManager.PlaySound(audioEnum);
         }
 
-        public void AddCoin(int newCoin)
+        public void AddStar(int star)
         {
-            // Use ProfileManager instead of DataManager
-            // This will automatically notify all observers about the coin change
-            _profileManager.AddCoins(newCoin);
+            _currencyManager.AddStars(star);
         }
     }
 }

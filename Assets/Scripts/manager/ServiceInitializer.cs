@@ -19,6 +19,7 @@ namespace manager
         public IEventManager EventManager { get; set; }
         public ILevelLoaderManager LevelLoaderManager { get; set; }
         public IProfileManager ProfileManager { get; set; }
+        public ICurrencyManager CurrencyManager { get; set; }
     }
 
     public class ServiceInitializer : IServiceDeclaration
@@ -35,6 +36,7 @@ namespace manager
         public IEventManager EventManager { get; set; }
         public ILevelLoaderManager LevelLoaderManager { get; set; }
         public IProfileManager ProfileManager { get; set; }
+        public ICurrencyManager CurrencyManager { get; set; }
 
         #endregion
 
@@ -66,6 +68,7 @@ namespace manager
             EventManager = new EventManager();
             LevelLoaderManager = new DefaultLevelLoaderManager();
             ProfileManager = new DefaultProfileManager(DataManager);
+            CurrencyManager = new DefaultCurrencyManager(DataManager);
 
             var configManager = new DefaultConfigManager();
             configManager.SetDefaultValue(ConfigKey.LevelConfig, data.LevelConfig);
@@ -84,6 +87,7 @@ namespace manager
                 EventManager,
                 LevelLoaderManager,
                 ProfileManager,
+                CurrencyManager,
                 configManager
             };
             TotalSteps = services.Length;

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Cysharp.Threading.Tasks;
 using Defines;
 using DG.Tweening;
@@ -7,6 +8,7 @@ using Dialog.Controller;
 using Senspark;
 using UI;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Utilities;
 using Random = UnityEngine.Random;
 
@@ -17,16 +19,16 @@ namespace Dialog
         [SerializeField] private RectTransform pointer;
         [SerializeField] private RectTransform left;
         [SerializeField] private RectTransform right;
-        [SerializeField] private CurrencyBar coinBar;
+        [SerializeField] private CurrencyBar starBar;
         [SerializeField] private ClaimButton claimAdsRewardButton;
         [SerializeField] private ClaimButton claimRewardButton;
             
-        [SerializeField] private GameObject coinPrefab;
+        [SerializeField] private GameObject starPrefab;
         private ICompleteLevelDialogController _controller;
         private float _t;
         private bool _clickedClaim;
         private bool _isSlidingBonusBar;
-        private const int BaseCoin = 10;
+        private const int BaseStar = 10;
 
         private void Start()
         {
@@ -41,12 +43,12 @@ namespace Dialog
                 _isSlidingBonusBar = true;
                 
                 claimRewardButton.SetMode(ClaimButton.Mode.Normal);
-                claimRewardButton.Setup(BaseCoin, OnClaimReward);
+                claimRewardButton.Setup(BaseStar, OnClaimReward);
                 
                 claimAdsRewardButton.SetMode(ClaimButton.Mode.WithAds, 2);
-                claimAdsRewardButton.Setup(BaseCoin, OnClaimAdsReward);
+                claimAdsRewardButton.Setup(BaseStar, OnClaimAdsReward);
                 
-                coinBar.SetValue(0);
+                starBar.SetValue(0);
             });
             OnDidShow(() =>
             {
@@ -62,11 +64,11 @@ namespace Dialog
             _controller.PlayEffect(AudioEnum.ClaimComplete);
             _clickedClaim = true;
             _isSlidingBonusBar = false;
-            _ = ShowEffectReward(claimRewardButton.transform as RectTransform, coinBar.GetIcon().transform as RectTransform, BaseCoin);
-            await coinBar.NumberTo(1f, BaseCoin);
+            _ = ShowEffectReward(claimRewardButton.transform as RectTransform, starBar.GetIcon().transform as RectTransform, BaseStar);
+            await starBar.NumberTo(1f, BaseStar);
             // wait a bit second then load menu scene
             await UniTask.Delay(1000);
-            _controller.AddCoin(BaseCoin);
+            _controller.AddStar(BaseStar);
             _controller.BackToMenuScene();
         }
         
@@ -78,10 +80,10 @@ namespace Dialog
             _isSlidingBonusBar = false;
             var multiplier = CalculateMultiplier();
             claimAdsRewardButton.SetMode(ClaimButton.Mode.WithAds, multiplier);
-            _ = ShowEffectReward(claimAdsRewardButton.transform as RectTransform, coinBar.GetIcon().transform as RectTransform, BaseCoin);
-            await coinBar.NumberTo(1f, BaseCoin * multiplier);
+            _ = ShowEffectReward(claimAdsRewardButton.transform as RectTransform, starBar.GetIcon().transform as RectTransform, BaseStar);
+            await starBar.NumberTo(1f, BaseStar * multiplier);
             await UniTask.Delay(1000);
-            _controller.AddCoin(BaseCoin * multiplier);
+            _controller.AddStar(BaseStar * multiplier);
             _controller.BackToMenuScene();
         }
 
@@ -104,9 +106,9 @@ namespace Dialog
         // Effect helper
         private GameObject SpawnCoin(Vector3 position)
         {
-            var coin = Instantiate(coinPrefab, position, Quaternion.identity);
-            coin.transform.SetParent(transform);
-            return coin;
+            var star = Instantiate(starPrefab, position, Quaternion.identity);
+            star.transform.SetParent(transform);
+            return star;
         }
         
         private async UniTask ShowEffectReward(RectTransform from, RectTransform to, int count)
@@ -124,18 +126,14 @@ namespace Dialog
                 coins.Add(coin);
             }
 
-            foreach (var coin in coins)
-            {
-                // play sound
-                tasks.Add(MoveCoinAsync(coin, endPos));
-            }
+            tasks.AddRange(Enumerable.Select(coins, coin => MoveStarAsync(coin, endPos)));
 
             await UniTask.WhenAll(tasks);
         }
 
-        private async UniTask MoveCoinAsync(GameObject coin, Vector3 targetPos)
+        private async UniTask MoveStarAsync(GameObject star, Vector3 targetPos)
         {
-            var startPos = coin.transform.position;
+            var startPos = star.transform.position;
             var midOffset = new Vector3(Random.Range(-100f, 100f), Random.Range(50f, 150f), 0f);
 
             var delay = Random.Range(0f, 0.1f);
@@ -149,12 +147,12 @@ namespace Dialog
                 tick += Time.deltaTime / duration;
                 var mid = Vector3.Lerp(startPos, targetPos, tick);
                 mid += Vector3.Lerp(midOffset, Vector3.zero, tick); 
-                coin.transform.position = mid;
+                star.transform.position = mid;
                 await UniTask.Yield();
             }
 
-            coin.transform.position = targetPos;
-            Destroy(coin);
+            star.transform.position = targetPos;
+            Destroy(star);
         }
 
     }

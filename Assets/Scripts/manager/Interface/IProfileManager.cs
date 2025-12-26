@@ -7,7 +7,6 @@ namespace manager.Interface
     {
         public Action<string> OnNameChanged { get; set; }
         public Action<string> OnAvatarIdChanged { get; set; }
-        public Action<int> OnCoinsChanged { get; set; }
         public Action<int> OnLivesChanged { get; set; }
     }
 
@@ -16,13 +15,11 @@ namespace manager.Interface
     {
         void SetName(string name);
         void SetAvatarId(string avatarId);
-        void AddCoins(int amount);
         void SetLives(int lives);
         bool UseLive();
 
         string GetName();
         string GetAvatarId();
-        int GetCoins();
         int GetLives();
     }
 }
