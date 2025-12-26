@@ -29,7 +29,7 @@ namespace manager.Interface
         int GetPendingChests();
         int GetChestClaimCount();
         ChestReward GetNextChestReward();
-        ChestReward ClaimChest();
+        ChestReward ClaimChest(bool withAds = false);
     }
 }
 

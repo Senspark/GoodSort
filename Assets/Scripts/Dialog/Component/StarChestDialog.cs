@@ -1,4 +1,5 @@
 using System;
+using DG.Tweening;
 using Dialog.Controller;
 using TMPro;
 using UnityEngine;
@@ -11,9 +12,12 @@ namespace Dialog
         [SerializeField] private Slider starProgress;
         [SerializeField] private TMP_Text textProgress;
         [SerializeField] private TMP_Text textRewardCoins;
-        [SerializeField] private GameObject boosterRewardContainer;
         [SerializeField] private Booster.Booster boosterReward;
+        [SerializeField] private RectTransform panelStarChest;
+        [SerializeField] private RectTransform panelOpenChest;
+        [SerializeField] private Button btnContinue;
         [SerializeField] private Button btnClaim;
+        [SerializeField] private Button btnClaimX2;
 
         private IStarChestDialogController _controller;
         private Action _onClaimed;
@@ -21,7 +25,9 @@ namespace Dialog
         protected override void Awake()
         {
             base.Awake();
+            btnContinue.onClick.AddListener(OnContinueClicked);
             btnClaim.onClick.AddListener(OnClaimClicked);
+            btnClaimX2.onClick.AddListener(OnClaimX2Clicked);
         }
 
         public override void Show(Canvas canvas)
@@ -52,20 +58,31 @@ namespace Dialog
 
             if (reward.BoosterQuantity > 0)
             {
-                boosterRewardContainer.SetActive(true);
                 boosterReward.SetType(reward.Booster).SetQuantity(reward.BoosterQuantity);
             }
-            else
-            {
-                boosterRewardContainer.SetActive(false);
-            }
+            panelStarChest.gameObject.SetActive(true);
+            panelOpenChest.gameObject.SetActive(false);
         }
 
         private void OnClaimClicked()
         {
-            var reward = _controller.ClaimChest();
+            _controller.ClaimChest();
             Hide();
             _onClaimed?.Invoke();
+        }
+        
+        private void OnClaimX2Clicked()
+        {
+            _controller.ClaimChest(true);
+            Hide();
+            _onClaimed?.Invoke();
+        }
+        
+        private void OnContinueClicked()
+        {
+            // immediately hide star chest panel and tween fade in panel open chest
+            panelStarChest.gameObject.SetActive(false);
+            panelOpenChest.gameObject.SetActive(true);
         }
     }
 }

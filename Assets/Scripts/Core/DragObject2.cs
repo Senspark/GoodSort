@@ -128,6 +128,7 @@ namespace Core
 
         // Getters/Setters
         public Vector3 GetOriginalPosition() => _originalPosition;
+        public Bounds GetSpriteBounds() => spriteRenderer.bounds;
         public bool ShouldReturnToOriginal() => returnToOriginal;
         public void SetDraggable(bool draggable) => isDraggable = draggable;
     }

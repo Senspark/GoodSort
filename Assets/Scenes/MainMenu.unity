@@ -605,7 +605,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 886.1539, y: 1920}
+  m_SizeDelta: {x: 1080, y: 1920}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &76730919
 MonoBehaviour:
@@ -3628,7 +3628,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 886.1539, y: 1920}
+  m_SizeDelta: {x: 1080, y: 1920}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &548486379
 MonoBehaviour:
@@ -5041,7 +5041,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 695340898}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1713247979}
+        m_TargetAssemblyTypeName: UI.MainMenu, Assembly-CSharp
+        m_MethodName: ShowStarChestDialog
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &695340898
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6296,7 +6308,7 @@ MonoBehaviour:
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
   m_Interactable: 1
-  m_TargetGraphic: {fileID: 0}
+  m_TargetGraphic: {fileID: 864422495}
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
@@ -8891,7 +8903,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 886.1539, y: 1920}
+  m_SizeDelta: {x: 1080, y: 1920}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1349278838
 MonoBehaviour:
@@ -9462,7 +9474,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 88654023571742368, guid: 7dc4ea38608e8440581dc589d9be8174, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 88654023571742368, guid: 7dc4ea38608e8440581dc589d9be8174, type: 3}
       propertyPath: m_AnchorMin.x
@@ -9470,7 +9482,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 88654023571742368, guid: 7dc4ea38608e8440581dc589d9be8174, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 88654023571742368, guid: 7dc4ea38608e8440581dc589d9be8174, type: 3}
       propertyPath: m_SizeDelta.x
@@ -9510,11 +9522,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 88654023571742368, guid: 7dc4ea38608e8440581dc589d9be8174, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 443.07693
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 88654023571742368, guid: 7dc4ea38608e8440581dc589d9be8174, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -107
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 88654023571742368, guid: 7dc4ea38608e8440581dc589d9be8174, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -12853,7 +12865,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -300.00006}
+  m_AnchoredPosition: {x: 0, y: -600.00006}
   m_SizeDelta: {x: 0, y: 300}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &2103302353

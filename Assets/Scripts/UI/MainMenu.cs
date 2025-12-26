@@ -43,17 +43,13 @@ namespace UI
             }
         }
 
-        private void ShowStarChestDialog()
+        public void ShowStarChestDialog()
         {
             _ = PrefabUtils.LoadPrefab("Prefabs/Dialog/StarChestDialog")
                 .ContinueWith(prefab =>
                 {
                     var dialog = UIControllerFactory.Instance.Instantiate<StarChestDialog>(prefab);
-                    dialog.OnClaimed(() =>
-                    {
-                        UpdateCoinBar();
-                        CheckAndShowStarChest();
-                    });
+                    dialog.OnClaimed(UpdateCoinBar);
                     dialog.Show(canvasDialog);
                 });
         }

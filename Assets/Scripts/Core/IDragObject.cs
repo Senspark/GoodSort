@@ -8,10 +8,11 @@ namespace Core
          * Unique Id của Item trong Game Scene
          */
         int Id { get; }
-        
+
         Vector3 Position { get; }
 
         Vector3 GetOriginalPosition();
+        Bounds GetSpriteBounds();
         void UpdatePosition(Vector3 newPosition);
         bool ShouldReturnToOriginal();
         void ReturnToOriginalPosition();

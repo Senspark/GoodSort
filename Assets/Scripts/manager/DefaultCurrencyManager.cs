@@ -84,7 +84,7 @@ namespace manager
             return ChestRewards[index];
         }
 
-        public ChestReward ClaimChest()
+        public ChestReward ClaimChest(bool withAds = false)
         {
             if (GetPendingChests() <= 0)
             {
@@ -94,7 +94,7 @@ namespace manager
             var reward = GetNextChestReward();
             _totalStars -= ChestThreshold;
             _chestClaimCount++;
-            _coins += reward.Coins;
+            _coins += reward.Coins * (withAds ? 2 : 1);
             SaveData();
             DispatchEvent(observer => observer.OnCoinsChanged?.Invoke(_coins));
             DispatchEvent(observer => observer.OnStarsChanged?.Invoke(_totalStars));

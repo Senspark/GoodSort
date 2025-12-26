@@ -103,7 +103,7 @@ namespace Core
         {
             return _currentDraggingObject;
         }
-        
+
         public void ResetAllObjects()
         {
             foreach (var obj in _dragObjects)

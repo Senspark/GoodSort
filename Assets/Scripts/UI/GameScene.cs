@@ -181,15 +181,23 @@ namespace UI
             UniTask.Void(async () =>
             {
                 await UniTask.Delay(TimeSpan.FromSeconds(0.3f)); // TODO: [Refactor] - bị hard code delay sau khi hiện xong hiệu ứng Blink
-                // demo show text combo
+
                 var starCount = levelUI.GetScore();
+
                 EffectUtils.FlyMultipleStarsToUI(position, levelUI.GetStarPosition(), uiCanvas, starPrefab, starCount);
+
+                // Tăng combo
                 levelUI.IncreaseCombo();
                 var combo = levelUI.GetCombo();
                 var comboColor = GetComboColor(combo);
                 EffectUtils.ShowComboText(position, uiCanvas, $"x{combo}", comboColor);
+
                 await UniTask.Delay(TimeSpan.FromSeconds(0.8f));
+
                 levelUI.AddScore();
+
+                var currencyManager = ServiceLocator.Instance.Resolve<ICurrencyManager>();
+                currencyManager.AddStars(starCount);
             });
         }
 

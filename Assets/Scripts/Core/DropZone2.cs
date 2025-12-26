@@ -51,7 +51,26 @@ namespace Core
             var distance = Vector2.Distance(transform.position, position);
             return distance;
         }
-        
+
+        public float GetOverlapArea(Bounds objectBounds)
+        {
+            var zoneBounds = GetBounds();
+
+            // Tính intersection bounds
+            var minX = Mathf.Max(zoneBounds.min.x, objectBounds.min.x);
+            var maxX = Mathf.Min(zoneBounds.max.x, objectBounds.max.x);
+            var minY = Mathf.Max(zoneBounds.min.y, objectBounds.min.y);
+            var maxY = Mathf.Min(zoneBounds.max.y, objectBounds.max.y);
+
+            // Nếu không overlap
+            if (minX >= maxX || minY >= maxY) return 0f;
+
+            // Tính diện tích overlap
+            var width = maxX - minX;
+            var height = maxY - minY;
+            return width * height;
+        }
+
         public bool ShouldSnapToCenter() => snapToCenter;
         public void SetActive(bool active) => isActive = active;
 

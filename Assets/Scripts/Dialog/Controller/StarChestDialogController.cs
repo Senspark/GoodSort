@@ -9,7 +9,7 @@ namespace Dialog.Controller
         int GetStarsToNextChest();
         int GetChestThreshold();
         ChestReward GetNextReward();
-        ChestReward ClaimChest();
+        ChestReward ClaimChest(bool withAds = false);
         bool HasPendingChest();
     }
 
@@ -45,9 +45,9 @@ namespace Dialog.Controller
             return _currencyManager.GetNextChestReward();
         }
 
-        public ChestReward ClaimChest()
+        public ChestReward ClaimChest(bool withAds = false)
         {
-            return _currencyManager.ClaimChest();
+            return _currencyManager.ClaimChest(withAds);
         }
 
         public bool HasPendingChest()

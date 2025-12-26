@@ -12,7 +12,7 @@ namespace Dialog.Controller
         public void BackToMenuScene();
         public void PlayEffect(AudioEnum audioEnum);
 
-        public void AddStar(int star);
+        public void AddCoins(int coins); // ✅ Đổi từ AddStar → AddCoins
     }
 
     public class CompleteLevelDialogController : ICompleteLevelDialogController
@@ -46,9 +46,9 @@ namespace Dialog.Controller
             _audioManager.PlaySound(audioEnum);
         }
 
-        public void AddStar(int star)
+        public void AddCoins(int coins) // ✅ Đổi từ AddStar → AddCoins
         {
-            _currencyManager.AddStars(star);
+            _currencyManager.AddCoins(coins); // ✅ Cộng vào Coins thay vì Stars
         }
     }
 }
