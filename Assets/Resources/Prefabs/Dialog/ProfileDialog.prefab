@@ -269,18 +269,18 @@ MonoBehaviour:
   avatarPrefab: {fileID: 2488532160287114500, guid: 9cb0784dddb9945cc9072dbbd7fbe848, type: 3}
   avatarContainer: {fileID: 6209794123327377435}
   avatarSprites:
-  - {fileID: 7017509393210701290, guid: 7aeded51cc6414675bccb4525089df98, type: 3}
-  - {fileID: 628682797261203071, guid: 03ddef1e92407436081def16b0d25259, type: 3}
-  - {fileID: 3913460935259348587, guid: 35d5b4f540d0e410ebc8c8ef4b54421d, type: 3}
-  - {fileID: -2663842577821076175, guid: 417b52d325a6e4071a0e50c020486362, type: 3}
-  - {fileID: -1890636672552319607, guid: ccbb51880f6a149a9a5b73124037ca27, type: 3}
-  - {fileID: 5790049602992772160, guid: 4cb9592f3ce4b44e09caa5c212f36ffb, type: 3}
-  - {fileID: -7459693483250247586, guid: 3d04e68e9e0674f5eb5fc63b535c92de, type: 3}
-  - {fileID: 8782577196703318923, guid: aa4c7f5083a3443bdac9063a6066c20f, type: 3}
-  - {fileID: -4315780806397064911, guid: 4803064282d114d1887d9920b7c3dd66, type: 3}
-  - {fileID: 7231865743386432610, guid: e31f227956b7f47d9bcc2a4982ef00bc, type: 3}
-  - {fileID: -4320707168600177274, guid: 2e9fe01ba19d541a5bdf1c4a4d46afdb, type: 3}
-  - {fileID: 4959850118409636482, guid: 5a556765228cc4e4b923e37629ebdd82, type: 3}
+  - {fileID: 21300000, guid: 03ddef1e92407436081def16b0d25259, type: 3}
+  - {fileID: 21300000, guid: 35d5b4f540d0e410ebc8c8ef4b54421d, type: 3}
+  - {fileID: 21300000, guid: 417b52d325a6e4071a0e50c020486362, type: 3}
+  - {fileID: 21300000, guid: ccbb51880f6a149a9a5b73124037ca27, type: 3}
+  - {fileID: 21300000, guid: 4cb9592f3ce4b44e09caa5c212f36ffb, type: 3}
+  - {fileID: 21300000, guid: 3d04e68e9e0674f5eb5fc63b535c92de, type: 3}
+  - {fileID: 21300000, guid: aa4c7f5083a3443bdac9063a6066c20f, type: 3}
+  - {fileID: 21300000, guid: 4803064282d114d1887d9920b7c3dd66, type: 3}
+  - {fileID: 21300000, guid: e31f227956b7f47d9bcc2a4982ef00bc, type: 3}
+  - {fileID: 21300000, guid: 2e9fe01ba19d541a5bdf1c4a4d46afdb, type: 3}
+  - {fileID: 21300000, guid: 5a556765228cc4e4b923e37629ebdd82, type: 3}
+  - {fileID: 21300000, guid: d4f9d301d269e4104b06bf1370b57a95, type: 3}
 --- !u!1 &1905085695130374776
 GameObject:
   m_ObjectHideFlags: 0
@@ -1295,8 +1295,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -10}
-  m_SizeDelta: {x: 182, y: 220}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 196, y: 196}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6348771404843831443
 CanvasRenderer:
@@ -1326,7 +1326,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 3913460935259348587, guid: 35d5b4f540d0e410ebc8c8ef4b54421d, type: 3}
+  m_Sprite: {fileID: -8593363048089091735, guid: 03ddef1e92407436081def16b0d25259, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1

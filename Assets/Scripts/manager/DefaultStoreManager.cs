@@ -41,14 +41,14 @@ namespace manager
         {
             _coins += amount;
             SaveData();
-            DispatchEvent(observer => observer.OnCoinsChanged?.Invoke(_coins));
+            DispatchEvent(observer => observer.OnCoinsChanged?.Invoke());
         }
 
         public void SetCoins(int coins)
         {
             _coins = coins;
             SaveData();
-            DispatchEvent(observer => observer.OnCoinsChanged?.Invoke(_coins));
+            DispatchEvent(observer => observer.OnCoinsChanged?.Invoke());
         }
 
         public int GetCoins()
@@ -60,7 +60,7 @@ namespace manager
         {
             _totalStars += amount;
             SaveData();
-            DispatchEvent(observer => observer.OnStarsChanged?.Invoke(_totalStars));
+            DispatchEvent(observer => observer.OnStarsChanged?.Invoke());
         }
 
         public int GetTotalStars()
@@ -96,8 +96,8 @@ namespace manager
             _chestClaimCount++;
             _coins += reward.Coins * (withAds ? 2 : 1);
             SaveData();
-            DispatchEvent(observer => observer.OnCoinsChanged?.Invoke(_coins));
-            DispatchEvent(observer => observer.OnStarsChanged?.Invoke(_totalStars));
+            DispatchEvent(observer => observer.OnCoinsChanged?.Invoke());
+            DispatchEvent(observer => observer.OnStarsChanged?.Invoke());
             return reward;
         }
 

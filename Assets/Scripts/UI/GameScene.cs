@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Core;
 using Cysharp.Threading.Tasks;
 using Defines;
@@ -34,10 +35,12 @@ namespace UI
         private ILevelLoaderManager _levelLoaderManager;
         private ILevelManager _levelManager;
         private IAudioManager _audioManager;
+        private IAnalyticsManager _analyticsManager;
 
         private GameStateType State { get; set; } = GameStateType.UnInitialize;
         private LevelView _levelView;
         private bool _didDrag = false;
+        private int _levelPlaying;
 
         private void Awake()
         {
@@ -64,6 +67,7 @@ namespace UI
                 _levelLoaderManager = services.Resolve<ILevelLoaderManager>();
                 _levelManager = services.Resolve<ILevelManager>();
                 _audioManager = services.Resolve<IAudioManager>();
+                _analyticsManager = services.Resolve<IAnalyticsManager>();
                 State = GameStateType.Initialized;
             }
         }
@@ -94,6 +98,8 @@ namespace UI
                 {
                     _didDrag = true;
                     State = GameStateType.Playing;
+                    // Track: Start Level
+                    _analyticsManager?.PushGameLevel(_levelPlaying, "normal");
                 }
             }
             if (State == GameStateType.Playing)
@@ -101,6 +107,8 @@ namespace UI
                 _levelView.Step(Time.deltaTime);
                 if (_levelView.GetStatus() != LevelStatus.Finished) return;
                 State = GameStateType.GameOver;
+                // Track: Fail Level (Time Out)
+                _analyticsManager?.PopGameLevel(false);
                 OpenTimeOutDialog().Forget();
             }
         }
@@ -112,12 +120,14 @@ namespace UI
                 if (State == GameStateType.GameOver) return;
                 State = GameStateType.GameOver;
                 dragDropManager.Pause();
+                _analyticsManager?.PopGameLevel(false);
                 OpenLoseLevelDialog().Forget();
             }
         }
 
         private void LoadLevel(int level)
         {
+            _levelPlaying = level;
             var builder = new LevelConfigBuilder(_levelLoaderManager).SetLevel(level).Build();
             var levelView = builder.LevelObject.GetComponent<LevelView>();
             levelView.transform.SetParent(container.transform,false);
@@ -134,6 +144,12 @@ namespace UI
             _levelAnimation.SetOnShelfCleared(OnTopLayerCleared);
             _levelView = levelView;
             State = GameStateType.Loaded;
+
+            // Track: Start Level
+            _analyticsManager?.LogEvent("start_level", new Dictionary<string, object>
+            {
+                { "level", level }
+            });
         }
 
         private void CleanUp()
@@ -229,6 +245,8 @@ namespace UI
             State = GameStateType.GameOver;
             dragDropManager.Pause();
             
+            // Track: Win Level
+            _analyticsManager?.PopGameLevel(true);
             UniTask.Void(async () =>
             {
                 await UniTask.Delay(TimeSpan.FromSeconds(1f));
@@ -269,6 +287,8 @@ namespace UI
             var dialog = prefabDialog.GetComponent<ConfirmDialog>();
             dialog.SetActions(() =>
             {
+                // Track: Quit Level
+                _analyticsManager?.PopGameLevel(false);
                 BackToMenu();
             }, () =>
             {

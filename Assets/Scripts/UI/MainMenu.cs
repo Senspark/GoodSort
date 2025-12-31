@@ -1,9 +1,11 @@
+using System;
 using Cysharp.Threading.Tasks;
 using Defines;
 using Dialog;
 using Factory;
 using UnityEngine;
 using manager.Interface;
+using Mono.Cecil;
 using Senspark;
 using TMPro;
 using UnityEngine.UI;
@@ -15,13 +17,25 @@ namespace UI
     public class MainMenu : MonoBehaviour
     {
         [SerializeField] private Canvas canvasDialog;
-        [SerializeField] private TMP_Text textCoin;
+        [SerializeField] private ResourceBar coinBar;
+        [SerializeField] private ResourceBar starBar;
         [SerializeField] private TMP_Text textCurrentLevel;
+
+        private void Awake()
+        {
+            RegisterObserver();
+        }
         
-        [Header("Cheat")]
-        [SerializeField] private TMP_InputField cheatLevelInputField;
-        [SerializeField] private TMP_InputField cheatCoinInputField;
-        
+        private void RegisterObserver()
+        {
+            var storeManager = ServiceLocator.Instance.Resolve<IStoreManager>();
+            storeManager.AddObserver(new StoreManagerObserver
+            {
+                OnCoinsChanged = UpdateCoinBar,
+                OnStarsChanged = UpdateStarBar
+            });
+        }
+
         private void Start()
         {
             UpdateUI();
@@ -31,6 +45,7 @@ namespace UI
         private void UpdateUI()
         {
             UpdateCoinBar();
+            UpdateStarBar();
             UpdateLevel();
         }
 
@@ -58,7 +73,15 @@ namespace UI
         {
             var storeManager = ServiceLocator.Instance.Resolve<IStoreManager>();
             var coin = storeManager.GetCoins();
-            textCoin.text = $"{coin}";
+            coinBar.Value = coin;
+        }
+        
+        private void UpdateStarBar()
+        {
+            var storeManager = ServiceLocator.Instance.Resolve<IStoreManager>();
+            var star = storeManager.GetTotalStars();
+            starBar.Value = star;
+            starBar.MaxValue = 800;
         }
         
         private void UpdateLevel()
@@ -109,41 +132,6 @@ namespace UI
                     dialog.Show(canvasDialog);
                 });
         }
-        
-        public void OnCheatLevelPressed()
-        {
-            int level;
-            var text = cheatLevelInputField.text;
-            if (string.IsNullOrWhiteSpace(text) || !int.TryParse(text, out var parsed))
-            {
-                level = 1;
-            }
-            else
-            {
-                level = Mathf.Clamp(parsed, 1, 71);
-            }
-
-            var dataManager = ServiceLocator.Instance.Resolve<IDataManager>();
-            dataManager.Set("CurrentLevel", level);
-            UpdateLevel();
-        }
-        
-        public void OnCheatCoinPressed()
-        {
-            int coin;
-            var text = cheatCoinInputField.text;
-            if (string.IsNullOrWhiteSpace(text) || !int.TryParse(text, out var parsed))
-            {
-                coin = 0;
-            }
-            else
-            {
-                coin = Mathf.Clamp(parsed, 0, int.MaxValue);
-            }
-
-            var storeManager = ServiceLocator.Instance.Resolve<IStoreManager>();
-            storeManager.AddCoins(coin);
-            UpdateCoinBar();
-        }
+    
     }
 }

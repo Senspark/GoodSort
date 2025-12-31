@@ -62,6 +62,9 @@ namespace Dialog
             }
             panelStarChest.gameObject.SetActive(true);
             panelOpenChest.gameObject.SetActive(false);
+            
+            // if not enough stars to claim, disable continue button
+            btnContinue.interactable = progress >= threshold;
         }
 
         private void OnClaimClicked()

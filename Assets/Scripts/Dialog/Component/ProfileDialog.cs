@@ -24,7 +24,12 @@ namespace Dialog
         protected override void Awake()
         {
             base.Awake();
-            btnSave?.onClick.AddListener(OnSaveClicked);
+            btnSave?.onClick.AddListener(() =>
+            {
+                // set focus into input field
+                nameInputField.Select();
+                nameInputField.ActivateInputField();
+            });
         }
 
         public override void Show(Canvas canvas)
@@ -34,7 +39,11 @@ namespace Dialog
                 RegisterObserver();
                 UpdateUI();
             });
-            OnWillHide(UnregisterObserver);
+            OnWillHide(() =>
+            {
+                _controller.SaveProfile(nameInputField.text.Trim(), _tempAvatarId);
+                UnregisterObserver();
+            });
             base.Show(canvas);
         }
 
@@ -109,11 +118,6 @@ namespace Dialog
                 var selectedNode = _avatarButtons[i].GetChild(2); // Or Find("Selected")
                 selectedNode.gameObject.SetActive(i == selectedIndex);
             }
-        }
-
-        private void OnSaveClicked()
-        {
-            _controller.SaveProfile(nameInputField.text.Trim(), _tempAvatarId);
         }
     }
 }

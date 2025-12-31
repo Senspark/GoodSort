@@ -6,8 +6,8 @@ namespace manager.Interface
 {
     public class StoreManagerObserver
     {
-        public Action<int> OnCoinsChanged { get; set; }
-        public Action<int> OnStarsChanged { get; set; }
+        public Action OnCoinsChanged { get; set; }
+        public Action OnStarsChanged { get; set; }
     }
     
     public struct ChestReward
@@ -15,6 +15,13 @@ namespace manager.Interface
         public int Coins;
         public BoosterType Booster;
         public int BoosterQuantity;
+    }
+
+    public enum ResourceType
+    {
+        Coins,
+        Stars,
+        Lives
     }
 
     [Service(typeof(IStoreManager))]

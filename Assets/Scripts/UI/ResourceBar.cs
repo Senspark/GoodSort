@@ -1,15 +1,16 @@
 using System;
-using Cysharp.Threading.Tasks;
 using DG.Tweening;
+using manager.Interface;
+using Senspark;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Serialization;
-using UnityEngine.UI;
 
 namespace UI
 {
+    
     public class ResourceBar : MonoBehaviour
     {
+        [SerializeField] private ResourceType resourceType;
         [SerializeField] private TMP_Text label;
         [SerializeField] private bool isDisplayMaxValue;
         
@@ -51,7 +52,22 @@ namespace UI
 
         private void Awake()
         {
-            UpdateDisplay();
+            // UpdateDisplay();
+            // take value from store manager
+            var storeManager = ServiceLocator.Instance.Resolve<IStoreManager>();
+            switch (resourceType)
+            {
+                case ResourceType.Coins:
+                    _value = storeManager.GetCoins();
+                    break;
+                case ResourceType.Stars:
+                    _value = storeManager.GetTotalStars();
+                    break;
+                case ResourceType.Lives:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
         
         private void UpdateDisplay()
