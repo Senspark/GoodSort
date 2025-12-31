@@ -17,7 +17,7 @@ namespace Factory
                 containerManager.AudioManager,
                 containerManager.LevelManager,
                 containerManager.SceneLoader,
-                containerManager.CurrencyManager
+                containerManager.StoreManager
             ));
             factory.Register<SettingDialog>(() => new SettingDialogController(
                 containerManager.AudioManager
@@ -37,12 +37,12 @@ namespace Factory
             ));
             factory.Register<OutOfLivesDialog>(() => new OutOfLivesDialogController(
                 containerManager.ProfileManager,
-                containerManager.CurrencyManager,
+                containerManager.StoreManager,
                 containerManager.SceneLoader,
                 containerManager.AudioManager
             ));
             factory.Register<StarChestDialog>(() => new StarChestDialogController(
-                containerManager.CurrencyManager
+                containerManager.StoreManager
             ));
         }
     }

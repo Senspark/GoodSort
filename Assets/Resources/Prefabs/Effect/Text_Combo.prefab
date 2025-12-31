@@ -66,10 +66,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: ' x1'
+  m_text: x4
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: ddbafb146760f4ee8ad95101b7d9910a, type: 2}
-  m_sharedMaterial: {fileID: -991442612969158631, guid: ddbafb146760f4ee8ad95101b7d9910a, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: ac9e79d600fb043ac832d1ef92e9c36b, type: 2}
+  m_sharedMaterial: {fileID: 1220069968380405375, guid: ac9e79d600fb043ac832d1ef92e9c36b, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -154,4 +154,4 @@ MonoBehaviour:
   greenFont: {fileID: 11400000, guid: ddbafb146760f4ee8ad95101b7d9910a, type: 2}
   blueFont: {fileID: 11400000, guid: 5043d5de2bb1d488d805e95518080b49, type: 2}
   violetFont: {fileID: 11400000, guid: 8038cc68c06e840d38de0bb534a6004a, type: 2}
-  gradientFont: {fileID: 11400000, guid: 086cdc30267bd49ff8a607dbfc5aa80d, type: 2}
+  gradientFont: {fileID: 11400000, guid: ac9e79d600fb043ac832d1ef92e9c36b, type: 2}

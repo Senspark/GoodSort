@@ -15,5 +15,7 @@ namespace Game
         public abstract void Init(int shelfId, int lockCount);
         public abstract void DecreaseLockCount();
         public abstract void OnTopLayerCleared(Action<Vector2> onCleared);
+        
+        public abstract Bounds GetShelfBounds();
     }
 }

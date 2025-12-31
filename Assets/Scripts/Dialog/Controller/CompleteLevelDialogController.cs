@@ -20,19 +20,19 @@ namespace Dialog.Controller
         private readonly IAudioManager _audioManager;
         private readonly ILevelManager _levelManager;
         private readonly ISceneLoader _sceneLoader;
-        private readonly ICurrencyManager _currencyManager;
+        private readonly IStoreManager _storeManager;
 
         public CompleteLevelDialogController(
             IAudioManager audioManager,
             ILevelManager levelManager,
             ISceneLoader sceneLoader,
-            ICurrencyManager currencyManager
+            IStoreManager storeManager
         )
         {
             _audioManager = audioManager;
             _levelManager = levelManager;
             _sceneLoader = sceneLoader;
-            _currencyManager = currencyManager;
+            _storeManager = storeManager;
         }
 
         public void BackToMenuScene()
@@ -48,7 +48,7 @@ namespace Dialog.Controller
 
         public void AddCoins(int coins) // ✅ Đổi từ AddStar → AddCoins
         {
-            _currencyManager.AddCoins(coins); // ✅ Cộng vào Coins thay vì Stars
+            _storeManager.AddCoins(coins); // ✅ Cộng vào Coins thay vì Stars
         }
     }
 }

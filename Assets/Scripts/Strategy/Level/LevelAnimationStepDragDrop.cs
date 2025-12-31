@@ -27,9 +27,17 @@ namespace Strategy.Level
                 for (var slotId = 0; slotId < shelve.DropZones.Length; slotId++)
                 {
                     var sId = slotId;
+                    var dropZone = shelve.DropZones[slotId];
+
+                    // Set dependencies cho DropZone2 để hỗ trợ thuật toán detect mới
+                    if (dropZone is DropZone2 dropZone2)
+                    {
+                        dropZone2.SetDependencies(shelve, _levelDataManager);
+                    }
+
                     _dragDropManager.RegisterDropZone(new DropZoneData
                     {
-                        Zone = shelve.DropZones[slotId],
+                        Zone = dropZone,
                         OnDropped = itemId => OnDropped(itemId, shelve.Id, sId)
                     });
                 }

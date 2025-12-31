@@ -16,7 +16,7 @@ namespace Dialog
         [SerializeField] private RectTransform pointer;
         [SerializeField] private RectTransform left;
         [SerializeField] private RectTransform right;
-        [SerializeField] private CurrencyBar coinBar;
+        [SerializeField] private ResourceBar coinBar;
         [SerializeField] private ClaimButton claimAdsRewardButton;
         [SerializeField] private ClaimButton claimRewardButton;
             
@@ -44,8 +44,8 @@ namespace Dialog
                 
                 claimAdsRewardButton.SetMode(ClaimButton.Mode.WithAds, 2);
                 claimAdsRewardButton.Setup(BaseCoin, OnClaimAdsReward);
-                
-                coinBar.SetValue(0);
+
+                coinBar.Value = 0;
             });
             OnDidShow(() =>
             {
@@ -61,15 +61,13 @@ namespace Dialog
             _controller.PlayEffect(AudioEnum.ClaimComplete);
             _clickedClaim = true;
             _isSlidingBonusBar = false;
-            _ = ShowEffectReward(claimRewardButton.transform as RectTransform, coinBar.GetIcon().transform as RectTransform, BaseCoin);
-            await coinBar.NumberTo(1f, BaseCoin);
-            // wait a bit second then load menu scene
-            await UniTask.Delay(1000);
+            _ = ShowEffectReward(claimRewardButton.transform as RectTransform, coinBar.transform as RectTransform, BaseCoin);
+            coinBar.AnimateTo(BaseCoin);
             _controller.AddCoins(BaseCoin); // ✅ Đổi từ AddStar → AddCoins
             _controller.BackToMenuScene();
         }
         
-        private async void OnClaimAdsReward()
+        private void OnClaimAdsReward()
         {
             if (_clickedClaim) return;
             _controller.PlayEffect(AudioEnum.ClaimComplete);
@@ -77,9 +75,8 @@ namespace Dialog
             _isSlidingBonusBar = false;
             var multiplier = CalculateMultiplier();
             claimAdsRewardButton.SetMode(ClaimButton.Mode.WithAds, multiplier);
-            _ = ShowEffectReward(claimAdsRewardButton.transform as RectTransform, coinBar.GetIcon().transform as RectTransform, BaseCoin);
-            await coinBar.NumberTo(1f, BaseCoin * multiplier);
-            await UniTask.Delay(1000);
+            _ = ShowEffectReward(claimAdsRewardButton.transform as RectTransform, coinBar.transform as RectTransform, BaseCoin);
+            coinBar.AnimateTo(BaseCoin * multiplier);
             _controller.AddCoins(BaseCoin * multiplier); // ✅ Đổi từ AddStar → AddCoins
             _controller.BackToMenuScene();
         }

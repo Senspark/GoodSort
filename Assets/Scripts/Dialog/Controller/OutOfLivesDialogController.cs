@@ -18,31 +18,31 @@ namespace Dialog.Controller
         private const int MaxLives = 5;
 
         private readonly IProfileManager _profileManager;
-        private readonly ICurrencyManager _currencyManager;
+        private readonly IStoreManager _storeManager;
         private readonly ISceneLoader _sceneLoader;
         private readonly IAudioManager _audioManager;
 
         public OutOfLivesDialogController(
             IProfileManager profileManager,
-            ICurrencyManager currencyManager,
+            IStoreManager storeManager,
             ISceneLoader sceneLoader,
             IAudioManager audioManager)
         {
             _profileManager = profileManager;
-            _currencyManager = currencyManager;
+            _storeManager = storeManager;
             _sceneLoader = sceneLoader;
             _audioManager = audioManager;
         }
 
         public bool CanBuyLives()
         {
-            return _currencyManager.GetCoins() >= LivesCost;
+            return _storeManager.GetCoins() >= LivesCost;
         }
 
         public bool BuyLivesAndRestart()
         {
             if (!CanBuyLives()) return false;
-            _currencyManager.AddCoins(-LivesCost);
+            _storeManager.AddCoins(-LivesCost);
             _profileManager.SetLives(MaxLives);
             return true;
         }

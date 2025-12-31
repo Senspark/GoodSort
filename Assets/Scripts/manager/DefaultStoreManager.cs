@@ -7,9 +7,9 @@ using UnityEngine;
 
 namespace manager
 {
-    public class DefaultCurrencyManager : ObserverManager<CurrencyManagerObserver>, ICurrencyManager
+    public class DefaultStoreManager : ObserverManager<StoreManagerObserver>, IStoreManager
     {
-        private const string SaveKey = nameof(DefaultCurrencyManager);
+        private const string SaveKey = nameof(DefaultStoreManager);
         private const int ChestThreshold = 800;
 
         private static readonly ChestReward[] ChestRewards =
@@ -26,7 +26,7 @@ namespace manager
         private int _totalStars;
         private int _chestClaimCount;
 
-        public DefaultCurrencyManager(IDataManager dataManager)
+        public DefaultStoreManager(IDataManager dataManager)
         {
             _dataManager = dataManager;
         }
@@ -110,6 +110,7 @@ namespace manager
                 _coins = data.coins;
                 _totalStars = data.totalStars;
                 _chestClaimCount = data.chestClaimCount;
+                Debug.Log($"StoreManager: {_coins}, {_totalStars}, {_chestClaimCount}");
             }
             catch (Exception)
             {

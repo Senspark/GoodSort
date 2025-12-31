@@ -17,5 +17,7 @@ namespace Core
         void DecreaseLockCount();
         void OnTopLayerCleared([CanBeNull] Action<Vector2> onCleared);
         
+        Bounds GetShelfBounds();
+        
     }
 }

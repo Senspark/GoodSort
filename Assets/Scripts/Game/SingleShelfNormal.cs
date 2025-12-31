@@ -38,5 +38,10 @@ namespace Game
         public override void OnTopLayerCleared(Action<Vector2> onCleared)
         {
         }
+
+        public override Bounds GetShelfBounds()
+        {
+            return sprRenderer.bounds;
+        }
     }
 }

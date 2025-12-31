@@ -63,5 +63,10 @@ namespace Game
         {
             onCleared?.Invoke(transform.position);
         }
+        
+        public override Bounds GetShelfBounds()
+        {
+            return sprRenderer.bounds;
+        }
     }
 }

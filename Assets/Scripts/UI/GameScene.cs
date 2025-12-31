@@ -152,7 +152,9 @@ namespace UI
             if (shelf.Type != ShelfType.Common) return false; // Chỉ cho phép drop vào Common
 
             var layer = _levelDataManager.GetTopLayer(dropzone.ShelfId);
-            if (layer == null || layer.Length == 0 || shelf.LockCount > 0) return false;
+            if (layer == null) return false;
+            if (shelf.LockCount > 0) return false; // Check lock trước
+            if (layer.Length == 0) return true; //
             if (dropzone.SlotId < 0 || dropzone.SlotId >= layer.Length) return false;
             return layer[dropzone.SlotId] == null;
         }
@@ -196,8 +198,8 @@ namespace UI
 
                 levelUI.AddScore();
 
-                var currencyManager = ServiceLocator.Instance.Resolve<ICurrencyManager>();
-                currencyManager.AddStars(starCount);
+                var storeManager = ServiceLocator.Instance.Resolve<IStoreManager>();
+                storeManager.AddStars(starCount);
             });
         }
 

@@ -2462,8 +2462,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b02afdd1516c42d5bc0affc7101b6bde, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  icon: {fileID: 2704416010126952542}
-  valueText: {fileID: 7638580489729141914}
+  label: {fileID: 7638580489729141914}
+  isDisplayMaxValue: 0
 --- !u!1 &5969380277735343986
 GameObject:
   m_ObjectHideFlags: 0

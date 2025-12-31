@@ -4,7 +4,7 @@ using Senspark;
 
 namespace manager.Interface
 {
-    public class CurrencyManagerObserver
+    public class StoreManagerObserver
     {
         public Action<int> OnCoinsChanged { get; set; }
         public Action<int> OnStarsChanged { get; set; }
@@ -17,8 +17,8 @@ namespace manager.Interface
         public int BoosterQuantity;
     }
 
-    [Service(typeof(ICurrencyManager))]
-    public interface ICurrencyManager : IObserverManager<CurrencyManagerObserver>, IService
+    [Service(typeof(IStoreManager))]
+    public interface IStoreManager : IObserverManager<StoreManagerObserver>, IService
     {
         void AddCoins(int amount);
         void SetCoins(int coins);

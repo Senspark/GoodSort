@@ -36,8 +36,8 @@ namespace UI
 
         private void CheckAndShowStarChest()
         {
-            var currencyManager = ServiceLocator.Instance.Resolve<ICurrencyManager>();
-            if (currencyManager.GetPendingChests() > 0)
+            var storeManager = ServiceLocator.Instance.Resolve<IStoreManager>();
+            if (storeManager.GetPendingChests() > 0)
             {
                 ShowStarChestDialog();
             }
@@ -56,8 +56,8 @@ namespace UI
         
         private void UpdateCoinBar()
         {
-            var currencyManager = ServiceLocator.Instance.Resolve<ICurrencyManager>();
-            var coin = currencyManager.GetCoins();
+            var storeManager = ServiceLocator.Instance.Resolve<IStoreManager>();
+            var coin = storeManager.GetCoins();
             textCoin.text = $"{coin}";
         }
         
@@ -141,8 +141,8 @@ namespace UI
                 coin = Mathf.Clamp(parsed, 0, int.MaxValue);
             }
 
-            var currencyManager = ServiceLocator.Instance.Resolve<ICurrencyManager>();
-            currencyManager.AddCoins(coin);
+            var storeManager = ServiceLocator.Instance.Resolve<IStoreManager>();
+            storeManager.AddCoins(coin);
             UpdateCoinBar();
         }
     }

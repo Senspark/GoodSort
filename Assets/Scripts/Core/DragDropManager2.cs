@@ -217,7 +217,6 @@ namespace Core
                 }
             }
 
-            // Handle unsuccessful drop
             if (!successfulDrop && dragObject.ShouldReturnToOriginal())
             {
                 dragObject.ReturnToOriginalPosition();
@@ -228,25 +227,25 @@ namespace Core
             _currentDraggingObject = null;
         }
 
-        private bool DropInto(IDragObject dragObject, DropZoneData targetZoneData)
-        {
-            var targetZone = targetZoneData.Zone;
-
-            if (targetZone != null && _canAcceptDropIntoFunc(targetZone))
-            {
-                // Snap position if needed
-                if (targetZone.ShouldSnapToCenter())
-                {
-                    dragObject.UpdatePosition(targetZone.GetSnapPosition(0));
-                }
-
-                StartCoroutine(ScheduleCallback(targetZoneData, dragObject.Id));
-
-                return true;
-            }
-
-            return false;
-        }
+        // private bool DropInto(IDragObject dragObject, DropZoneData targetZoneData)
+        // {
+        //     var targetZone = targetZoneData.Zone;
+        //
+        //     if (targetZone != null && _canAcceptDropIntoFunc(targetZone))
+        //     {
+        //         // Snap position if needed
+        //         if (targetZone.ShouldSnapToCenter())
+        //         {
+        //             dragObject.UpdatePosition(targetZone.GetSnapPosition(0));
+        //         }
+        //
+        //         StartCoroutine(ScheduleCallback(targetZoneData, dragObject.Id));
+        //
+        //         return true;
+        //     }
+        //
+        //     return false;
+        // }
 
         // Helper methods
         private Vector3 GetMouseWorldPosition()
@@ -269,26 +268,77 @@ namespace Core
             return null;
         }
 
+        // [CanBeNull]
+        // private DropZoneData GetDropZoneAtPosition(Vector2 position)
+        // {
+        //     var dragObjectBounds = _currentDraggingObject.GetSpriteBounds();
+        //     var feasibleZones = new List<(DropZoneData zone, float overlap)>();
+        //     for (var i = _dropZones.Count - 1; i >= 0; i--)
+        //     {
+        //         if (_dropZones[i].Zone is DropZone2 zone2)
+        //         {
+        //             if (_canAcceptDropIntoFunc != null && !_canAcceptDropIntoFunc(_dropZones[i].Zone)) continue;
+        //             var overlap = zone2.GetOverlapArea(dragObjectBounds);
+        //             if (overlap > 0)
+        //             {
+        //                 feasibleZones.Add((_dropZones[i], overlap));
+        //             }
+        //         }
+        //     }
+        //     if (feasibleZones.Count == 0) return null;
+        //     return feasibleZones.OrderByDescending(e => e.overlap).First().zone;
+        // }
+
         [CanBeNull]
         private DropZoneData GetDropZoneAtPosition(Vector2 position)
         {
-            var feasibleZones = new List<(DropZoneData zone, float distance)>();
-            for (var i = _dropZones.Count - 1; i >= 0; i--)
+            var dragObjectBounds = _currentDraggingObject.GetSpriteBounds();
+
+            var shelfOverlaps = new Dictionary<int, (DropZone2 zone, float overlap)>();
+
+            foreach (var zoneData in _dropZones)
             {
-                if(_dropZones[i].Zone.ContainsPosition(position))
+                if (zoneData.Zone is not DropZone2 zone2) continue;
+
+                var shelfId = zone2.ShelfId;
+
+                if (shelfOverlaps.ContainsKey(shelfId)) continue;
+
+                var shelfOverlap = zone2.GetShelfOverlapArea(dragObjectBounds);
+                if (shelfOverlap > 0)
                 {
-                    if(_canAcceptDropIntoFunc != null && !_canAcceptDropIntoFunc(_dropZones[i].Zone)) continue;
-                    var distance = float.MaxValue;
-                    if(_dropZones[i].Zone is DropZone2 zone2)
-                    {
-                        distance = zone2.GetDetectionDistance(position);
-                    }
-                    feasibleZones.Add((_dropZones[i], distance));
+                    shelfOverlaps[shelfId] = (zone2, shelfOverlap);
                 }
             }
-            if(feasibleZones.Count == 0) return null;
-            return feasibleZones.OrderBy(e => e.distance).First().zone;
+
+            if (shelfOverlaps.Count == 0) return null;
+
+            var bestShelf = shelfOverlaps.OrderByDescending(e => e.Value.overlap).First();
+            var bestZone2 = bestShelf.Value.zone;
+
+            var emptyDropZone = bestZone2.GetNearestEmptyDropZone(position);
+            if (emptyDropZone == null) return null;
+
+            return _dropZones.Find(e => e.Zone == emptyDropZone);
         }
+
+        private bool DropInto(IDragObject dragObject, DropZoneData targetZoneData)
+        {
+            var targetZone = targetZoneData.Zone;
+
+            if (targetZone == null || !_canAcceptDropIntoFunc(targetZone)) return false;
+
+            // Snap position if needed
+            if (targetZone.ShouldSnapToCenter())
+            {
+                dragObject.UpdatePosition(targetZone.GetSnapPosition(0));
+            }
+
+            StartCoroutine(ScheduleCallback(targetZoneData, dragObject.Id));
+            return true;
+        }
+
+        #endregion
 
         private static IEnumerator ScheduleCallback(DropZoneData dropZone, int dragId)
         {
@@ -296,7 +346,6 @@ namespace Core
             dropZone.OnDropped(dragId);
         }
 
-        #endregion
     }
 
     public class DropZoneData

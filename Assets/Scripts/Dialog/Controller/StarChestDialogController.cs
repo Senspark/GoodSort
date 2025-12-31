@@ -16,21 +16,21 @@ namespace Dialog.Controller
     public class StarChestDialogController : IStarChestDialogController
     {
         private const int ChestThreshold = 800;
-        private readonly ICurrencyManager _currencyManager;
+        private readonly IStoreManager _storeManager;
 
-        public StarChestDialogController(ICurrencyManager currencyManager)
+        public StarChestDialogController(IStoreManager storeManager)
         {
-            _currencyManager = currencyManager;
+            _storeManager = storeManager;
         }
 
         public int GetTotalStars()
         {
-            return _currencyManager.GetTotalStars();
+            return _storeManager.GetTotalStars();
         }
 
         public int GetStarsToNextChest()
         {
-            var total = _currencyManager.GetTotalStars();
+            var total = _storeManager.GetTotalStars();
             var remaining = total % ChestThreshold;
             return ChestThreshold - remaining;
         }
@@ -42,17 +42,17 @@ namespace Dialog.Controller
 
         public ChestReward GetNextReward()
         {
-            return _currencyManager.GetNextChestReward();
+            return _storeManager.GetNextChestReward();
         }
 
         public ChestReward ClaimChest(bool withAds = false)
         {
-            return _currencyManager.ClaimChest(withAds);
+            return _storeManager.ClaimChest(withAds);
         }
 
         public bool HasPendingChest()
         {
-            return _currencyManager.GetPendingChests() > 0;
+            return _storeManager.GetPendingChests() > 0;
         }
     }
 }
