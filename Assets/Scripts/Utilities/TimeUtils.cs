@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
@@ -23,6 +24,18 @@ namespace Utilities
             return Regex.Replace(format, "HH|MM|mm|ss", match => replacements[match.Value]);
 
             string Pad(int num) => num.ToString("D2");
+        }
+        
+        public static long ConvertDateTimeToEpochSeconds(DateTime dateTime) {
+            var offset = new DateTimeOffset(dateTime);
+            var epoch = offset.ToUnixTimeSeconds();
+            return epoch;
+        }
+
+        public static DateTime ConvertEpochSecondsToLocalDateTime(long epoch) {
+            var offset = DateTimeOffset.FromUnixTimeSeconds(epoch);
+            var localDateTime = offset.LocalDateTime;
+            return localDateTime;
         }
     }
 }

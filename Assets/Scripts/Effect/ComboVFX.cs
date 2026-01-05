@@ -1,7 +1,6 @@
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
-using UnityEngine.TextCore.Text;
 
 namespace Effect
 {
@@ -46,7 +45,6 @@ namespace Effect
 
         public void Play()
         {
-            // Text di chuyển nhẹ lên trên (1s) rồi opacity giảm dần về 0 (0.5s)
             var tmpText = GetComponent<TMP_Text>();
             var rectTransform = GetComponent<RectTransform>();
             
@@ -63,7 +61,6 @@ namespace Effect
 
             sequence.OnComplete(() =>
             {
-                Debug.Log("Destroy ------->");
                 Destroy(gameObject);
             });
         }

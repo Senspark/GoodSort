@@ -16,10 +16,15 @@ namespace UI.Menu
         [SerializeField] private TMP_InputField edbCoin;
         [SerializeField] private Button btnSaveCoin;
         
+        [Header("Star")]
+        [SerializeField] private TMP_InputField edbStar;
+        [SerializeField] private Button btnSaveStar;
+        
         private void Start()
         {
             btnSaveLevel.onClick.AddListener(OnSaveLevel);
             btnSaveCoin.onClick.AddListener(OnSaveCoin);
+            btnSaveStar.onClick.AddListener(OnSaveStar);
         }
 
         private void OnSaveLevel()
@@ -34,6 +39,13 @@ namespace UI.Menu
             var coin = int.Parse(edbCoin.text);
             var storeManager = ServiceLocator.Instance.Resolve<IStoreManager>();
             storeManager.AddCoins(coin);
+        }
+        
+        private void OnSaveStar()
+        {
+            var star = int.Parse(edbStar.text);
+            var storeManager = ServiceLocator.Instance.Resolve<IStoreManager>();
+            storeManager.AddStars(star);
         }
     }
 }

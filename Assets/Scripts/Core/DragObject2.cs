@@ -20,6 +20,8 @@ namespace Core
 
         // State
         private Vector3 _originalPosition;
+        private Vector3 _originalLocalPosition;
+        private Transform _originalParent;
         private Color _originalColor;
         private Vector3 _originalScale;
         private int _originalSortingOrder;
@@ -71,7 +73,19 @@ namespace Core
         public void OnStartDrag()
         {
             _isBeingDragged = true;
+            _originalParent = transform.parent;
+            _originalLocalPosition = transform.localPosition;
             _originalPosition = transform.position;
+
+            Debug.Log($"[DRAG START] Item: {gameObject.name}");
+            Debug.Log($"[DRAG START] Original Parent: {(_originalParent ? _originalParent.name : "NULL")}");
+            Debug.Log($"[DRAG START] Original LocalPos: {_originalLocalPosition}");
+            Debug.Log($"[DRAG START] Original WorldPos: {_originalPosition}");
+
+            transform.SetParent(null, true);
+
+            Debug.Log($"[DRAG START] AFTER Detach - WorldPos: {transform.position}, LocalPos: {transform.localPosition}");
+            Debug.Log($"[DRAG START] AFTER Detach - Parent: {(transform.parent ? transform.parent.name : "NULL")}");
 
             // Bring to front
             spriteRenderer.sortingOrder = _originalSortingOrder + 100;
@@ -80,6 +94,16 @@ namespace Core
         public void OnEndDrag()
         {
             _isBeingDragged = false;
+
+            Debug.Log($"[DRAG END] Item: {gameObject.name}");
+            Debug.Log($"[DRAG END] Current Parent: {(transform.parent ? transform.parent.name : "NULL")}");
+            Debug.Log($"[DRAG END] Current WorldPos: {transform.position}, LocalPos: {transform.localPosition}");
+
+            // ❌ KHÔNG re-attach ở đây!
+            // OnDrop sẽ xử lý việc set parent mới
+            // Nếu drop fail, ReturnToOriginalPosition() sẽ được gọi
+
+            Debug.Log($"[DRAG END] Skip re-attach, waiting for OnDrop or ReturnToOriginalPosition");
 
             // Reset sorting order
             spriteRenderer.sortingOrder = _originalSortingOrder;
@@ -107,7 +131,21 @@ namespace Core
 
         public void ReturnToOriginalPosition()
         {
-            transform.position = _originalPosition;
+            Debug.Log($"[RETURN] Item: {gameObject.name}");
+            Debug.Log($"[RETURN] Original Parent: {(_originalParent ? _originalParent.name : "NULL")}");
+            Debug.Log($"[RETURN] Original LocalPos: {_originalLocalPosition}");
+
+            if (_originalParent != null)
+            {
+                transform.SetParent(_originalParent, false);
+                transform.localPosition = _originalLocalPosition;
+                Debug.Log($"[RETURN] AFTER Return - WorldPos: {transform.position}, LocalPos: {transform.localPosition}");
+            }
+            else
+            {
+                transform.position = _originalPosition;
+                Debug.Log($"[RETURN] AFTER Return (no parent) - WorldPos: {transform.position}");
+            }
         }
 
         // 🔍 Debug Gizmo: visualize Sprite bounds

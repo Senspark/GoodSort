@@ -68,6 +68,7 @@ namespace UI
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+            UpdateDisplay();
         }
         
         private void UpdateDisplay()

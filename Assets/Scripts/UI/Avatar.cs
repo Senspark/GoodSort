@@ -21,7 +21,9 @@ namespace UI
             { "6", "Avatar/avatar_6" },
             { "7", "Avatar/avatar_7" },
             { "8", "Avatar/avatar_8" },
-            { "9", "Avatar/avatar_9" }
+            { "9", "Avatar/avatar_9" },
+            { "10", "Avatar/avatar_10" },
+            { "11", "Avatar/avatar_11" }
         };
 
         private IProfileManager _profileManager;

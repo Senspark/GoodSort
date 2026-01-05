@@ -7349,7 +7349,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b37972fc1b0f42ddb61067bfff1378a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 2
+  speed: 1.5
   topToBottom: 1
   boundary: {x: 3, y: 12}
   spacing: 2.25

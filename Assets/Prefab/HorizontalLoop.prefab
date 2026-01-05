@@ -3632,7 +3632,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 501238e4563640f0b083c4cf753a3b20, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 1.5
+  speed: 1
   rightToLeft: 1
   boundary: {x: 15, y: 2}
   spacing: 3.75

@@ -7,6 +7,7 @@ using JetBrains.Annotations;
 using manager.Interface;
 using Senspark;
 using UnityEngine;
+using UnityEngine.Analytics;
 
 namespace manager
 {
@@ -21,6 +22,8 @@ namespace manager
         public IProfileManager ProfileManager { get; set; }
         public IStoreManager StoreManager { get; set; }
         public IAnalyticsManager AnalyticsManager { get; set; }
+        
+        public IDateTimeManager DateTimeManager { get; set; }
     }
 
     public class ServiceInitializer : IServiceDeclaration
@@ -38,8 +41,9 @@ namespace manager
         public ILevelLoaderManager LevelLoaderManager { get; set; }
         public IProfileManager ProfileManager { get; set; }
         public IStoreManager StoreManager { get; set; }
-        
         public IAnalyticsManager AnalyticsManager { get; set; }
+        
+        public IDateTimeManager DateTimeManager { get; set; }
 
         #endregion
 
@@ -73,6 +77,7 @@ namespace manager
             ProfileManager = new DefaultProfileManager(DataManager);
             StoreManager = new DefaultStoreManager(DataManager);
             AnalyticsManager = new UnityAnalyticsManager();
+            DateTimeManager = new DefaultDateTimeManager(DataManager);
 
             var configManager = new DefaultConfigManager();
             configManager.SetDefaultValue(ConfigKey.LevelConfig, data.LevelConfig);

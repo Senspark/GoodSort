@@ -800,7 +800,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 330}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 644, y: 204}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &5763977129416953392
 MonoBehaviour:
@@ -875,7 +875,7 @@ RectTransform:
   m_Father: {fileID: 6942938670682092295}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0.813, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 8}
   m_Pivot: {x: 0, y: 0.5}
@@ -1294,7 +1294,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2275553814500174002
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1343,7 +1343,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &2803036651037072243
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1472,6 +1472,7 @@ MonoBehaviour:
   canvasGroup: {fileID: 8953854876351851799}
   overlay: {fileID: 2299124968345601846}
   starProgress: {fileID: 6058481013588951236}
+  textButton: {fileID: 1616598302999811288}
   textProgress: {fileID: 8369302860079140413}
   textRewardCoins: {fileID: 6077269326575081070}
   boosterReward: {fileID: 488623954241697417}
@@ -1743,9 +1744,9 @@ RectTransform:
   - {fileID: 1453692988143508442}
   m_Father: {fileID: 8734229887884352205}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 522, y: -102}
   m_SizeDelta: {x: 244, y: 204}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3094653682993045505
@@ -2645,9 +2646,9 @@ RectTransform:
   - {fileID: 7412806358189299426}
   m_Father: {fileID: 8734229887884352205}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 100, y: -102}
   m_SizeDelta: {x: 200, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5691011090743867778

@@ -1,15 +1,19 @@
 using System;
+using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using Dialog.Controller;
+using Factory;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Utilities;
 
 namespace Dialog
 {
     public class StarChestDialog : Dialog<StarChestDialog>
     {
         [SerializeField] private Slider starProgress;
+        [SerializeField] private TMP_Text textButton;
         [SerializeField] private TMP_Text textProgress;
         [SerializeField] private TMP_Text textRewardCoins;
         [SerializeField] private Booster.Booster boosterReward;
@@ -21,6 +25,7 @@ namespace Dialog
 
         private IStarChestDialogController _controller;
         private Action _onClaimed;
+        private bool _claimable = false;
 
         protected override void Awake()
         {
@@ -47,11 +52,11 @@ namespace Dialog
         {
             var total = _controller.GetTotalStars();
             var threshold = _controller.GetChestThreshold();
-            var progress = total % threshold;
+            var progress = Math.Min(1, total / threshold);
 
             starProgress.maxValue = threshold;
-            starProgress.value = progress;
-            textProgress.text = $"{progress}/{threshold}";
+            starProgress.value = progress * threshold;
+            textProgress.text = $"{total}/{threshold}";
 
             var reward = _controller.GetNextReward();
             textRewardCoins.text = $"+{reward.Coins}";
@@ -64,28 +69,49 @@ namespace Dialog
             panelOpenChest.gameObject.SetActive(false);
             
             // if not enough stars to claim, disable continue button
-            btnContinue.interactable = progress >= threshold;
+            _claimable = total >= threshold;
+            if (_claimable) textButton.text = "Claim";
+            else textButton.text = "Continue";
         }
 
         private void OnClaimClicked()
         {
             _controller.ClaimChest();
-            Hide();
             _onClaimed?.Invoke();
+            Hide();
         }
         
         private void OnClaimX2Clicked()
         {
             _controller.ClaimChest(true);
-            Hide();
             _onClaimed?.Invoke();
+            Hide();
         }
         
         private void OnContinueClicked()
         {
             // immediately hide star chest panel and tween fade in panel open chest
-            panelStarChest.gameObject.SetActive(false);
-            panelOpenChest.gameObject.SetActive(true);
+            if (_claimable)
+            {
+                panelStarChest.gameObject.SetActive(false);
+                panelOpenChest.gameObject.SetActive(true);
+            }
+            else
+            {
+                // hide dialog and show dialog select level
+                Hide();
+                ShowPreLevelDialog();
+            }
+        }
+
+        private void ShowPreLevelDialog()
+        {
+            _ = PrefabUtils.LoadPrefab("Prefabs/Dialog/SelectLevelDialog")
+                .ContinueWith(prefab =>
+                {
+                    var dialog = UIControllerFactory.Instance.Instantiate<SelectLevelDialog>(prefab);
+                    dialog.Show(Canvas);
+                });
         }
     }
 }

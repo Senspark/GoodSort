@@ -88,6 +88,11 @@ namespace Game
 
         public void ResetVisual()
         {
+            Debug.Log($"[RESET VISUAL] Item: {gameObject.name}, Display: {_display}");
+            Debug.Log($"[RESET VISUAL] BEFORE - WorldPos: {transform.position}, LocalPos: {transform.localPosition}");
+            Debug.Log($"[RESET VISUAL] BEFORE - Parent: {(transform.parent ? transform.parent.name : "NULL")}");
+            Debug.Log($"[RESET VISUAL] BEFORE - Active: {gameObject.activeSelf}");
+
             // Visible
             if (_display == ShelfLayerDisplay.Hidden)
             {
@@ -103,17 +108,21 @@ namespace Game
             offset.z = MaxZ + layerOrder * 0.01f; // z càng nhỏ thì càng hiển thị trên cùng
             if (Meta.SlotId == 1)
             {
-                offset.z -= 0.001f; // cho item ở giữa hiển thị nổi bật hơn 
+                offset.z -= 0.001f; // cho item ở giữa hiển thị nổi bật hơn
             }
 
+            Debug.Log($"[RESET VISUAL] Calculated offset (localPos): {offset}");
             transform.localPosition = offset;
 
             // Color
             spriteRenderer.color = GetDisplayColor(_display);
-            
+
             // Scale
             // scale 1 for top, scale 0.9 for second
             transform.localScale = new Vector3(1f, 1f, 1f);
+
+            Debug.Log($"[RESET VISUAL] AFTER - WorldPos: {transform.position}, LocalPos: {transform.localPosition}");
+            Debug.Log($"[RESET VISUAL] AFTER - Active: {gameObject.activeSelf}\n");
         }
         
         public void FadeInVisual(float duration)
