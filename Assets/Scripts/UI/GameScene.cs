@@ -80,6 +80,7 @@ namespace UI
             CleanUp();
             LoadLevel(_levelManager.GetCurrentLevel());
             InvokeRepeating(nameof(IntervalAutoCheckDeadlock), 5f, 3f);
+            _analyticsManager?.PushGameLevel(_levelPlaying, "normal");
         }
 
         private void Update()
@@ -98,8 +99,6 @@ namespace UI
                 {
                     _didDrag = true;
                     State = GameStateType.Playing;
-                    // Track: Start Level
-                    _analyticsManager?.PushGameLevel(_levelPlaying, "normal");
                 }
             }
             if (State == GameStateType.Playing)
@@ -334,7 +333,6 @@ namespace UI
         
         private void OnDestroy()
         {
-            CleanUp();
             CancelInvoke(nameof(IntervalAutoCheckDeadlock));
         }
     }
