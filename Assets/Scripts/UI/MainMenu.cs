@@ -18,15 +18,24 @@ namespace UI
         [SerializeField] private ResourceBar starBar;
         [SerializeField] private TMP_Text textCurrentLevel;
 
+        private ILevelManager _levelManager;
+        private IStoreManager _storeManager;
+
         private void Awake()
         {
+            GetServices();
             RegisterObserver();
+        }
+        
+        private void GetServices()
+        {
+            _levelManager = ServiceLocator.Instance.Resolve<ILevelManager>();
+            _storeManager = ServiceLocator.Instance.Resolve<IStoreManager>();
         }
         
         private void RegisterObserver()
         {
-            var storeManager = ServiceLocator.Instance.Resolve<IStoreManager>();
-            storeManager.AddObserver(new StoreManagerObserver
+            _storeManager.AddObserver(new StoreManagerObserver
             {
                 OnCoinsChanged = UpdateCoinBar,
                 OnStarsChanged = UpdateStarBar
@@ -48,8 +57,7 @@ namespace UI
 
         private void CheckAndShowStarChest()
         {
-            var storeManager = ServiceLocator.Instance.Resolve<IStoreManager>();
-            if (storeManager.GetPendingChests() > 0)
+            if (_storeManager.GetPendingChests() > 0)
             {
                 ShowStarChestDialog();
             }
@@ -68,34 +76,30 @@ namespace UI
         
         private void UpdateCoinBar()
         {
-            var storeManager = ServiceLocator.Instance.Resolve<IStoreManager>();
-            var coin = storeManager.GetCoins();
+            var coin = _storeManager.GetCoins();
             coinBar.Value = coin;
         }
         
         private void UpdateStarBar()
         {
-            var storeManager = ServiceLocator.Instance.Resolve<IStoreManager>();
-            var star = storeManager.GetTotalStars();
+            var star = _storeManager.GetTotalStars();
             starBar.Value = star;
             starBar.MaxValue = 800;
         }
         
         private void UpdateLevel()
         {
-            var levelManager = ServiceLocator.Instance.Resolve<ILevelManager>();
-            textCurrentLevel.text = $"Level {levelManager.GetCurrentLevel()}";
+            textCurrentLevel.text = $"Level {_levelManager.GetCurrentLevel()}";
         }
         
 
         public void OnClickPlayButton()
         {
-            var levelManager = ServiceLocator.Instance.Resolve<ILevelManager>();
             _ = PrefabUtils.LoadPrefab("Prefabs/Dialog/SelectLevelDialog")
                 .ContinueWith(prefab =>
                 {
                     var dialog = UIControllerFactory.Instance.Instantiate<SelectLevelDialog>(prefab);
-                    dialog.SetCurrentLevel(levelManager.GetCurrentLevel())
+                    dialog.SetCurrentLevel(_levelManager.GetCurrentLevel())
                         .Show(canvasDialog);
                 });
         }
