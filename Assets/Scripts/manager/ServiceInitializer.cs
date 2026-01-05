@@ -20,6 +20,7 @@ namespace manager
         public ILevelLoaderManager LevelLoaderManager { get; set; }
         public IProfileManager ProfileManager { get; set; }
         public IStoreManager StoreManager { get; set; }
+        public IAnalyticsManager AnalyticsManager { get; set; }
     }
 
     public class ServiceInitializer : IServiceDeclaration
@@ -37,6 +38,8 @@ namespace manager
         public ILevelLoaderManager LevelLoaderManager { get; set; }
         public IProfileManager ProfileManager { get; set; }
         public IStoreManager StoreManager { get; set; }
+        
+        public IAnalyticsManager AnalyticsManager { get; set; }
 
         #endregion
 
@@ -69,6 +72,7 @@ namespace manager
             LevelLoaderManager = new DefaultLevelLoaderManager();
             ProfileManager = new DefaultProfileManager(DataManager);
             StoreManager = new DefaultStoreManager(DataManager);
+            AnalyticsManager = new UnityAnalyticsManager();
 
             var configManager = new DefaultConfigManager();
             configManager.SetDefaultValue(ConfigKey.LevelConfig, data.LevelConfig);
@@ -79,6 +83,9 @@ namespace manager
 
             await AudioManager.Initialize();
             ServiceLocator.Instance.Provide(AudioManager);
+            
+            await AnalyticsManager.Initialize(5f);
+            ServiceLocator.Instance.Provide(AnalyticsManager);
             
             var services = new IService[]
             {

@@ -144,12 +144,6 @@ namespace UI
             _levelAnimation.SetOnShelfCleared(OnTopLayerCleared);
             _levelView = levelView;
             State = GameStateType.Loaded;
-
-            // Track: Start Level
-            _analyticsManager?.LogEvent("start_level", new Dictionary<string, object>
-            {
-                { "level", level }
-            });
         }
 
         private void CleanUp()

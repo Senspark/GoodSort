@@ -1,14 +1,11 @@
-using System;
 using Cysharp.Threading.Tasks;
 using Defines;
 using Dialog;
 using Factory;
 using UnityEngine;
 using manager.Interface;
-using Mono.Cecil;
 using Senspark;
 using TMPro;
-using UnityEngine.UI;
 using Utilities;
 
 namespace UI
