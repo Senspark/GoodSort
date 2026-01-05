@@ -9,6 +9,6 @@ namespace manager.Interface
         bool IsLiveActive();
         TimeSpan GetLiveTimeLeft();
         void RefreshLive();
-        void CheckAndRefreshIfNeeded();
+        void CheckAndRestoreLives();
     }
 }

@@ -331,5 +331,11 @@ namespace UI
                 .LoadScene<MainMenu>(nameof(MainMenu))
                 .Forget();
         }
+        
+        private void OnDestroy()
+        {
+            CleanUp();
+            CancelInvoke(nameof(IntervalAutoCheckDeadlock));
+        }
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using Cysharp.Threading.Tasks;
 using Defines;
 using Dialog;
@@ -7,6 +8,7 @@ using manager.Interface;
 using Senspark;
 using TMPro;
 using Utilities;
+using TimeUtils = Utilities.TimeUtils;
 
 namespace UI
 {
@@ -14,12 +16,16 @@ namespace UI
     public class MainMenu : MonoBehaviour
     {
         [SerializeField] private Canvas canvasDialog;
+        [SerializeField] private TMP_Text textLiveTime;
         [SerializeField] private ResourceBar coinBar;
         [SerializeField] private ResourceBar starBar;
         [SerializeField] private TMP_Text textCurrentLevel;
 
         private ILevelManager _levelManager;
         private IStoreManager _storeManager;
+        private ILivesManager _livesManager;
+        
+        private int observerId;
 
         private void Awake()
         {
@@ -31,21 +37,29 @@ namespace UI
         {
             _levelManager = ServiceLocator.Instance.Resolve<ILevelManager>();
             _storeManager = ServiceLocator.Instance.Resolve<IStoreManager>();
+            _livesManager = ServiceLocator.Instance.Resolve<ILivesManager>();
         }
         
         private void RegisterObserver()
         {
-            _storeManager.AddObserver(new StoreManagerObserver
+            observerId = _storeManager.AddObserver(new StoreManagerObserver
             {
                 OnCoinsChanged = UpdateCoinBar,
                 OnStarsChanged = UpdateStarBar
             });
+        }
+        
+        private void UnregisterObserver()
+        {
+            // remove observer
+            _storeManager.RemoveObserver(observerId);
         }
 
         private void Start()
         {
             UpdateUI();
             CheckAndShowStarChest();
+            InvokeRepeating(nameof(UpdateLiveTime), 0f, 1f);
         }
 
         private void UpdateUI()
@@ -53,6 +67,13 @@ namespace UI
             UpdateCoinBar();
             UpdateStarBar();
             UpdateLevel();
+        }
+        
+        private void UpdateLiveTime()
+        {
+            _livesManager.CheckAndRestoreLives();
+            var timeLeft = _livesManager.GetLiveTimeLeft();
+            textLiveTime.text = TimeUtils.FormatTime((int)timeLeft.TotalSeconds, "HHh mmm");
         }
 
         private void CheckAndShowStarChest()
@@ -133,6 +154,11 @@ namespace UI
                     dialog.Show(canvasDialog);
                 });
         }
-    
+
+        private void OnDestroy()
+        {
+            UnregisterObserver();
+            CancelInvoke(nameof(UpdateLiveTime));
+        }
     }
 }

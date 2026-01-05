@@ -41,7 +41,7 @@ namespace manager
             _dateTimeManager.SetCountdownFromNow(Key, TimeSpan.FromHours(LiveHours));
         }
 
-        public void CheckAndRefreshIfNeeded()
+        public void CheckAndRestoreLives()
         {
             if (_dateTimeManager.IsTimeOut(Key))
             {
