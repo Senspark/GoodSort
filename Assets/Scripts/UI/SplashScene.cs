@@ -35,8 +35,6 @@ namespace UI
         private IEnumerator OnAppLoaded()
         {
             yield return new WaitForSeconds(1f);
-            ServiceLocator.Instance.Resolve<IAudioManager>().PlayMusic(AudioEnum.MenuMusic);
-            // Nếu current level là 1 và chưa finish tutorial là chuyển sang tutorial scene
             if (ServiceLocator.Instance.Resolve<ILevelManager>().GetCurrentLevel() == 1 &&
                 !ServiceLocator.Instance.Resolve<ITutorialManager>().IsTutorialFinished(TutorialType.Onboarding))
             {

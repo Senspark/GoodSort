@@ -25,7 +25,7 @@ namespace UI
         private IStoreManager _storeManager;
         private ILivesManager _livesManager;
         
-        private int observerId;
+        private int _observerId;
 
         private void Awake()
         {
@@ -42,7 +42,7 @@ namespace UI
         
         private void RegisterObserver()
         {
-            observerId = _storeManager.AddObserver(new StoreManagerObserver
+            _observerId = _storeManager.AddObserver(new StoreManagerObserver
             {
                 OnCoinsChanged = UpdateCoinBar,
                 OnStarsChanged = UpdateStarBar
@@ -52,7 +52,7 @@ namespace UI
         private void UnregisterObserver()
         {
             // remove observer
-            _storeManager.RemoveObserver(observerId);
+            _storeManager.RemoveObserver(_observerId);
         }
 
         private void Start()

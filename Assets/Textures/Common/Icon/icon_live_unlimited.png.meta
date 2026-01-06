@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 7cdd3e5ccf4f247ecb29d3a169062be5
+guid: 7aa45a9ad21eb42f39f025956b933dcf
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 4387307349305783306
-    second: icon_infinity 1_0
+      213: -1838517316311792727
+    second: icon_live_unlimited_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: icon_infinity 1_0
+      name: icon_live_unlimited_0
       rect:
         serializedVersion: 2
-        x: 51
-        y: 149
-        width: 398
-        height: 202
+        x: 0
+        y: 2
+        width: 128
+        height: 124
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: a04f4db0ac8d2ec30800000000000000
-      internalID: 4387307349305783306
+      spriteID: 9a3c4dfdd364c76e0800000000000000
+      internalID: -1838517316311792727
       vertices: []
       indices: 
       edges: []
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      icon_infinity 1_0: 4387307349305783306
+      icon_live_unlimited_0: -1838517316311792727
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -99,6 +99,7 @@ namespace Dialog
             _t += Time.deltaTime * 2f;
             var sinValue = (Mathf.Sin(_t) + 1f) * 0.5f; // dao động từ 0 → 1 → 0
             pointer.anchoredPosition = Vector2.Lerp(left.anchoredPosition, right.anchoredPosition, sinValue);
+            claimAdsRewardButton.SetMode(ClaimButton.Mode.WithAds, CalculateMultiplier());
         }
         
         // Effect helper

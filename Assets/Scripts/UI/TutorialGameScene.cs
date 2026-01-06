@@ -36,6 +36,7 @@ namespace UI
         private ITutorialManager _tutorialManager;
         private ITutorial _onboardingTutorial;
         private ILevelManager _levelManager;
+        private IAudioManager _audioManager;
 
         private GameStateType State { get; set; } = GameStateType.UnInitialize;
         private bool _didDrag = false;
@@ -62,6 +63,7 @@ namespace UI
                 _levelLoaderManager = services.Resolve<ILevelLoaderManager>();
                 _tutorialManager = services.Resolve<ITutorialManager>();
                 _levelManager = services.Resolve<ILevelManager>();
+                _audioManager = services.Resolve<IAudioManager>();
                 State = GameStateType.Initialized;
             }
         }
@@ -100,6 +102,7 @@ namespace UI
 
             _levelAnimation.SetOnShelfCleared((_) =>
             {
+                _audioManager.PlaySound(AudioEnum.Match);
                 TutorialEvents.SendEvent(TutorialActionType.OnClear);
             });
             State = GameStateType.Loaded;

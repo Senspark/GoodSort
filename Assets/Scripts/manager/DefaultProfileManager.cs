@@ -10,7 +10,7 @@ namespace manager
     {
         private const string SaveKey = nameof(DefaultProfileManager);
         private const string DefaultName = "Player";
-        private const string DefaultAvatarId = "avt_2";
+        private const string DefaultAvatarId = "0";
         private const int DefaultLives = 0;
 
         private readonly IDataManager _dataManager;

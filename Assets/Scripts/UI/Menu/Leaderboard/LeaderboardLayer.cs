@@ -6,17 +6,39 @@ namespace UI.Menu.Leaderboard
 {
     public class LeaderboardLayer : MonoBehaviour
     {
-        [Header("References")]
         [SerializeField] private GameObject itemPrefab;
         [SerializeField] private Transform content;
         [SerializeField] private Sprite[] avatarList;
+        [SerializeField] private NestedScroll nestedScroll;
+        [SerializeField] private RectTransform viewport;
+        [SerializeField] private ItemLeaderboard staticItem;
 
-        [Header("Mock Data")]
-        [SerializeField] private TextAsset mockDataFile;
+        [Header("Mock Data")] [SerializeField] private TextAsset mockDataFile;
+        
+        private List<LeaderboardEntry> _entries = new();
 
         private void Start()
         {
             LoadLeaderboardData();
+            nestedScroll.onValueChanged.AddListener(OnScroll);
+        }
+
+        private void RefreshEntries(int level, string name)
+        {
+            var entries = ParseMockData(mockDataFile.text);
+            var myEntry = new LeaderboardEntry {rank = 0, level = level, name = name};
+            entries.Add(myEntry);
+            entries.Sort((a, b) => b.level.CompareTo(a.level));
+            _entries = entries;
+            for (var i = 0; i < _entries.Count; i++)
+            {
+                // _entries[i].rank = i + 1;
+            }
+        }
+
+        private void OnScroll(Vector2 pos)
+        {
+            
         }
 
         /// <summary>
