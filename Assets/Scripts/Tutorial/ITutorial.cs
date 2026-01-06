@@ -7,9 +7,7 @@ namespace Tutorial
 
     public enum TutorialActionType
     {
-        OnClick,
-        OnDrag,
-        OnDrop
+        OnClear
     }
     
     public interface ITutorial
@@ -18,11 +16,15 @@ namespace Tutorial
         public void Finish();
         public bool CheckStart();
         public bool CheckFinish();
+        public string GetCurrentTargetName();
     }
-
-    public interface TutorialData
+    
+    public class Step 
     {
-        
+        public string targetObjectName; 
+        public TutorialActionType actionType; 
+        public string eventParameter;
+        public System.Action OnStepStart;
     }
 
     public static class TutorialEvents

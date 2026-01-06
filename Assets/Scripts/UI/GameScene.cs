@@ -131,7 +131,6 @@ namespace UI
             var levelView = builder.LevelObject.GetComponent<LevelView>();
             levelView.transform.SetParent(container.transform,false);
 
-            // var levelConfig = _configManager.GetValue<PuzzleLevelConfig>(ConfigKey.LevelConfig);
             var levelCreator = new LevelCreator(container, shelfItemPrefab);
             var inputData = _levelLoaderManager.GetInputData(level);
             var levelData = levelCreator.SpawnLevel(inputData, OnItemDestroy);

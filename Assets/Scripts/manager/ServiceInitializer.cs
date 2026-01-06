@@ -23,8 +23,8 @@ namespace manager
         public IStoreManager StoreManager { get; set; }
         public IAnalyticsManager AnalyticsManager { get; set; }
         public IDateTimeManager DateTimeManager { get; set; }
-        
         public ILivesManager LivesManager { get; set; }
+        public ITutorialManager TutorialManager { get; set; }
     }
 
     public class ServiceInitializer : IServiceDeclaration
@@ -44,8 +44,8 @@ namespace manager
         public IStoreManager StoreManager { get; set; }
         public IAnalyticsManager AnalyticsManager { get; set; }
         public IDateTimeManager DateTimeManager { get; set; }
-        
         public ILivesManager LivesManager { get; set; }
+        public ITutorialManager TutorialManager { get; set; }
 
         #endregion
 
@@ -81,6 +81,7 @@ namespace manager
             AnalyticsManager = new UnityAnalyticsManager();
             DateTimeManager = new DefaultDateTimeManager(DataManager);
             LivesManager = new DefaultLivesManager(DateTimeManager);
+            TutorialManager = new TutorialManager(DataManager);
 
             var configManager = new DefaultConfigManager();
             configManager.SetDefaultValue(ConfigKey.LevelConfig, data.LevelConfig);
@@ -105,7 +106,8 @@ namespace manager
                 StoreManager,
                 configManager,
                 DateTimeManager,
-                LivesManager
+                LivesManager,
+                TutorialManager,
             };
             TotalSteps = services.Length;
             CurrentStep = 0;

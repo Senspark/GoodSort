@@ -7,8 +7,6 @@ using Cysharp.Threading.Tasks;
 
 using JetBrains.Annotations;
 
-using manager.Interface;
-
 using Newtonsoft.Json;
 
 using Sirenix.OdinInspector;

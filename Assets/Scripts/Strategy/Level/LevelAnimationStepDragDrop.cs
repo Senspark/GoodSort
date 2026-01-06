@@ -76,19 +76,19 @@ namespace Strategy.Level
                 var item = (ShelfItemBasic)_levelDataManager.FindItem(itemId);
                 var shelf = (ShelfBase)_levelDataManager.GetShelf(shelfId);
 
-                Debug.Log($"[DROP] === START DROP ===");
-                Debug.Log($"[DROP] Item: {item.name}, ItemID: {itemId}");
-                Debug.Log($"[DROP] Target Shelf: {shelfId}, Layer: {layerId}, Slot: {slotId}");
-                Debug.Log($"[DROP] BEFORE SetParent - Item WorldPos: {item.transform.position}, LocalPos: {item.transform.localPosition}");
-                Debug.Log($"[DROP] BEFORE SetParent - Item Parent: {(item.transform.parent ? item.transform.parent.name : "NULL")}");
-                Debug.Log($"[DROP] BEFORE SetParent - Shelf WorldPos: {shelf.transform.position}");
+                // Debug.Log($"[DROP] === START DROP ===");
+                // Debug.Log($"[DROP] Item: {item.name}, ItemID: {itemId}");
+                // Debug.Log($"[DROP] Target Shelf: {shelfId}, Layer: {layerId}, Slot: {slotId}");
+                // Debug.Log($"[DROP] BEFORE SetParent - Item WorldPos: {item.transform.position}, LocalPos: {item.transform.localPosition}");
+                // Debug.Log($"[DROP] BEFORE SetParent - Item Parent: {(item.transform.parent ? item.transform.parent.name : "NULL")}");
+                // Debug.Log($"[DROP] BEFORE SetParent - Shelf WorldPos: {shelf.transform.position}");
 
                 item.gameObject.SetActive(false);
-                Debug.Log($"[DROP] SetActive(false) - Item hidden");
+                // Debug.Log($"[DROP] SetActive(false) - Item hidden");
 
                 item.transform.SetParent(shelf.transform, false);
-                Debug.Log($"[DROP] AFTER SetParent - Item WorldPos: {item.transform.position}, LocalPos: {item.transform.localPosition}");
-                Debug.Log($"[DROP] AFTER SetParent - Item Parent: {item.transform.parent.name}");
+                // Debug.Log($"[DROP] AFTER SetParent - Item WorldPos: {item.transform.position}, LocalPos: {item.transform.localPosition}");
+                // Debug.Log($"[DROP] AFTER SetParent - Item Parent: {item.transform.parent.name}");
 
                 var prevShelfId = item.Meta.ShelfId;
                 var prevLayerId = item.Meta.LayerId;
@@ -96,11 +96,11 @@ namespace Strategy.Level
                 _levelDataManager.SetSlotData(prevShelfId, prevLayerId, prevSlotId, null);
                 item.SetShelf(item.Meta.Change(shelfId, layerId, slotId), shelf.SpacingData, ShelfLayerDisplay.Top);
 
-                Debug.Log($"[DROP] BEFORE ResetVisual - Item WorldPos: {item.transform.position}, LocalPos: {item.transform.localPosition}");
+                // Debug.Log($"[DROP] BEFORE ResetVisual - Item WorldPos: {item.transform.position}, LocalPos: {item.transform.localPosition}");
                 item.ResetVisual();
-                Debug.Log($"[DROP] AFTER ResetVisual - Item WorldPos: {item.transform.position}, LocalPos: {item.transform.localPosition}");
-                Debug.Log($"[DROP] AFTER ResetVisual - Item Active: {item.gameObject.activeSelf}");
-                Debug.Log($"[DROP] === END DROP ===\n");
+                // Debug.Log($"[DROP] AFTER ResetVisual - Item WorldPos: {item.transform.position}, LocalPos: {item.transform.localPosition}");
+                // Debug.Log($"[DROP] AFTER ResetVisual - Item Active: {item.gameObject.activeSelf}");
+                // Debug.Log($"[DROP] === END DROP ===\n");
 
                 _levelDataManager.SetSlotData(shelfId, layerId, slotId, item);
 

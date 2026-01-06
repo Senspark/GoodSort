@@ -47,5 +47,12 @@ namespace UI.Menu
             var storeManager = ServiceLocator.Instance.Resolve<IStoreManager>();
             storeManager.AddStars(star);
         }
+        
+        private void OnDestroy()
+        {
+            btnSaveLevel.onClick.RemoveListener(OnSaveLevel);
+            btnSaveCoin.onClick.RemoveListener(OnSaveCoin);
+            btnSaveStar.onClick.RemoveListener(OnSaveStar);
+        }
     }
 }

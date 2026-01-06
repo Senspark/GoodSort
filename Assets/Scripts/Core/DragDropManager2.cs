@@ -227,26 +227,6 @@ namespace Core
             _currentDraggingObject = null;
         }
 
-        // private bool DropInto(IDragObject dragObject, DropZoneData targetZoneData)
-        // {
-        //     var targetZone = targetZoneData.Zone;
-        //
-        //     if (targetZone != null && _canAcceptDropIntoFunc(targetZone))
-        //     {
-        //         // Snap position if needed
-        //         if (targetZone.ShouldSnapToCenter())
-        //         {
-        //             dragObject.UpdatePosition(targetZone.GetSnapPosition(0));
-        //         }
-        //
-        //         StartCoroutine(ScheduleCallback(targetZoneData, dragObject.Id));
-        //
-        //         return true;
-        //     }
-        //
-        //     return false;
-        // }
-
         // Helper methods
         private Vector3 GetMouseWorldPosition()
         {
@@ -267,27 +247,6 @@ namespace Core
 
             return null;
         }
-
-        // [CanBeNull]
-        // private DropZoneData GetDropZoneAtPosition(Vector2 position)
-        // {
-        //     var dragObjectBounds = _currentDraggingObject.GetSpriteBounds();
-        //     var feasibleZones = new List<(DropZoneData zone, float overlap)>();
-        //     for (var i = _dropZones.Count - 1; i >= 0; i--)
-        //     {
-        //         if (_dropZones[i].Zone is DropZone2 zone2)
-        //         {
-        //             if (_canAcceptDropIntoFunc != null && !_canAcceptDropIntoFunc(_dropZones[i].Zone)) continue;
-        //             var overlap = zone2.GetOverlapArea(dragObjectBounds);
-        //             if (overlap > 0)
-        //             {
-        //                 feasibleZones.Add((_dropZones[i], overlap));
-        //             }
-        //         }
-        //     }
-        //     if (feasibleZones.Count == 0) return null;
-        //     return feasibleZones.OrderByDescending(e => e.overlap).First().zone;
-        // }
 
         [CanBeNull]
         private DropZoneData GetDropZoneAtPosition(Vector2 position)
