@@ -1,4 +1,7 @@
 using System.Collections.Generic;
+using System.Linq;
+using manager.Interface;
+using Senspark;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -14,31 +17,119 @@ namespace UI.Menu.Leaderboard
         [SerializeField] private ItemLeaderboard staticItem;
 
         [Header("Mock Data")] [SerializeField] private TextAsset mockDataFile;
-        
-        private List<LeaderboardEntry> _entries = new();
+
+        private RectTransform _myItemInContent;
+        private int _myRank;
+        private IProfileManager _profileManager;
+        private ILevelManager _levelManager;
+        private Sprite _myAvatarSprite;
+        private int _observerId = -1;
 
         private void Start()
         {
+            _profileManager = ServiceLocator.Instance.Resolve<IProfileManager>();
+            _levelManager = ServiceLocator.Instance.Resolve<ILevelManager>();
+            _myAvatarSprite = LoadAvatarSprite(_profileManager.GetAvatarId());
+            RegisterObserver();
             LoadLeaderboardData();
+            ResizeItemWidth(staticItem.gameObject);
             nestedScroll.onValueChanged.AddListener(OnScroll);
+            UpdateStaticItemVisibility();
         }
 
-        private void RefreshEntries(int level, string name)
+        private void OnDestroy()
         {
-            var entries = ParseMockData(mockDataFile.text);
-            var myEntry = new LeaderboardEntry {rank = 0, level = level, name = name};
-            entries.Add(myEntry);
-            entries.Sort((a, b) => b.level.CompareTo(a.level));
-            _entries = entries;
-            for (var i = 0; i < _entries.Count; i++)
+            UnregisterObserver();
+        }
+
+        private void RegisterObserver()
+        {
+            _observerId = _profileManager.AddObserver(new ProfileManagerObserver
             {
-                // _entries[i].rank = i + 1;
+                OnAvatarIdChanged = OnAvatarChanged,
+                OnNameChanged = OnNameChanged
+            });
+        }
+
+        private void UnregisterObserver()
+        {
+            if (_profileManager != null && _observerId >= 0)
+                _profileManager.RemoveObserver(_observerId);
+        }
+
+        private void OnAvatarChanged(string avatarId)
+        {
+            _myAvatarSprite = LoadAvatarSprite(avatarId);
+            // Reload leaderboard to update avatar for player's items
+            LoadLeaderboardData();
+            UpdateStaticItemVisibility();
+        }
+
+        private void OnNameChanged(string newName)
+        {
+            // Reload leaderboard to update name for player's items
+            LoadLeaderboardData();
+            UpdateStaticItemVisibility();
+        }
+
+        /// <summary>
+        /// Load avatar sprite from Resources based on avatarId
+        /// </summary>
+        private Sprite LoadAvatarSprite(string avatarId)
+        {
+            var path = $"Avatar/avatar_{avatarId}";
+            var sprite = Resources.Load<Sprite>(path);
+            if (sprite == null)
+            {
+                Debug.LogWarning($"[LeaderboardLayer] Failed to load avatar at path: {path}");
+                // Fallback to first avatar in list
+                return avatarList.Length > 0 ? avatarList[0] : null;
             }
+            return sprite;
         }
 
         private void OnScroll(Vector2 pos)
         {
-            
+            UpdateStaticItemVisibility();
+        }
+
+        /// <summary>
+        /// Update static item visibility based on player's rank and scroll position
+        /// </summary>
+        private void UpdateStaticItemVisibility()
+        {
+            if (_myRank > 100)
+            {
+                staticItem.gameObject.SetActive(true);
+                return;
+            }
+
+            if (_myItemInContent != null)
+            {
+                bool isVisible = IsItemVisibleInViewport(_myItemInContent);
+                staticItem.gameObject.SetActive(!isVisible);
+            }
+        }
+        
+        bool IsItemVisibleInViewport(RectTransform item)
+        {
+            Vector3[] itemCorners = new Vector3[4];
+            Vector3[] viewportCorners = new Vector3[4];
+
+            item.GetWorldCorners(itemCorners);
+            viewport.GetWorldCorners(viewportCorners);
+
+            Rect itemRect = new Rect(
+                itemCorners[0],
+                itemCorners[2] - itemCorners[0]
+            );
+
+            Rect viewportRect = new Rect(
+                viewportCorners[0],
+                viewportCorners[2] - viewportCorners[0]
+            );
+
+            return itemRect.Overlaps(viewportRect);
         }
 
         /// <summary>
@@ -46,12 +137,53 @@ namespace UI.Menu.Leaderboard
         /// </summary>
         private void LoadLeaderboardData()
         {
-            RemoveAllChildren();
-            var entries = ParseMockData(mockDataFile.text);
-            foreach (var entry in entries)
+            var myPlayerName = _profileManager.GetName();
+            var myPlayerLevel = _levelManager.GetCurrentLevel();
+            var newItem = new LeaderboardEntry
             {
-                CreateLeaderboardItem(entry);
+                rank = 0,
+                level = myPlayerLevel,
+                name = myPlayerName
+            };
+            RemoveAllChildren();
+            _myItemInContent = null;
+            var entries = ParseMockData(mockDataFile.text);
+            entries = AddItem(entries, newItem);
+
+            // Find player's rank after sorting
+            _myRank = entries.Find(e => e.name == myPlayerName).rank;
+
+            // Setup static item with player's data and correct avatar from profile
+            var myEntry = entries.Find(e => e.name == myPlayerName);
+            staticItem.SetData(myEntry.rank, myEntry.name, myEntry.level, _myAvatarSprite);
+
+            for(var i = 0; i < 100; i++)
+            {
+                var itemObj = CreateLeaderboardItem(entries[i], entries[i].name == myPlayerName);
+                // Track player's item in content if within top 100
+                if (entries[i].name == myPlayerName)
+                {
+                    _myItemInContent = itemObj.GetComponent<RectTransform>();
+                }
             }
+        }
+        
+        private List<LeaderboardEntry> AddItem(List<LeaderboardEntry> oldList, LeaderboardEntry newEntry)
+        {
+            newEntry.rank = 0;
+            oldList.Add(newEntry);
+
+            oldList = oldList
+                .OrderByDescending(e => e.level)
+                .ToList();
+
+            for (var i = 0; i < oldList.Count; i++)
+            {
+                var entry = oldList[i];
+                entry.rank = i + 1;
+                oldList[i] = entry;
+            }
+            return oldList;
         }
 
         /// <summary>
@@ -103,13 +235,15 @@ namespace UI.Menu.Leaderboard
         /// <summary>
         /// Create a leaderboard item and add to content
         /// </summary>
-        private void CreateLeaderboardItem(LeaderboardEntry entry)
+        private GameObject CreateLeaderboardItem(LeaderboardEntry entry, bool isMyItem = false)
         {
             var itemObj = Instantiate(itemPrefab, content);
             itemObj.name = $"Item_{entry.rank}_{entry.name}";
             var item = itemObj.GetComponent<ItemLeaderboard>();
-            item.SetData(entry.rank, entry.name, entry.level, avatarList[Random.Range(0, avatarList.Length)]);
+            var avatar = isMyItem ? _myAvatarSprite : avatarList[Random.Range(0, avatarList.Length)];
+            item.SetData(entry.rank, entry.name, entry.level, avatar);
             ResizeItemWidth(itemObj);
+            return itemObj;
         }
 
         /// <summary>
@@ -130,6 +264,7 @@ namespace UI.Menu.Leaderboard
         public void Reload()
         {
             LoadLeaderboardData();
+            UpdateStaticItemVisibility();
         }
     }
 

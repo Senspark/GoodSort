@@ -13,7 +13,8 @@ namespace UI.Menu.Leaderboard
         
         public void SetData(int rank, string name, int level, Sprite avatar)
         {
-            textRank.text = rank.ToString();
+            // Display "100+" for ranks greater than 100
+            textRank.text = rank > 100 ? "100+" : rank.ToString();
             textName.text = name;
             textLevel.text = level.ToString();
             imageAvatar.sprite = avatar;
