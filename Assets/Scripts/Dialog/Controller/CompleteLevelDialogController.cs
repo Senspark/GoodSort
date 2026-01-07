@@ -38,7 +38,15 @@ namespace Dialog.Controller
         public void BackToMenuScene()
         {
             _levelManager.GoToNextLevel();
-            _ = _sceneLoader.LoadScene<MainMenu>(nameof(MainMenu));
+            // _ = _sceneLoader.LoadScene<MainMenu>(nameof(MainMenu));
+            if (_levelManager.GetCurrentLevel() == 3)
+            {
+                _ = _sceneLoader.LoadScene<GameScene>(nameof(GameScene));
+            }
+            else
+            {
+                _ = _sceneLoader.LoadScene<MainMenu>(nameof(MainMenu));
+            }
         }
 
         public void PlayEffect(AudioEnum audioEnum)

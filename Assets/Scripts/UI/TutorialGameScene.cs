@@ -19,6 +19,7 @@ using Utilities;
 
 namespace UI
 {
+    [SceneMusic(AudioEnum.GameMusic)]
     public class TutorialGameScene : MonoBehaviour
     {
         [SerializeField] private Canvas uiCanvas;

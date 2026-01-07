@@ -241,10 +241,10 @@ namespace UI
             _analyticsManager?.PopGameLevel(true);
             UniTask.Void(async () =>
             {
+                Debug.Log("UniTask.Void(async");
                 await UniTask.Delay(TimeSpan.FromSeconds(1f));
                 var prefabDialog = await PrefabUtils.LoadPrefab("Prefabs/Dialog/CompleteLevelDialog");
                 var dialog = UIControllerFactory.Instance.Instantiate<CompleteLevelDialog>(prefabDialog);
-                dialog.OnDidHide(BackToMenu);
                 dialog.Show(canvasDialog);
             });
         }
@@ -323,7 +323,6 @@ namespace UI
 
         private void BackToMenu()
         {
-            _audioManager.PlayMusic(AudioEnum.MenuMusic);
             ServiceLocator.Instance
                 .Resolve<ISceneLoader>()
                 .LoadScene<MainMenu>(nameof(MainMenu))

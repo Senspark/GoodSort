@@ -25,7 +25,7 @@ namespace Game
         {
             _levelUI = levelUI;
             _loaded = true;
-            _levelUI.SetMaxTime(900);
+            _levelUI.SetMaxTime(360);
         }
         
         public void Step(float dt)
