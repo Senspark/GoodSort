@@ -1,6 +1,5 @@
 using UnityEngine;
 using System;
-using System.Collections.Generic;
 using Core;
 using Cysharp.Threading.Tasks;
 using Defines;
@@ -9,17 +8,15 @@ using Engine.ShelfPuzzle;
 using Factory;
 using Game;
 using JetBrains.Annotations;
-using manager;
 using manager.Interface;
 using Senspark;
 using Strategy.Level;
 using Tutorial;
-using UnityEngine;
 using Utilities;
 
 namespace UI
 {
-    [SceneMusic(AudioEnum.GameMusic)]
+    // [SceneMusic(AudioEnum.GameMusic)]
     public class TutorialGameScene : MonoBehaviour
     {
         [SerializeField] private Canvas uiCanvas;
@@ -36,12 +33,9 @@ namespace UI
         private ILevelLoaderManager _levelLoaderManager;
         private ITutorialManager _tutorialManager;
         private ITutorial _onboardingTutorial;
-        private ILevelManager _levelManager;
         private IAudioManager _audioManager;
 
         private GameStateType State { get; set; } = GameStateType.UnInitialize;
-        private bool _didDrag = false;
-        private int _levelPlaying;
         private LevelView _levelView;
 
         private void Awake()
@@ -55,7 +49,7 @@ namespace UI
                 // missing service - re-initialize
                 Debug.LogError(e);
             }
-
+            _audioManager.PlayMusic(AudioEnum.GameMusic);
             return;
 
             void GetServices()
@@ -63,10 +57,10 @@ namespace UI
                 var services = ServiceLocator.Instance;
                 _levelLoaderManager = services.Resolve<ILevelLoaderManager>();
                 _tutorialManager = services.Resolve<ITutorialManager>();
-                _levelManager = services.Resolve<ILevelManager>();
                 _audioManager = services.Resolve<IAudioManager>();
                 State = GameStateType.Initialized;
             }
+            
         }
 
         private void Start()
@@ -88,7 +82,6 @@ namespace UI
 
         private void LoadLevel(int level)
         {
-            _levelPlaying = level;
             var builder = new LevelConfigBuilder(_levelLoaderManager).SetLevel(level).Build();
             var levelView = builder.LevelObject.GetComponent<LevelView>();
             _levelView = levelView;
@@ -122,7 +115,7 @@ namespace UI
             if (_levelDataManager == null) return false;
             var shelf = _levelDataManager.GetShelf(dropzone.ShelfId);
             if (shelf == null) return false;
-            if (shelf.Type != ShelfType.Common) return false; // Chỉ cho phép drop vào Common
+            if (shelf.Type != ShelfType.Common) return false;
 
             var layer = _levelDataManager.GetTopLayer(dropzone.ShelfId);
             if (layer == null) return false;
@@ -157,39 +150,13 @@ namespace UI
             State = GameStateType.GameOver;
             dragDropManager.Pause();
             
-            // Track: Win Level
-            // _analyticsManager?.PopGameLevel(true);
             UniTask.Void(async () =>
             {
                 await UniTask.Delay(TimeSpan.FromSeconds(1f));
-                if (_levelPlaying == 1)
-                {
-                    _levelManager.GoToNextLevel();
-                    GoToGameScene();
-                }
-                // var prefabDialog = await PrefabUtils.LoadPrefab("Prefabs/Dialog/CompleteLevelDialog");
-                // var dialog = UIControllerFactory.Instance.Instantiate<CompleteLevelDialog>(prefabDialog);
-                // dialog.OnDidHide(BackToMenu);
-                // dialog.Show(canvasDialog);
+                var prefabDialog = await PrefabUtils.LoadPrefab("Prefabs/Dialog/CompleteLevelDialog");
+                var dialog = UIControllerFactory.Instance.Instantiate<CompleteLevelDialog>(prefabDialog);
+                dialog.Show(canvasDialog);
             });
-        }
-
-        private async UniTaskVoid OpenSelectLevelDialog()
-        {
-            var levelManager = ServiceLocator.Instance.Resolve<ILevelManager>();
-            levelManager.GetCurrentLevel();
-            var selectLevelDialogPrefab = await PrefabUtils.LoadPrefab("Prefabs/Dialog/SelectLevelDialog");
-            var dialog = UIControllerFactory.Instance.Instantiate<SelectLevelDialog>(selectLevelDialogPrefab);
-            dialog.SetCurrentLevel(levelManager.GetCurrentLevel())
-                .Show(canvasDialog);
-        }
-        
-        private void GoToGameScene()
-        {
-            ServiceLocator.Instance
-                .Resolve<ISceneLoader>()
-                .LoadScene<GameScene>("GameScene")  // Tên scene trong Build Settings
-                .Forget();
         }
     }
 }

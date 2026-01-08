@@ -12,7 +12,6 @@ namespace Dialog.Controller
     {
         bool HasLives();
         void UseLiveAndRestart();
-        void BackToMenu();
     }
 
     public class LoseLevelDialogController : ILoseLevelDialogController
@@ -40,13 +39,8 @@ namespace Dialog.Controller
         {
             if (_profileManager.UseLive())
             {
-                _ = _sceneLoader.LoadScene<GameScene>(nameof(GameScene));
+                SceneUtils.LoadScene("GameScene");
             }
-        }
-
-        public void BackToMenu()
-        {
-            _ = _sceneLoader.LoadScene<MainMenu>(nameof(MainMenu));
         }
     }
 }

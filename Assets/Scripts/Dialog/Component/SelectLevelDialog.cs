@@ -2,6 +2,7 @@ using Defines;
 using Dialog.Controller;
 using TMPro;
 using UnityEngine;
+using Utilities;
 
 namespace  Dialog
 {
@@ -18,16 +19,11 @@ namespace  Dialog
             textLevel.text = $"Level {_currentLevel}";
             return this;
         }
-
-        public void ActiveLostStreakPanel()
-        {
-            panel.GetChild(1).gameObject.SetActive(false);
-            panel.GetChild(2).gameObject.SetActive(true);
-        }
         
         public void OnClickLevelButton()
         {
-            _controller.OpenGameScene();
+            // _controller.OpenGameScene();
+            SceneUtils.LoadScene("GameScene");
         }
     }
 

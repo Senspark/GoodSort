@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "com.coffee.ui-particle": "https://github.com/mob-sakai/ParticleEffectForUGUI.git",
     "com.google.external-dependency-manager": "file:../unity-extension/com.google.external-dependency-manager",
     "com.senspark.extension": "file:../unity-extension/com.senspark.extension",
     "com.unity.feature.2d": "2.0.1",

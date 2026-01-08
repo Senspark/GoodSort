@@ -1,6 +1,7 @@
 using manager.Interface;
 using Senspark;
 using UI;
+using Utilities;
 
 namespace Dialog.Controller
 {
@@ -19,19 +20,13 @@ namespace Dialog.Controller
 
         private readonly IProfileManager _profileManager;
         private readonly IStoreManager _storeManager;
-        private readonly ISceneLoader _sceneLoader;
-        private readonly IAudioManager _audioManager;
 
         public OutOfLivesDialogController(
             IProfileManager profileManager,
-            IStoreManager storeManager,
-            ISceneLoader sceneLoader,
-            IAudioManager audioManager)
+            IStoreManager storeManager)
         {
             _profileManager = profileManager;
             _storeManager = storeManager;
-            _sceneLoader = sceneLoader;
-            _audioManager = audioManager;
         }
 
         public bool CanBuyLives()
@@ -49,12 +44,12 @@ namespace Dialog.Controller
 
         public void GoToShop()
         {
-            _ = _sceneLoader.LoadScene<MainMenu>(nameof(MainMenu));
+            SceneUtils.LoadScene("MainMenu");
         }
         
         public void RestartGame()
         {
-            _ = _sceneLoader.LoadScene<GameScene>(nameof(GameScene));
+            SceneUtils.LoadScene("GameScene");
         }
     }
 }

@@ -12,7 +12,7 @@ namespace Dialog.Controller
         public void BackToMenuScene();
         public void PlayEffect(AudioEnum audioEnum);
 
-        public void AddCoins(int coins); // ✅ Đổi từ AddStar → AddCoins
+        public void AddCoins(int coins);
     }
 
     public class CompleteLevelDialogController : ICompleteLevelDialogController
@@ -38,14 +38,13 @@ namespace Dialog.Controller
         public void BackToMenuScene()
         {
             _levelManager.GoToNextLevel();
-            // _ = _sceneLoader.LoadScene<MainMenu>(nameof(MainMenu));
-            if (_levelManager.GetCurrentLevel() == 3)
+            if (_levelManager.GetCurrentLevel() == 3 || _levelManager.GetCurrentLevel() == 2)
             {
-                _ = _sceneLoader.LoadScene<GameScene>(nameof(GameScene));
+                SceneUtils.LoadScene("GameScene");
             }
             else
             {
-                _ = _sceneLoader.LoadScene<MainMenu>(nameof(MainMenu));
+                SceneUtils.LoadScene("MainMenu");
             }
         }
 
@@ -54,9 +53,9 @@ namespace Dialog.Controller
             _audioManager.PlaySound(audioEnum);
         }
 
-        public void AddCoins(int coins) // ✅ Đổi từ AddStar → AddCoins
+        public void AddCoins(int coins)
         {
-            _storeManager.AddCoins(coins); // ✅ Cộng vào Coins thay vì Stars
+            _storeManager.AddCoins(coins);
         }
     }
 }

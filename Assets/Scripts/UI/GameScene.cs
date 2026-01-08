@@ -18,7 +18,6 @@ using Utilities;
 
 namespace UI
 {
-    [SceneMusic(AudioEnum.GameMusic)]
     public class GameScene : MonoBehaviour
     {
         [SerializeField] private Canvas uiCanvas;
@@ -58,7 +57,7 @@ namespace UI
                             Start();
                         }));
             }
-
+            _audioManager.PlayMusic(AudioEnum.GameMusic);
             return;
 
             void GetServices()

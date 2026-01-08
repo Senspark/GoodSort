@@ -62,10 +62,10 @@ namespace Dialog
             _clickedClaim = true;
             _isSlidingBonusBar = false;
             _ = ShowEffectReward(claimRewardButton.transform as RectTransform, coinBar.transform as RectTransform, BaseCoin);
-            await UniTask.Delay(TimeSpan.FromSeconds(1f));
+            await UniTask.Delay(TimeSpan.FromSeconds(0.7f));
             coinBar.AnimateTo(BaseCoin);
             _controller.AddCoins(BaseCoin); // ✅ Đổi từ AddStar → AddCoins
-            await UniTask.Delay(TimeSpan.FromSeconds(0.5f));
+            await UniTask.Delay(TimeSpan.FromSeconds(1f));
             _controller.BackToMenuScene();
         }
         
@@ -78,10 +78,10 @@ namespace Dialog
             var multiplier = CalculateMultiplier();
             claimAdsRewardButton.SetMode(ClaimButton.Mode.WithAds, multiplier);
             _ = ShowEffectReward(claimAdsRewardButton.transform as RectTransform, coinBar.transform as RectTransform, BaseCoin);
-            await UniTask.Delay(TimeSpan.FromSeconds(1f));
+            await UniTask.Delay(TimeSpan.FromSeconds(0.7f));
             coinBar.AnimateTo(BaseCoin * multiplier);
             _controller.AddCoins(BaseCoin * multiplier); // ✅ Đổi từ AddStar → AddCoins
-            await UniTask.Delay(TimeSpan.FromSeconds(0.5f));
+            await UniTask.Delay(TimeSpan.FromSeconds(1f));
             _controller.BackToMenuScene();
         }
 

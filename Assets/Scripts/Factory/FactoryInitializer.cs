@@ -37,9 +37,7 @@ namespace Factory
             ));
             factory.Register<OutOfLivesDialog>(() => new OutOfLivesDialogController(
                 containerManager.ProfileManager,
-                containerManager.StoreManager,
-                containerManager.SceneLoader,
-                containerManager.AudioManager
+                containerManager.StoreManager
             ));
             factory.Register<StarChestDialog>(() => new StarChestDialogController(
                 containerManager.StoreManager

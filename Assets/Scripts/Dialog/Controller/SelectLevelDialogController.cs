@@ -9,7 +9,6 @@ namespace Dialog.Controller
 {
     public interface ISelectLevelDialogController
     {
-        public void OpenGameScene();
     }
     public class SelectLevelDialogController : ISelectLevelDialogController
     {
@@ -19,11 +18,6 @@ namespace Dialog.Controller
         {
             _audioManager = audioManager;
             _sceneLoader = sceneLoader;
-        }
-        
-        public void OpenGameScene()
-        {
-            _ = _sceneLoader.LoadScene<GameScene>(nameof(GameScene));
         }
     }
 }

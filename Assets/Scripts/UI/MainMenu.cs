@@ -12,7 +12,6 @@ using TimeUtils = Utilities.TimeUtils;
 
 namespace UI
 {
-    [SceneMusic(AudioEnum.MenuMusic)]
     public class MainMenu : MonoBehaviour
     {
         [SerializeField] private Canvas canvasDialog;
@@ -24,6 +23,7 @@ namespace UI
         private ILevelManager _levelManager;
         private IStoreManager _storeManager;
         private ILivesManager _livesManager;
+        private IAudioManager _audioManager;
         
         private int _observerId;
 
@@ -31,6 +31,7 @@ namespace UI
         {
             GetServices();
             RegisterObserver();
+            _audioManager.PlayMusic(AudioEnum.MenuMusic);
         }
         
         private void GetServices()
@@ -38,6 +39,7 @@ namespace UI
             _levelManager = ServiceLocator.Instance.Resolve<ILevelManager>();
             _storeManager = ServiceLocator.Instance.Resolve<IStoreManager>();
             _livesManager = ServiceLocator.Instance.Resolve<ILivesManager>();
+            _audioManager = ServiceLocator.Instance.Resolve<IAudioManager>();
         }
         
         private void RegisterObserver()

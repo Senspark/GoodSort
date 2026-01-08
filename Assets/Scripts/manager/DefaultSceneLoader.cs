@@ -26,20 +26,13 @@ namespace manager
         {
             await SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Single);
             var item = Object.FindFirstObjectByType<T>();
-            HandleSceneMusic<T>();
             Assert.IsTrue(item != null);
             return item;
         }
         
-        private void HandleSceneMusic<T>()
+        public void LoadScene(string sceneName)
         {
-            // Lấy attribute từ class T
-            var musicAttr = typeof(T).GetCustomAttribute<SceneMusicAttribute>();
-        
-            if (musicAttr != null)
-            {
-                _audioManager.PlayMusic(musicAttr.Music);
-            }
+            SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Single);
         }
     }
 }

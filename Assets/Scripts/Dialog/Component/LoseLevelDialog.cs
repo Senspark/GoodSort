@@ -1,6 +1,7 @@
 using Cysharp.Threading.Tasks;
 using Dialog.Controller;
 using Factory;
+using UnityEditor.SearchService;
 using UnityEngine;
 using UnityEngine.UI;
 using Utilities;
@@ -27,7 +28,8 @@ namespace Dialog
 
         public void OnExitClicked()
         {
-            _controller.BackToMenu();
+            // _controller.BackToMenu();
+            SceneUtils.LoadScene("MainMenu");
         }
 
         private void OnPlayAgainClicked()

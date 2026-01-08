@@ -8,5 +8,6 @@ namespace manager.Interface
     public interface ISceneLoader : IService
     {
         public UniTask<T> LoadScene<T>(string sceneName) where T : MonoBehaviour;
+        public void LoadScene(string sceneName);
     }
 }
