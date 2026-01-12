@@ -15,6 +15,7 @@ namespace UI
     public class MainMenu : MonoBehaviour
     {
         [SerializeField] private Canvas canvasDialog;
+        // [SerializeField] private SceneTransition sceneTransition;
         [SerializeField] private TMP_Text textLiveTime;
         [SerializeField] private ResourceBar coinBar;
         [SerializeField] private ResourceBar starBar;
@@ -123,6 +124,11 @@ namespace UI
                 {
                     var dialog = UIControllerFactory.Instance.Instantiate<SelectLevelDialog>(prefab);
                     dialog.SetCurrentLevel(_levelManager.GetCurrentLevel())
+                        .SetOnClickLevelButton(() =>
+                        {
+                            dialog.Hide();
+                            LoadScene("GameScene");
+                        })
                         .Show(canvasDialog);
                 });
         }
@@ -155,6 +161,13 @@ namespace UI
                     var dialog = UIControllerFactory.Instance.Instantiate<ProfileDialog>(prefab);
                     dialog.Show(canvasDialog);
                 });
+        }
+
+        private async void LoadScene(string sceneName)
+        {
+            // await sceneTransition.FadeIn();
+            await SceneTransition.Instance.FadeIn();
+            SceneUtils.LoadScene(sceneName);
         }
 
         private void OnDestroy()

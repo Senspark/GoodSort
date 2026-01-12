@@ -22,11 +22,14 @@ namespace UI
     {
         [SerializeField] private Canvas uiCanvas;
         [SerializeField] private Canvas canvasDialog;
+        // [SerializeField] private SceneTransition sceneTransition;
         [SerializeField] private DragDropManager2 dragDropManager;
         [SerializeField] private GameObject container;
         [SerializeField] private ShelfItemBasic shelfItemPrefab;
         [SerializeField] private GameObject starPrefab;
         [SerializeField] private LevelUI levelUI;
+        [SerializeField] private RectTransform starPosition;
+        [SerializeField] private Transform effectPosition;
 
         [CanBeNull] private LevelDataManager _levelDataManager;
         [CanBeNull] private LevelAnimation _levelAnimation;
@@ -73,6 +76,7 @@ namespace UI
 
         private void Start()
         {
+            _ =SceneTransition.Instance.FadeOut();
             if (State != GameStateType.Initialized) return;
             Time.timeScale = 1;
             dragDropManager.Init(CanAcceptDropInto);
@@ -193,7 +197,12 @@ namespace UI
 
                 var starCount = levelUI.GetScore();
 
-                EffectUtils.FlyMultipleStarsToUI(position, levelUI.GetStarPosition(), uiCanvas, starPrefab, starCount);
+                EffectUtils.FlyMultipleStarsToUI(position, levelUI.GetStarPosition(), uiCanvas, starPrefab, starCount)
+                    .Then(() =>
+                    {
+                        effectPosition.position = starPosition.position;
+                        effectPosition.gameObject.GetComponent<ParticleSystem>().Play();
+                    });
 
                 // Tăng combo
                 levelUI.IncreaseCombo();

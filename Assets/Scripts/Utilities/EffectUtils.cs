@@ -70,26 +70,31 @@ namespace Utilities
                 .OnComplete(() => Object.Destroy(star));
         }
 
-        public static void FlyMultipleStarsToUI(
+        public static async UniTask FlyMultipleStarsToUI(
             Vector3 worldPos,
             RectTransform uiTarget,
             Canvas canvas,
             GameObject starPrefab,
             int starCount = 5,
-            float spreadRadius = 1f,
-            float duration = 1f)
+            Action onAllComplete = null)
         {
-            for (int i = 0; i < starCount; i++)
+            const int maxDelay = 150;
+            for (var i = 0; i < starCount; i++)
             {
-                var randomOffset = UnityEngine.Random.insideUnitCircle * spreadRadius;
+                var randomOffset = UnityEngine.Random.insideUnitCircle * 1f;
                 var randomStartPos = worldPos + new Vector3(randomOffset.x, randomOffset.y, 0);
 
                 UniTask.Void(async () =>
                 {
-                    await UniTask.Delay(TimeSpan.FromMilliseconds(UnityEngine.Random.Range(80, 150)));
-                    FlyStarToUI(randomStartPos, uiTarget, canvas, starPrefab, duration);
+                    await UniTask.Delay(TimeSpan.FromMilliseconds(UnityEngine.Random.Range(80, maxDelay)));
+                    FlyStarToUI(randomStartPos, uiTarget, canvas, starPrefab);
                 });
             }
+
+            var totalWaitTimeMS = maxDelay + (int)(1f * 500);
+            await UniTask.Delay(totalWaitTimeMS);
+
+            onAllComplete?.Invoke();
         }
 
         public static void ShowComboText(Vector3 worldPos, Canvas canvas, string text, ComboVFXType type)

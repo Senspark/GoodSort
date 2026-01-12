@@ -1,3 +1,4 @@
+using System;
 using Defines;
 using Dialog.Controller;
 using TMPro;
@@ -12,6 +13,7 @@ namespace  Dialog
         [SerializeField] private TextMeshProUGUI textLevel;
         private ISelectLevelDialogController _controller;
         private int _currentLevel;
+        private Action _clickLevelButtonCallback;
         
         public SelectLevelDialog SetCurrentLevel(int level)
         {
@@ -23,7 +25,14 @@ namespace  Dialog
         public void OnClickLevelButton()
         {
             // _controller.OpenGameScene();
-            SceneUtils.LoadScene("GameScene");
+            // SceneUtils.LoadScene("GameScene");
+            _clickLevelButtonCallback?.Invoke();
+        }
+        
+        public SelectLevelDialog SetOnClickLevelButton(Action action)
+        {
+            _clickLevelButtonCallback = action;
+            return this;
         }
     }
 
