@@ -55,21 +55,6 @@ namespace Utilities
                 .OnComplete(() => Object.Destroy(star));
         }
 
-        public static void FlyStarToUI_ver2(
-            Vector3 worldPos,
-            Transform worldTarget,
-            GameObject container,
-            GameObject starPrefab,
-            float duration = 0.5f)
-        {
-            var star = Object.Instantiate(starPrefab, container.transform);
-            star.transform.position = worldPos;
-
-            star.transform.DOMove(worldTarget.position, duration)
-                .SetEase(Ease.InOutQuad)
-                .OnComplete(() => Object.Destroy(star));
-        }
-
         public static async UniTask FlyMultipleStarsToUI(
             Vector3 worldPos,
             RectTransform uiTarget,

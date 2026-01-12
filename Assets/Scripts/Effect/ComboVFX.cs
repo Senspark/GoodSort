@@ -1,3 +1,4 @@
+using System;
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
@@ -31,8 +32,9 @@ namespace Effect
                 ComboVFXType.Green => greenFont,
                 ComboVFXType.Blue => blueFont,
                 ComboVFXType.Violet => violetFont,
-                ComboVFXType.Gradient => gradientFont
-                };
+                ComboVFXType.Gradient => gradientFont,
+                _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
+            };
             GetComponent<TMP_Text>().font = font;
             return this;
         }

@@ -16,7 +16,7 @@ namespace Strategy.Level
         private readonly LevelAnimationStepDragDrop _stateDragDrop;
         private readonly LevelAnimationSwitchStateControl _stateControl;
         [CanBeNull] private ILevelAnimationStep _currentStep;
-        private Action<Vector2> _onShelfCleared;
+        // private Action<Vector2> _onShelfCleared;
 
         public LevelAnimation(LevelDataManager levelDataManager, IDragDropManager dragDropManager)
         {
@@ -24,6 +24,7 @@ namespace Strategy.Level
             _dragDropManager = dragDropManager;
             _stateControl = new LevelAnimationSwitchStateControl(
                 SwitchToState_MergeLayer,
+                SwitchToState_AddScore,
                 SwitchToState_UnlockShelves,
                 SwitchToState_DragDrop
             );
@@ -31,10 +32,10 @@ namespace Strategy.Level
                 new LevelAnimationStepDragDrop(_stateControl, levelDataManager, dragDropManager);
         }
         
-        public void SetOnShelfCleared(Action<Vector2> onShelfCleared)
-        {
-            _onShelfCleared = onShelfCleared;
-        }
+        // public void SetOnShelfCleared(Action<Vector2> onShelfCleared)
+        // {
+        //     _onShelfCleared = onShelfCleared;
+        // }
 
         public void Enter()
         {
@@ -54,7 +55,14 @@ namespace Strategy.Level
         private void SwitchToState_MergeLayer(LevelAnimationStepMergeLayer.InputData data)
         {
             _currentStep?.Exit();
-            _currentStep = new LevelAnimationStepMergeLayer(_stateControl, data, _levelDataManager, _dragDropManager, _onShelfCleared);
+            _currentStep = new LevelAnimationStepMergeLayer(_stateControl, data, _levelDataManager, _dragDropManager);
+            _currentStep.Enter();
+        }
+
+        private void SwitchToState_AddScore(LevelAnimationStepAddScore.InputData data)
+        {
+            _currentStep?.Exit();
+            _currentStep = new LevelAnimationStepAddScore(_stateControl, data, _levelDataManager);
             _currentStep.Enter();
         }
         
@@ -77,15 +85,18 @@ namespace Strategy.Level
     {
         public readonly Action<LevelAnimationStepMergeLayer.InputData> ToMergeLayer;
         public readonly Action ToDragDrop;
+        public readonly Action<LevelAnimationStepAddScore.InputData> ToAddScore;
         public readonly Action<LevelAnimationUnlockShelves.InputData> ToUnlockShelves;
 
         public LevelAnimationSwitchStateControl(
             Action<LevelAnimationStepMergeLayer.InputData> toMergeLayer,
+            Action<LevelAnimationStepAddScore.InputData> toAddScore,
             Action<LevelAnimationUnlockShelves.InputData> toUnlockShelves,
             Action toDragDrop
         )
         {
             ToMergeLayer = toMergeLayer;
+            ToAddScore = toAddScore;
             ToUnlockShelves = toUnlockShelves;
             ToDragDrop = toDragDrop;
         }

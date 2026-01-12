@@ -32,7 +32,8 @@ namespace Strategy.Level
                 }
             }
 
-            _control.ToDragDrop();
+            // _control.ToDragDrop();
+            _control.ToAddScore(new LevelAnimationStepAddScore.InputData(0, 0));
         }
 
         public void Exit()

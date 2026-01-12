@@ -652,8 +652,6 @@ MonoBehaviour:
   shelfItemPrefab: {fileID: -3984508902149505473, guid: 126b1ec0e429d4fea8fce05b2e0b83de, type: 3}
   starPrefab: {fileID: 8633468018668126285, guid: 08d38482e10664bfc925812dec9cceea, type: 3}
   levelUI: {fileID: 697549703}
-  starPosition: {fileID: 5419338978315657094}
-  effectPosition: {fileID: 555902056}
 --- !u!1 &176712246
 GameObject:
   m_ObjectHideFlags: 0

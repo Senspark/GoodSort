@@ -28,8 +28,8 @@ namespace UI
         [SerializeField] private ShelfItemBasic shelfItemPrefab;
         [SerializeField] private GameObject starPrefab;
         [SerializeField] private LevelUI levelUI;
-        [SerializeField] private RectTransform starPosition;
-        [SerializeField] private Transform effectPosition;
+        // [SerializeField] private RectTransform starPosition;
+        // [SerializeField] private Transform effectPosition;
 
         [CanBeNull] private LevelDataManager _levelDataManager;
         [CanBeNull] private LevelAnimation _levelAnimation;
@@ -197,12 +197,12 @@ namespace UI
 
                 var starCount = levelUI.GetScore();
 
-                EffectUtils.FlyMultipleStarsToUI(position, levelUI.GetStarPosition(), uiCanvas, starPrefab, starCount)
-                    .Then(() =>
-                    {
-                        effectPosition.position = starPosition.position;
-                        effectPosition.gameObject.GetComponent<ParticleSystem>().Play();
-                    });
+                EffectUtils.FlyMultipleStarsToUI(position, levelUI.GetStarPosition(), uiCanvas, starPrefab, starCount);
+                    // .Then(() =>
+                    // {
+                    //     effectPosition.position = starPosition.position;
+                    //     effectPosition.gameObject.GetComponent<ParticleSystem>().Play();
+                    // });
 
                 // Tăng combo
                 levelUI.IncreaseCombo();
