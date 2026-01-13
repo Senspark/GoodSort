@@ -20,14 +20,14 @@ namespace UI
 {
     public interface GameController
     {
-        void AddStar(int amount, Vector3 position);
+        void AddStar(Vector3 position);
     }
     public class GameScene : MonoBehaviour, GameController
     {
         [SerializeField] private Canvas uiCanvas;
         [SerializeField] private Canvas canvasDialog;
         // [SerializeField] private SceneTransition sceneTransition;
-        [SerializeField] private LevelView_V2 levelView;
+        [SerializeField] private LevelView levelView;
         [SerializeField] private DragDropManager2 dragDropManager;
         [SerializeField] private GameObject container;
         [SerializeField] private ShelfItemBasic shelfItemPrefab;
@@ -45,8 +45,7 @@ namespace UI
         private IAnalyticsManager _analyticsManager;
 
         private GameStateType State { get; set; } = GameStateType.UnInitialize;
-        // private LevelView _levelView;
-        private bool _didDrag = false;
+        private bool _didDrag;
         private int _levelPlaying;
 
         private void Awake()
@@ -111,6 +110,9 @@ namespace UI
             }
             if (State == GameStateType.Playing)
             {
+                levelView.SimulationManager.Paused = false;
+                levelView.Status = LevelStatus.Playing;
+                
                 // _levelView.Step(Time.deltaTime);
                 // if (_levelView.GetStatus() != LevelStatus.Finished) return;
                 // State = GameStateType.GameOver;
@@ -119,7 +121,7 @@ namespace UI
                 // OpenTimeOutDialog().Forget();
 
                 // var status = levelView.GetStatus();
-                
+
             }
         }
         
@@ -151,10 +153,6 @@ namespace UI
                 GameSceneController = this
             };
             _levelAnimation.Enter();
-
-            // levelView.Initialize(levelUI);
-            // _levelAnimation.SetOnShelfCleared(OnTopLayerCleared);
-            // _levelView = levelView;
             State = GameStateType.Loaded;
         }
 
@@ -200,7 +198,7 @@ namespace UI
             }
         }
         
-        public void AddStar(int amount, Vector3 position)
+        public void AddStar(Vector3 position)
         {
             // _levelAnimation.AddStar(amount, position);
         }

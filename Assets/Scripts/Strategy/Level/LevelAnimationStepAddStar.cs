@@ -30,7 +30,7 @@ namespace Strategy.Level
         public void Update(float dt)
         {
             var shelf = _levelDataManager.GetShelf(_inputData.ShelfId) as ShelfBase;
-            if (shelf) _gameSceneController.AddStar(0, shelf.transform.position);
+            if (shelf) _gameSceneController.AddStar(shelf.transform.position);
             _control.ToDragDrop();
         }
 

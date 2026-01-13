@@ -9,7 +9,7 @@ namespace Game
     {
         [SerializeField] private TextMeshProUGUI timeText;
 
-        private int _time;
+        private float _time;
         private int _maxTime;
         private bool _dirty;
         
@@ -18,12 +18,11 @@ namespace Game
             UpdateDisplay();
         }
         
-        public int Time
+        public float Time
         {
             get => _time;
             set
             {
-                if (_time == value) return;
                 _time = value;
                 _dirty = true;
             }
@@ -50,7 +49,7 @@ namespace Game
         private void UpdateDisplay()
         {
             var remainingTime = Math.Max(_maxTime - _time, 0);
-            timeText.text = TimeUtils.FormatTime(remainingTime, "mm:ss");
+            timeText.text = TimeUtils.FormatTime((int)remainingTime, "mm:ss");
         }
     }
 }
