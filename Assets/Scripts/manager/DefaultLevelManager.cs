@@ -1,3 +1,4 @@
+using Constant;
 using Cysharp.Threading.Tasks;
 using manager.Interface;
 using Senspark;
@@ -34,9 +35,9 @@ namespace manager
             {
                 currentLevel = 1;
             }
-            else if (currentLevel > 71)
+            else if (currentLevel > Globals.MaxLevel)
             {
-                currentLevel = 71;
+                currentLevel = Globals.MaxLevel;
             }
 
             return currentLevel;
