@@ -1,20 +1,26 @@
+using Game;
+using UI;
+
 namespace Strategy.Level
 {
-    public class LevelAnimationStepAddScore : ILevelAnimationStep
+    public class LevelAnimationStepAddStar : ILevelAnimationStep
     {
         private readonly LevelAnimationSwitchStateControl _control;
         private readonly LevelDataManager _levelDataManager;
         private readonly InputData _inputData;
+        private readonly GameController _gameSceneController;
         
-        public LevelAnimationStepAddScore(
+        public LevelAnimationStepAddStar(
             LevelAnimationSwitchStateControl control,
             InputData inputData,
-            LevelDataManager levelDataManager
+            LevelDataManager levelDataManager,
+            GameController gameSceneController
         )
         {
             _control = control;
             _inputData = inputData;
             _levelDataManager = levelDataManager;
+            _gameSceneController = gameSceneController;
         }
         
         public void Enter()
@@ -23,6 +29,9 @@ namespace Strategy.Level
 
         public void Update(float dt)
         {
+            var shelf = _levelDataManager.GetShelf(_inputData.ShelfId) as ShelfBase;
+            if (shelf) _gameSceneController.AddStar(0, shelf.transform.position);
+            _control.ToDragDrop();
         }
 
         public void Exit()

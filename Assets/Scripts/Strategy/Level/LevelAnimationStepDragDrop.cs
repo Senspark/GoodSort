@@ -30,9 +30,9 @@ namespace Strategy.Level
                     var sId = slotId;
                     var dropZone = shelve.DropZones[slotId];
 
-                    // Set dependencies cho DropZone2 để hỗ trợ thuật toán detect mới
                     if (dropZone is DropZone2 dropZone2)
                     {
+                        // Để biết zone này thuộc shelf nào
                         dropZone2.SetDependencies(shelve, _levelDataManager);
                     }
 

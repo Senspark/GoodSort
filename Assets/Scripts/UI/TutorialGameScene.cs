@@ -94,11 +94,11 @@ namespace UI
             _levelAnimation = new LevelAnimation(_levelDataManager, dragDropManager);
             _levelAnimation.Enter();
 
-            _levelAnimation.SetOnShelfCleared((_) =>
-            {
-                _audioManager.PlaySound(AudioEnum.Match);
-                TutorialEvents.SendEvent(TutorialActionType.OnClear);
-            });
+            // _levelAnimation.SetOnShelfCleared((_) =>
+            // {
+            //     _audioManager.PlaySound(AudioEnum.Match);
+            //     TutorialEvents.SendEvent(TutorialActionType.OnClear);
+            // });
             State = GameStateType.Loaded;
         }
 

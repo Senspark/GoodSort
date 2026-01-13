@@ -18,16 +18,21 @@ using Utilities;
 
 namespace UI
 {
-    public class GameScene : MonoBehaviour
+    public interface GameController
+    {
+        void AddStar(int amount, Vector3 position);
+    }
+    public class GameScene : MonoBehaviour, GameController
     {
         [SerializeField] private Canvas uiCanvas;
         [SerializeField] private Canvas canvasDialog;
         // [SerializeField] private SceneTransition sceneTransition;
+        [SerializeField] private LevelView_V2 levelView;
         [SerializeField] private DragDropManager2 dragDropManager;
         [SerializeField] private GameObject container;
         [SerializeField] private ShelfItemBasic shelfItemPrefab;
         [SerializeField] private GameObject starPrefab;
-        [SerializeField] private LevelUI levelUI;
+        // [SerializeField] private LevelUI levelUI;
         // [SerializeField] private RectTransform starPosition;
         // [SerializeField] private Transform effectPosition;
 
@@ -40,7 +45,7 @@ namespace UI
         private IAnalyticsManager _analyticsManager;
 
         private GameStateType State { get; set; } = GameStateType.UnInitialize;
-        private LevelView _levelView;
+        // private LevelView _levelView;
         private bool _didDrag = false;
         private int _levelPlaying;
 
@@ -106,12 +111,15 @@ namespace UI
             }
             if (State == GameStateType.Playing)
             {
-                _levelView.Step(Time.deltaTime);
-                if (_levelView.GetStatus() != LevelStatus.Finished) return;
-                State = GameStateType.GameOver;
-                // Track: Fail Level (Time Out)
-                _analyticsManager?.PopGameLevel(false);
-                OpenTimeOutDialog().Forget();
+                // _levelView.Step(Time.deltaTime);
+                // if (_levelView.GetStatus() != LevelStatus.Finished) return;
+                // State = GameStateType.GameOver;
+                // // Track: Fail Level (Time Out)
+                // _analyticsManager?.PopGameLevel(false);
+                // OpenTimeOutDialog().Forget();
+
+                // var status = levelView.GetStatus();
+                
             }
         }
         
@@ -131,19 +139,22 @@ namespace UI
         {
             _levelPlaying = level;
             var builder = new LevelConfigBuilder(_levelLoaderManager).SetLevel(level).Build();
-            var levelView = builder.LevelObject.GetComponent<LevelView>();
-            levelView.transform.SetParent(container.transform,false);
+            var levelTransform = builder.LevelObject.GetComponent<Transform>();
+            levelTransform.SetParent(container.transform,false);
 
             var levelCreator = new LevelCreator(container, shelfItemPrefab);
             var inputData = _levelLoaderManager.GetInputData(level);
             var levelData = levelCreator.SpawnLevel(inputData, OnItemDestroy);
             _levelDataManager = new LevelDataManager(levelData);
-            _levelAnimation = new LevelAnimation(_levelDataManager, dragDropManager);
+            _levelAnimation = new LevelAnimation(_levelDataManager, dragDropManager)
+            {
+                GameSceneController = this
+            };
             _levelAnimation.Enter();
 
-            levelView.Initialize(levelUI);
-            _levelAnimation.SetOnShelfCleared(OnTopLayerCleared);
-            _levelView = levelView;
+            // levelView.Initialize(levelUI);
+            // _levelAnimation.SetOnShelfCleared(OnTopLayerCleared);
+            // _levelView = levelView;
             State = GameStateType.Loaded;
         }
 
@@ -173,11 +184,11 @@ namespace UI
         private void OnItemDestroy(ShelfItemMeta itemMeta)
         {
             var itemPosition = _levelDataManager?.FindItem(itemMeta.Id).DragObject.Position;
-            if (itemPosition.HasValue)
-            {
-                var effectPosition = new Vector3(itemPosition.Value.x, itemPosition.Value.y + 0.5f, itemPosition.Value.z); 
-                EffectUtils.BlinkOnPosition(effectPosition, _levelView.gameObject);
-            }
+            // if (itemPosition.HasValue)
+            // {
+            //     var effectPosition = new Vector3(itemPosition.Value.x, itemPosition.Value.y + 0.5f, itemPosition.Value.z); 
+            //     EffectUtils.BlinkOnPosition(effectPosition, _levelView.gameObject);
+            // }
             
             dragDropManager.UnregisterDragObject(itemMeta.Id);
             _levelDataManager?.RemoveItem(itemMeta.Id);
@@ -189,34 +200,39 @@ namespace UI
             }
         }
         
+        public void AddStar(int amount, Vector3 position)
+        {
+            // _levelAnimation.AddStar(amount, position);
+        }
+        
         private void OnTopLayerCleared(Vector2 position)
         {
-            UniTask.Void(async () =>
-            {
-                await UniTask.Delay(TimeSpan.FromSeconds(0.3f)); // TODO: [Refactor] - bị hard code delay sau khi hiện xong hiệu ứng Blink
-
-                var starCount = levelUI.GetScore();
-
-                EffectUtils.FlyMultipleStarsToUI(position, levelUI.GetStarPosition(), uiCanvas, starPrefab, starCount);
-                    // .Then(() =>
-                    // {
-                    //     effectPosition.position = starPosition.position;
-                    //     effectPosition.gameObject.GetComponent<ParticleSystem>().Play();
-                    // });
-
-                // Tăng combo
-                levelUI.IncreaseCombo();
-                var combo = levelUI.GetCombo();
-                var comboColor = GetComboColor(combo);
-                EffectUtils.ShowComboText(position, uiCanvas, $"x{combo}", comboColor);
-
-                await UniTask.Delay(TimeSpan.FromSeconds(0.8f));
-
-                levelUI.AddScore();
-
-                var storeManager = ServiceLocator.Instance.Resolve<IStoreManager>();
-                storeManager.AddStars(starCount);
-            });
+            // UniTask.Void(async () =>
+            // {
+            //     await UniTask.Delay(TimeSpan.FromSeconds(0.3f)); // TODO: [Refactor] - bị hard code delay sau khi hiện xong hiệu ứng Blink
+            //
+            //     var starCount = levelUI.GetScore();
+            //
+            //     EffectUtils.FlyMultipleStarsToUI(position, levelUI.GetStarPosition(), uiCanvas, starPrefab, starCount);
+            //         // .Then(() =>
+            //         // {
+            //         //     effectPosition.position = starPosition.position;
+            //         //     effectPosition.gameObject.GetComponent<ParticleSystem>().Play();
+            //         // });
+            //
+            //     // Tăng combo
+            //     levelUI.IncreaseCombo();
+            //     var combo = levelUI.GetCombo();
+            //     var comboColor = GetComboColor(combo);
+            //     EffectUtils.ShowComboText(position, uiCanvas, $"x{combo}", comboColor);
+            //
+            //     await UniTask.Delay(TimeSpan.FromSeconds(0.8f));
+            //
+            //     levelUI.AddScore();
+            //
+            //     var storeManager = ServiceLocator.Instance.Resolve<IStoreManager>();
+            //     storeManager.AddStars(starCount);
+            // });
         }
 
         private ComboVFXType GetComboColor(int combo)

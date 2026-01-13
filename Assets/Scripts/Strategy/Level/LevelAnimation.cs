@@ -1,7 +1,7 @@
 using System;
 using Core;
 using JetBrains.Annotations;
-using UnityEngine;
+using UI;
 
 namespace Strategy.Level
 {
@@ -16,7 +16,7 @@ namespace Strategy.Level
         private readonly LevelAnimationStepDragDrop _stateDragDrop;
         private readonly LevelAnimationSwitchStateControl _stateControl;
         [CanBeNull] private ILevelAnimationStep _currentStep;
-        // private Action<Vector2> _onShelfCleared;
+        private GameController _gameSceneController;
 
         public LevelAnimation(LevelDataManager levelDataManager, IDragDropManager dragDropManager)
         {
@@ -32,10 +32,7 @@ namespace Strategy.Level
                 new LevelAnimationStepDragDrop(_stateControl, levelDataManager, dragDropManager);
         }
         
-        // public void SetOnShelfCleared(Action<Vector2> onShelfCleared)
-        // {
-        //     _onShelfCleared = onShelfCleared;
-        // }
+        public GameController GameSceneController { private get; set; }
 
         public void Enter()
         {
@@ -59,10 +56,10 @@ namespace Strategy.Level
             _currentStep.Enter();
         }
 
-        private void SwitchToState_AddScore(LevelAnimationStepAddScore.InputData data)
+        private void SwitchToState_AddScore(LevelAnimationStepAddStar.InputData data)
         {
             _currentStep?.Exit();
-            _currentStep = new LevelAnimationStepAddScore(_stateControl, data, _levelDataManager);
+            _currentStep = new LevelAnimationStepAddStar(_stateControl, data, _levelDataManager, _gameSceneController);
             _currentStep.Enter();
         }
         
@@ -85,12 +82,12 @@ namespace Strategy.Level
     {
         public readonly Action<LevelAnimationStepMergeLayer.InputData> ToMergeLayer;
         public readonly Action ToDragDrop;
-        public readonly Action<LevelAnimationStepAddScore.InputData> ToAddScore;
+        public readonly Action<LevelAnimationStepAddStar.InputData> ToAddScore;
         public readonly Action<LevelAnimationUnlockShelves.InputData> ToUnlockShelves;
 
         public LevelAnimationSwitchStateControl(
             Action<LevelAnimationStepMergeLayer.InputData> toMergeLayer,
-            Action<LevelAnimationStepAddScore.InputData> toAddScore,
+            Action<LevelAnimationStepAddStar.InputData> toAddScore,
             Action<LevelAnimationUnlockShelves.InputData> toUnlockShelves,
             Action toDragDrop
         )
