@@ -1,5 +1,7 @@
+using System;
 using Defines;
 using Senspark;
+using Strategy.Level;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -12,86 +14,44 @@ namespace Game
         [SerializeField] private TextMeshProUGUI comboText;
         [SerializeField] private TextMeshProUGUI scoreText;
 
-        private float _speed = 1f;
+        private IAudioManager _audioManager;
 
-        private int _combo;
+        private ComboData _comboData;
 
-        public int Combo
-        {
-            get => _combo;
-            set
-            {
-                _combo = value;
-                UpdateDisplay();
-                if (_combo <= 0) return;
-                PlaySoundCombo(_combo);
-                var duration = GetDuration(value);
-                _speed = 1f / (duration); // 60 FPS
-                progressBar.value = 1;
-            }
-        }
-
-        private int _score;
-        private int Score
-        {
-            get => _score;
-            set
-            {
-                _score = value;
-                UpdateDisplay();
-            }
-        }
+        private int _lastCombo;
 
         private void Awake()
         {
-            Combo = 0;
-            Score = 0;
+            _audioManager = ServiceLocator.Instance.Resolve<IAudioManager>();
         }
 
-        public void Step(float dt)
+        private void Update()
         {
-            if (Combo <= 0) return;
-            progressBar.value = Mathf.Clamp01(progressBar.value - dt * _speed);
-            if (progressBar.value <= 0)
+            if (_comboData == null) return;
+            if (_lastCombo != _comboData.Combo)
             {
-                Combo = 0;
+                _lastCombo = _comboData.Combo;
+                if (_comboData.Combo > 0) PlaySoundCombo(_comboData.Combo);
             }
+            UpdateDisplay();
         }
 
-        public void AddScore()
+        public void SetComboData(ComboData comboData)
         {
-            Score += GetScore();
-        }
-
-        public void IncreaseCombo()
-        {
-            Combo++;
+            _comboData = comboData;
         }
 
         private void UpdateDisplay()
         {
-            comboText.text = _combo <= 0 ? "" : $"Combo x{_combo}";
-            scoreText.text = $"{_score}";
+            comboText.text = _comboData.Combo > 0 ? $"Combo x{_comboData.Combo}" : "";
+            scoreText.text = $"{_comboData.Score}";
+            progressBar.value = _comboData.GetProgress();
         }
-
-        // Helper function to get duration
-        private float GetDuration(int combo)
-        {
-            const float t0 = 25;
-            const float decayRate = 0.4f;
-            return 3 + (t0 - 3) / (1 + Mathf.Exp(decayRate * (combo - 9)));
-        }
-
-        public int GetScore()
-        {
-            return (_combo - 1) / 3 + 1;
-        }
-
+        
         private void PlaySoundCombo(int combo)
         {
-            // play sound with pitch
-            var audioMgr = ServiceLocator.Instance.Resolve<AudioManager>();
-            audioMgr.PlaySoundOnPitch(AudioEnum.Match, Mathf.Clamp(1f + combo * 0.1f, 1f, 1.5f) );
+            Debug.Log("PlaySoundCombo: " + combo);
+            _audioManager.PlaySound(AudioEnum.Match);
         }
     }
 }

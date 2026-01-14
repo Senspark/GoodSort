@@ -647,11 +647,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   uiCanvas: {fileID: 697549701}
   canvasDialog: {fileID: 1800118256}
+  levelView: {fileID: 697549704}
   dragDropManager: {fileID: 157169784}
   container: {fileID: 921653993}
   shelfItemPrefab: {fileID: -3984508902149505473, guid: 126b1ec0e429d4fea8fce05b2e0b83de, type: 3}
   starPrefab: {fileID: 8633468018668126285, guid: 08d38482e10664bfc925812dec9cceea, type: 3}
-  levelUI: {fileID: 697549703}
 --- !u!1 &176712246
 GameObject:
   m_ObjectHideFlags: 0
@@ -10765,6 +10765,7 @@ GameObject:
   - component: {fileID: 697549700}
   - component: {fileID: 697549699}
   - component: {fileID: 697549703}
+  - component: {fileID: 697549704}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -10865,7 +10866,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 697549698}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9181e897daf9b4c94a79c417d420d5c8, type: 3}
   m_Name: 
@@ -10874,6 +10875,20 @@ MonoBehaviour:
   levelComboView: {fileID: 1930820924}
   scoreBar: {fileID: 687329931}
   starPosition: {fileID: 5419338978315657094}
+--- !u!114 &697549704
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 697549698}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: becfe1cb4ea2411aaa26e6cf93234aee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  levelTimeView: {fileID: 1325894784}
+  levelComboView: {fileID: 1930820924}
 --- !u!1 &861305185
 GameObject:
   m_ObjectHideFlags: 0
@@ -27656,8 +27671,8 @@ SceneRoots:
   m_Roots:
   - {fileID: 2077180784}
   - {fileID: 1800118257}
-  - {fileID: 1472828015}
   - {fileID: 697549702}
-  - {fileID: 157169785}
   - {fileID: 921653995}
   - {fileID: 1882848724}
+  - {fileID: 1472828015}
+  - {fileID: 157169785}

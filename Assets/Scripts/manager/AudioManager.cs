@@ -260,15 +260,5 @@ namespace Senspark {
             var finalVolume = _infos[id].Volume * volume;
             player.PlaySound(clip, finalVolume);
         }
-        
-        public void PlaySoundOnPitch(Enum id, float pitch) {
-            var player = _soundPlayer;
-            if (player == null) {
-                return;
-            }
-            var clip = _clips[id];
-            var finalVolume = _infos[id].Volume;
-            player.PlaySound(clip, finalVolume, pitch);
-        }
     }
 }

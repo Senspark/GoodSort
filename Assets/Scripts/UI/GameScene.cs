@@ -26,15 +26,11 @@ namespace UI
     {
         [SerializeField] private Canvas uiCanvas;
         [SerializeField] private Canvas canvasDialog;
-        // [SerializeField] private SceneTransition sceneTransition;
         [SerializeField] private LevelView levelView;
         [SerializeField] private DragDropManager2 dragDropManager;
         [SerializeField] private GameObject container;
         [SerializeField] private ShelfItemBasic shelfItemPrefab;
         [SerializeField] private GameObject starPrefab;
-        // [SerializeField] private LevelUI levelUI;
-        // [SerializeField] private RectTransform starPosition;
-        // [SerializeField] private Transform effectPosition;
 
         [CanBeNull] private LevelDataManager _levelDataManager;
         [CanBeNull] private LevelAnimation _levelAnimation;
@@ -80,7 +76,7 @@ namespace UI
 
         private void Start()
         {
-            _ =SceneTransition.Instance.FadeOut();
+            _ = SceneTransition.Instance.FadeOut();
             if (State != GameStateType.Initialized) return;
             Time.timeScale = 1;
             dragDropManager.Init(CanAcceptDropInto);
@@ -94,11 +90,6 @@ namespace UI
         {
             var dt = Time.deltaTime;
             _levelAnimation?.Update(dt);
-            ProcessUpdate();
-        }
-
-        private void ProcessUpdate()
-        {
             if (State == GameStateType.Paused) return;
             if (!_didDrag && dragDropManager.IsDragging())
             {
@@ -106,25 +97,15 @@ namespace UI
                 {
                     _didDrag = true;
                     State = GameStateType.Playing;
+                    levelView.SimulationManager.Paused = false;
+                    levelView.Status = LevelStatus.Playing;
                 }
             }
             if (State == GameStateType.Playing)
             {
-                levelView.SimulationManager.Paused = false;
-                levelView.Status = LevelStatus.Playing;
                 
-                // _levelView.Step(Time.deltaTime);
-                // if (_levelView.GetStatus() != LevelStatus.Finished) return;
-                // State = GameStateType.GameOver;
-                // // Track: Fail Level (Time Out)
-                // _analyticsManager?.PopGameLevel(false);
-                // OpenTimeOutDialog().Forget();
-
-                // var status = levelView.GetStatus();
-
             }
         }
-        
         private void IntervalAutoCheckDeadlock()
         {
             if (_levelDataManager != null && _levelDataManager.IsDeadlock())
@@ -154,6 +135,10 @@ namespace UI
             };
             _levelAnimation.Enter();
             State = GameStateType.Loaded;
+
+            var duration = 360;
+            var boosters = new Booster.Booster[] { };
+            levelView.SetConfig(duration, boosters);
         }
 
         private void CleanUp()
