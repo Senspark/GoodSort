@@ -33,9 +33,9 @@ RectTransform:
   - {fileID: 6827035089953450831}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0.5}
-  m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -540, y: 0}
   m_SizeDelta: {x: 22, y: 22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5105252129173775869
@@ -153,8 +153,8 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 90c8130738fd44a8c954b69bc79943da, type: 3}
---- !u!4 &6827035089953450831 stripped
-Transform:
+--- !u!224 &6827035089953450831 stripped
+RectTransform:
   m_CorrespondingSourceObject: {fileID: 4353882239805768, guid: 90c8130738fd44a8c954b69bc79943da, type: 3}
   m_PrefabInstance: {fileID: 6823507499291853319}
   m_PrefabAsset: {fileID: 0}

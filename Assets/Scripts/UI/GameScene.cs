@@ -27,6 +27,7 @@ namespace UI
         [SerializeField] private Canvas uiCanvas;
         [SerializeField] private Canvas canvasDialog;
         [SerializeField] private LevelView levelView;
+        [SerializeField] private CollectionStar collectionStar;
         [SerializeField] private DragDropManager2 dragDropManager;
         [SerializeField] private GameObject container;
         [SerializeField] private ShelfItemBasic shelfItemPrefab;
@@ -39,6 +40,7 @@ namespace UI
         private ILevelManager _levelManager;
         private IAudioManager _audioManager;
         private IAnalyticsManager _analyticsManager;
+        private IStoreManager _storeManager;
 
         private GameStateType State { get; set; } = GameStateType.UnInitialize;
         private bool _didDrag;
@@ -71,6 +73,7 @@ namespace UI
                 _levelManager = services.Resolve<ILevelManager>();
                 _audioManager = services.Resolve<IAudioManager>();
                 _analyticsManager = services.Resolve<IAnalyticsManager>();
+                _storeManager = services.Resolve<IStoreManager>();
                 State = GameStateType.Initialized;
             }
         }
@@ -146,7 +149,7 @@ namespace UI
             var boosters = new Booster.Booster[] { };
             levelView.SetConfig(duration, boosters);
             
-            _comboData = new ComboData();
+            _comboData = new ComboData(_storeManager);
             levelView.SetComboData(_comboData);
         }
 
@@ -187,62 +190,11 @@ namespace UI
         
         public void AddStar(Vector3 position)
         {
-            // _levelAnimation.AddStar(amount, position);
-            // Debug Score, then debug Combo
-            Debug.Log("AddStar: " + position);
-            Debug.Log("Score: " + _comboData.Score);
             _comboData.ComboUp();
-            Debug.Log("Combo: " + _comboData.Combo);
-        }
-        
-        private void OnTopLayerCleared(Vector2 position)
-        {
-            // UniTask.Void(async () =>
-            // {
-            //     await UniTask.Delay(TimeSpan.FromSeconds(0.3f)); // TODO: [Refactor] - bị hard code delay sau khi hiện xong hiệu ứng Blink
-            //
-            //     var starCount = levelUI.GetScore();
-            //
-            //     EffectUtils.FlyMultipleStarsToUI(position, levelUI.GetStarPosition(), uiCanvas, starPrefab, starCount);
-            //         // .Then(() =>
-            //         // {
-            //         //     effectPosition.position = starPosition.position;
-            //         //     effectPosition.gameObject.GetComponent<ParticleSystem>().Play();
-            //         // });
-            //
-            //     // Tăng combo
-            //     levelUI.IncreaseCombo();
-            //     var combo = levelUI.GetCombo();
-            //     var comboColor = GetComboColor(combo);
-            //     EffectUtils.ShowComboText(position, uiCanvas, $"x{combo}", comboColor);
-            //
-            //     await UniTask.Delay(TimeSpan.FromSeconds(0.8f));
-            //
-            //     levelUI.AddScore();
-            //
-            //     var storeManager = ServiceLocator.Instance.Resolve<IStoreManager>();
-            //     storeManager.AddStars(starCount);
-            // });
-        }
-
-        private ComboVFXType GetComboColor(int combo)
-        {
-            if (combo >= 21)
-            {
-                return ComboVFXType.Gradient;
-            }
-
-            var position = ((combo - 1) % 5) + 1;
-
-            return position switch
-            {
-                1 => ComboVFXType.Pink,    // combo 1, 6, 11, 16
-                2 => ComboVFXType.Orange,  // combo 2, 7, 12, 17
-                3 => ComboVFXType.Green,   // combo 3, 8, 13, 18
-                4 => ComboVFXType.Blue,    // combo 4, 9, 14, 19
-                5 => ComboVFXType.Violet,  // combo 5, 10, 15, 20
-                _ => ComboVFXType.Blue     // fallback
-            };
+            var uiLocalPos = WorldToUISpace(uiCanvas, position);
+            EffectUtils.ShowComboText(uiLocalPos, uiCanvas, _comboData.Combo);
+            _comboData.AddScore();
+            collectionStar.CollectionStars(uiLocalPos, _comboData.CalculateScore());
         }
         
         private void OnGameClear()
@@ -346,6 +298,19 @@ namespace UI
         private void OnDestroy()
         {
             CancelInvoke(nameof(IntervalAutoCheckDeadlock));
+        }
+        
+        // Helper function
+        private Vector2 WorldToUISpace(Canvas canvas, Vector3 worldPos)
+        {
+            Vector3 screenPos = Camera.main.WorldToScreenPoint(worldPos);
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                canvas.transform as RectTransform,
+                screenPos,
+                null,
+                out var localPos
+            );
+            return localPos;
         }
     }
 }

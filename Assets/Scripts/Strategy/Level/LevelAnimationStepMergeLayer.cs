@@ -67,7 +67,8 @@ namespace Strategy.Level
             // Callback Done
             if (done >= _processingData.Count)
             {
-                _control.ToUnlockShelves(new LevelAnimationUnlockShelves.InputData(1));
+                _control.ToAddScore(new LevelAnimationStepAddStar.InputData(_processingData[0].ShelfId));
+                //_control.ToUnlockShelves(new LevelAnimationUnlockShelves.InputData(1));
             }
         }
 

@@ -76,7 +76,7 @@ namespace Utilities
             onAllComplete?.Invoke();
         }
 
-        public static void ShowComboText(Vector3 worldPos, Canvas canvas, string text, ComboVFXType type)
+        public static void ShowComboText(Vector3 worldPos, Canvas canvas, int combo)
         {
             _ = PrefabUtils.LoadPrefab("Prefabs/Effect/Text_Combo").Then(comboPrefab =>
             {
@@ -84,22 +84,40 @@ namespace Utilities
                 var rectTransform = comboObj.GetComponent<RectTransform>();
                 var comboVFX = comboObj.GetComponent<ComboVFX>();
 
-                rectTransform.anchorMin = new Vector2(0.5f, 0.5f);
-                rectTransform.anchorMax = new Vector2(0.5f, 0.5f);
+                // var screenPos = Camera.main.WorldToScreenPoint(worldPos);
+                // RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                //     canvas.transform as RectTransform,
+                //     screenPos,
+                //     null,
+                //     out var localPos
+                // );
 
-                var screenPos = Camera.main.WorldToScreenPoint(worldPos);
-                RectTransformUtility.ScreenPointToLocalPointInRectangle(
-                    canvas.transform as RectTransform,
-                    screenPos,
-                    null,
-                    out var localPos
-                );
+                rectTransform.anchoredPosition = worldPos;
 
-                rectTransform.anchoredPosition = localPos;
-
-                comboVFX.SetComboVFX(type)
-                    .SetText(text)
+                comboVFX.SetComboVFX(GetComboColor(combo))
+                    .SetText($"x{combo}")
                     .Play();
+                return;
+
+                ComboVFXType GetComboColor(int c)
+                {
+                    if (c >= 21)
+                    {
+                        return ComboVFXType.Gradient;
+                    }
+
+                    var position = ((c - 1) % 5) + 1;
+
+                    return position switch
+                    {
+                        1 => ComboVFXType.Pink,    // combo 1, 6, 11, 16
+                        2 => ComboVFXType.Orange,  // combo 2, 7, 12, 17
+                        3 => ComboVFXType.Green,   // combo 3, 8, 13, 18
+                        4 => ComboVFXType.Blue,    // combo 4, 9, 14, 19
+                        5 => ComboVFXType.Violet,  // combo 5, 10, 15, 20
+                        _ => ComboVFXType.Blue     // fallback
+                    };
+                }
             });
         }
     }

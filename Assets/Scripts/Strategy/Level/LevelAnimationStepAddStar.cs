@@ -31,7 +31,8 @@ namespace Strategy.Level
         {
             var shelf = _levelDataManager.GetShelf(_inputData.ShelfId) as ShelfBase;
             if (shelf) _gameSceneController.AddStar(shelf.transform.position);
-            _control.ToDragDrop();
+            // _control.ToDragDrop();
+            _control.ToUnlockShelves(new LevelAnimationUnlockShelves.InputData(1));
         }
 
         public void Exit()
@@ -41,12 +42,10 @@ namespace Strategy.Level
         public class InputData
         {
             public readonly int ShelfId;
-            public readonly int LayerId;
 
-            public InputData(int shelfId, int layerId)
+            public InputData(int shelfId)
             {
                 ShelfId = shelfId;
-                LayerId = layerId;
             }
         }
     }

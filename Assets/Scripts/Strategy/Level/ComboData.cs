@@ -1,3 +1,4 @@
+using manager.Interface;
 using UnityEngine;
 
 namespace Strategy.Level
@@ -7,6 +8,7 @@ namespace Strategy.Level
         private int _combo;
         private int _score;
         private float _remainingTime;
+        private readonly IStoreManager _storeManager;
 
         public int Combo
         {
@@ -17,6 +19,10 @@ namespace Strategy.Level
         public int Score => _score;
         public float RemainingTime => _remainingTime;
         public bool IsActive => _combo > 0 && _remainingTime > 0;
+        public ComboData(IStoreManager storeManager)
+        {
+            _storeManager = storeManager;
+        }
 
         public void ComboUp()
         {
@@ -27,6 +33,7 @@ namespace Strategy.Level
         public void AddScore()
         {
             _score += CalculateScore();
+            _storeManager.AddStars(CalculateScore());
         }
 
         public int CalculateScore()

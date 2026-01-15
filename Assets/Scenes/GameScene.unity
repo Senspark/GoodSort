@@ -648,6 +648,7 @@ MonoBehaviour:
   uiCanvas: {fileID: 697549701}
   canvasDialog: {fileID: 1800118256}
   levelView: {fileID: 697549704}
+  collectionStar: {fileID: 1361475466}
   dragDropManager: {fileID: 157169784}
   container: {fileID: 921653993}
   shelfItemPrefab: {fileID: -3984508902149505473, guid: 126b1ec0e429d4fea8fce05b2e0b83de, type: 3}
@@ -10871,10 +10872,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9181e897daf9b4c94a79c417d420d5c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  levelTimeView: {fileID: 1325894784}
-  levelComboView: {fileID: 1930820924}
-  scoreBar: {fileID: 687329931}
-  starPosition: {fileID: 5419338978315657094}
 --- !u!114 &697549704
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16528,6 +16525,56 @@ RectTransform:
   m_AnchoredPosition: {x: 4, y: -20}
   m_SizeDelta: {x: 65, y: 22.5}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &1361475465
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1361475467}
+  - component: {fileID: 1361475466}
+  m_Layer: 0
+  m_Name: CollectionStar
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1361475466
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1361475465}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bcaf70cbb09346a5887868db7aa73a47, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  starPrefab: {fileID: 8633468018668126285, guid: 08d38482e10664bfc925812dec9cceea, type: 3}
+  starParent: {fileID: 697549702}
+  endPosition: {fileID: 5419338978315657094}
+  starEffect: {fileID: 555902057}
+  variantX: 20
+  variantY: 5
+--- !u!4 &1361475467
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1361475465}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1472828012
 GameObject:
   m_ObjectHideFlags: 0
@@ -27676,3 +27723,4 @@ SceneRoots:
   - {fileID: 1882848724}
   - {fileID: 1472828015}
   - {fileID: 157169785}
+  - {fileID: 1361475467}
