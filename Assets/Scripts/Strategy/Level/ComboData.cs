@@ -18,7 +18,7 @@ namespace Strategy.Level
         public float RemainingTime => _remainingTime;
         public bool IsActive => _combo > 0 && _remainingTime > 0;
 
-        public void IncreaseCombo()
+        public void ComboUp()
         {
             _combo++;
             _remainingTime = GetDuration(_combo);

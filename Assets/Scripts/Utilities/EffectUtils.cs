@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using Effect;
@@ -9,21 +10,14 @@ namespace Utilities
 {
     public class EffectUtils
     {
-        public static void BlinkOnPosition(Vector3 position, GameObject container)
+        public static void Blink(Vector3 position)
         {
             _ = PrefabUtils.LoadPrefab("Prefabs/Effect/MagicPillarBlastYellow").Then(effect =>
             {
-                UniTask.Void(async () =>
-                {
-                    effect.transform.SetParent(container.transform, true);
-                    effect.transform.position = position;
-
-                    var ps = effect.GetComponent<ParticleSystem>();
-                    ps?.Play();
-
-                    await UniTask.Delay(TimeSpan.FromSeconds(2f));
-                    Object.Destroy(effect);
-                });
+                effect.transform.position = position;
+                effect.transform.SetParent(null);
+                var ps = effect.GetComponent<ParticleSystem>();
+                ps?.Play();
             });
         }
 

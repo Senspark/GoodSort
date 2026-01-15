@@ -43,6 +43,7 @@ namespace UI
         private GameStateType State { get; set; } = GameStateType.UnInitialize;
         private bool _didDrag;
         private int _levelPlaying;
+        private ComboData _comboData;
 
         private void Awake()
         {
@@ -97,14 +98,19 @@ namespace UI
                 {
                     _didDrag = true;
                     State = GameStateType.Playing;
-                    levelView.SimulationManager.Paused = false;
-                    levelView.Status = LevelStatus.Playing;
+                    OnStart();
                 }
             }
             if (State == GameStateType.Playing)
             {
-                
+                _comboData.Step(Time.deltaTime);
             }
+        }
+
+        private void OnStart()
+        {
+            levelView.SimulationManager.Paused = false;
+            levelView.Status = LevelStatus.Playing;
         }
         private void IntervalAutoCheckDeadlock()
         {
@@ -139,6 +145,9 @@ namespace UI
             var duration = 360;
             var boosters = new Booster.Booster[] { };
             levelView.SetConfig(duration, boosters);
+            
+            _comboData = new ComboData();
+            levelView.SetComboData(_comboData);
         }
 
         private void CleanUp()
@@ -166,13 +175,6 @@ namespace UI
 
         private void OnItemDestroy(ShelfItemMeta itemMeta)
         {
-            var itemPosition = _levelDataManager?.FindItem(itemMeta.Id).DragObject.Position;
-            // if (itemPosition.HasValue)
-            // {
-            //     var effectPosition = new Vector3(itemPosition.Value.x, itemPosition.Value.y + 0.5f, itemPosition.Value.z); 
-            //     EffectUtils.BlinkOnPosition(effectPosition, _levelView.gameObject);
-            // }
-            
             dragDropManager.UnregisterDragObject(itemMeta.Id);
             _levelDataManager?.RemoveItem(itemMeta.Id);
             
@@ -186,6 +188,11 @@ namespace UI
         public void AddStar(Vector3 position)
         {
             // _levelAnimation.AddStar(amount, position);
+            // Debug Score, then debug Combo
+            Debug.Log("AddStar: " + position);
+            Debug.Log("Score: " + _comboData.Score);
+            _comboData.ComboUp();
+            Debug.Log("Combo: " + _comboData.Combo);
         }
         
         private void OnTopLayerCleared(Vector2 position)

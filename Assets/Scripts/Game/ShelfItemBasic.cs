@@ -4,6 +4,7 @@ using DG.Tweening;
 using Sirenix.OdinInspector;
 using TMPro;
 using UnityEngine;
+using Utilities;
 
 namespace Game
 {
@@ -147,6 +148,12 @@ namespace Game
 
         public void DestroyItem()
         {
+            var effectPosition = new Vector3(
+                transform.position.x, 
+                transform.position.y + 0.5f, 
+                transform.position.z
+            );
+            EffectUtils.Blink(effectPosition);
             _onDestroy.Invoke(Meta);
             Destroy(gameObject);
         }

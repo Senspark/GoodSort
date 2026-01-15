@@ -131,7 +131,7 @@ namespace UI
             if (itemPosition.HasValue)
             {
                 var effectPosition = new Vector3(itemPosition.Value.x, itemPosition.Value.y + 0.5f, itemPosition.Value.z); 
-                EffectUtils.BlinkOnPosition(effectPosition, _levelView.gameObject);
+                EffectUtils.Blink(effectPosition);
             }
             
             dragDropManager.UnregisterDragObject(itemMeta.Id);

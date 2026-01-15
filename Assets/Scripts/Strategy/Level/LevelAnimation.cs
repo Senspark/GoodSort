@@ -16,7 +16,6 @@ namespace Strategy.Level
         private readonly LevelAnimationStepDragDrop _stateDragDrop;
         private readonly LevelAnimationSwitchStateControl _stateControl;
         [CanBeNull] private ILevelAnimationStep _currentStep;
-        private GameController _gameSceneController;
 
         public LevelAnimation(LevelDataManager levelDataManager, IDragDropManager dragDropManager)
         {
@@ -59,7 +58,7 @@ namespace Strategy.Level
         private void SwitchToState_AddScore(LevelAnimationStepAddStar.InputData data)
         {
             _currentStep?.Exit();
-            _currentStep = new LevelAnimationStepAddStar(_stateControl, data, _levelDataManager, _gameSceneController);
+            _currentStep = new LevelAnimationStepAddStar(_stateControl, data, _levelDataManager, GameSceneController);
             _currentStep.Enter();
         }
         
