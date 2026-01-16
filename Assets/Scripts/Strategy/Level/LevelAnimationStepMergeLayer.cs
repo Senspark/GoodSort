@@ -67,8 +67,16 @@ namespace Strategy.Level
             // Callback Done
             if (done >= _processingData.Count)
             {
-                _control.ToAddScore(new LevelAnimationStepAddStar.InputData(_processingData[0].ShelfId));
-                //_control.ToUnlockShelves(new LevelAnimationUnlockShelves.InputData(1));
+                var mergedData = _processingData.FirstOrDefault(p => p.Items.Length > 0);
+    
+                if (mergedData != null)
+                {
+                    _control.ToAddScore(new LevelAnimationStepAddStar.InputData(mergedData.ShelfId));
+                }
+                else
+                {
+                    _control.ToDragDrop();
+                }
             }
         }
 
@@ -110,7 +118,7 @@ namespace Strategy.Level
             foreach (var item in nextTopLayer)
             {
                 item?.SetDisplay(ShelfLayerDisplay.Top);
-                item?.FadeInVisual(0.2f);
+                item?.FadeInVisual(0.5f);
                 // item?.ResetVisual();
             }
 

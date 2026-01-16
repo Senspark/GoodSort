@@ -28,6 +28,7 @@ namespace UI
         [SerializeField] private Canvas canvasDialog;
         [SerializeField] private LevelView levelView;
         [SerializeField] private CollectionStar collectionStar;
+        [SerializeField] private AnimateScene animateScene;
         [SerializeField] private DragDropManager2 dragDropManager;
         [SerializeField] private GameObject container;
         [SerializeField] private ShelfItemBasic shelfItemPrefab;
@@ -133,6 +134,7 @@ namespace UI
             var builder = new LevelConfigBuilder(_levelLoaderManager).SetLevel(level).Build();
             var levelTransform = builder.LevelObject.GetComponent<Transform>();
             levelTransform.SetParent(container.transform,false);
+            animateScene.StartAnimate(levelTransform);
 
             var levelCreator = new LevelCreator(container, shelfItemPrefab);
             var inputData = _levelLoaderManager.GetInputData(level);
@@ -193,8 +195,10 @@ namespace UI
             _comboData.ComboUp();
             var uiLocalPos = WorldToUISpace(uiCanvas, position);
             EffectUtils.ShowComboText(uiLocalPos, uiCanvas, _comboData.Combo);
-            _comboData.AddScore();
-            collectionStar.CollectionStars(uiLocalPos, _comboData.CalculateScore());
+            collectionStar.CollectionStars(uiLocalPos, _comboData.CalculateScore(), () =>
+            {
+                _comboData.AddScore();
+            });
         }
         
         private void OnGameClear()

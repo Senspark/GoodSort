@@ -18,15 +18,16 @@ namespace Game
         [SerializeField] private int variantY = 5;
         List<GameObject> _stars = new();
         private Tween _starReactToCollection;
+        private Action _onStarCollected;
 
         private void Start()
         {
             starEffect.Stop();
         }
-
-        public async void CollectionStars(Vector3 spawnLocation, int amount)
+        public async void CollectionStars(Vector3 spawnLocation, int amount, Action onStarCollected = null)
         {
             starEffect.transform.position = endPosition.position;
+            _onStarCollected = onStarCollected;
             for(var i = 0; i < _stars.Count; i++)
             {
                 Destroy(_stars[i]);
@@ -61,8 +62,10 @@ namespace Game
             for(var i = _stars.Count - 1; i >= 0; i--)
             {
                 moveStarTask.Add(MoveStarTask(_stars[i]));
-                await UniTask.Delay(TimeSpan.FromSeconds(0.05f));
+                await UniTask.Delay(TimeSpan.FromSeconds(0.1f));
             }
+            await UniTask.WhenAll(moveStarTask);
+            _onStarCollected?.Invoke();
         }
 
         private async UniTask MoveStarTask(GameObject star)
@@ -72,22 +75,23 @@ namespace Game
                 .ToUniTask(cancellationToken: this.GetCancellationTokenOnDestroy());
             _stars.Remove(star);
             Destroy(star);
-            
+
             ReactToCollectionStar().Forget();
         }
-        
+
         private async UniTaskVoid ReactToCollectionStar()
         {
-            _starReactToCollection?.Rewind(); 
+            _starReactToCollection?.Rewind();
             _starReactToCollection?.Kill();
-            
+
             endPosition.localScale = Vector3.one;
             starEffect.Play();
-            
+
             _starReactToCollection = endPosition
                 .DOPunchScale(new Vector3(0.3f, 0.3f, 0.3f), 0.1f)
                 .SetEase(Ease.OutQuad)
                 .SetTarget(endPosition);
+            await _starReactToCollection.ToUniTask(cancellationToken: this.GetCancellationTokenOnDestroy());
         }
     }
 }

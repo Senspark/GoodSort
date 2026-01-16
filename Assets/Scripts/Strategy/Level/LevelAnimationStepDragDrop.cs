@@ -86,6 +86,7 @@ namespace Strategy.Level
                 item.SetShelf(item.Meta.Change(shelfId, layerId, slotId), shelf.SpacingData, ShelfLayerDisplay.Top);
 
                 item.ResetVisual();
+                item.Jiggly();
 
                 _levelDataManager.SetSlotData(shelfId, layerId, slotId, item);
 

@@ -17,6 +17,8 @@ namespace Core
         void FadeInVisual(float duration);
         void DestroyItem();
         public void Bounce([CanBeNull] Action onCompleted, float delay = 0f);
+
+        public void Jiggly();
     }
 
     public enum ShelfLayerDisplay
